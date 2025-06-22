@@ -17,7 +17,7 @@
                     @endforeach
                 @endif
 
-                <form method="POST" action="{{ route('admin.principles.update', $principle) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('landingpage.principles.update', $principle) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT') 
                     <div>

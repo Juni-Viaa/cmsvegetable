@@ -18,7 +18,7 @@ class TestimonialController extends Controller
     {
         //
         $testimonials = Testimonial::orderByDesc('id')->paginate(10);
-        return view('admin.testimonials.index', compact('testimonials'));
+        return view('landingpage.testimonials.index', compact('testimonials'));
     }
 
     /**
@@ -28,7 +28,7 @@ class TestimonialController extends Controller
     {
         //
         $clients = ProjectClient::orderByDesc('id')->get();
-        return view('admin.testimonials.create', compact('clients'));
+        return view('landingpage.testimonials.create', compact('clients'));
     }
 
     /**
@@ -48,7 +48,7 @@ class TestimonialController extends Controller
             $newTestimonial = Testimonial::create($validated);
         });
 
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial created successfully.');
+        return redirect()->route('landingpage.testimonials.index')->with('success', 'Testimonial created successfully.');
     }
 
     /**
@@ -66,7 +66,7 @@ class TestimonialController extends Controller
     {
         //
         $clients = ProjectClient::orderByDesc('id')->get();
-        return view('admin.testimonials.edit', compact('testimonial', 'clients'));
+        return view('landingpage.testimonials.edit', compact('testimonial', 'clients'));
     }
 
     /**
@@ -86,7 +86,7 @@ class TestimonialController extends Controller
             $testimonial->update($validated);
         });
 
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial updated successfully.');
+        return redirect()->route('landingpage.testimonials.index')->with('success', 'Testimonial updated successfully.');
     }
 
     /**
@@ -98,6 +98,6 @@ class TestimonialController extends Controller
         DB::transaction(function () use ($testimonial) {
             $testimonial->delete();
         });
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial deleted successfully.');
+        return redirect()->route('landingpage.testimonials.index')->with('success', 'Testimonial deleted successfully.');
     }
 }

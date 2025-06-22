@@ -18,7 +18,7 @@ class ShowcaseController extends Controller
     {
         //
         $showcases = Showcase::orderByDesc('id')->paginate(10);
-        return view('admin.showcases.index', compact('showcases'));
+        return view('landingpage.showcases.index', compact('showcases'));
     }
 
     /**
@@ -27,7 +27,7 @@ class ShowcaseController extends Controller
     public function create()
     {
         //
-        return view('admin.showcases.create'); 
+        return view('landingpage.showcases.create'); 
     }
 
     /**
@@ -46,7 +46,7 @@ class ShowcaseController extends Controller
 
             $newShowcase = Showcase::create($validated);
         });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase created successfully.');
+        return redirect()->route('landingpage.showcases.index')->with('success', 'Showcase created successfully.');
     }
 
     /**
@@ -63,7 +63,7 @@ class ShowcaseController extends Controller
     public function edit(Showcase $showcase)
     {
         //
-        return view('admin.showcases.edit', compact('showcase'));
+        return view('landingpage.showcases.edit', compact('showcase'));
     }
 
     /**
@@ -82,7 +82,7 @@ class ShowcaseController extends Controller
 
             $showcase->update($validated);
         });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase updated successfully.');
+        return redirect()->route('landingpage.showcases.index')->with('success', 'Showcase updated successfully.');
     }
 
     /**
@@ -94,7 +94,7 @@ class ShowcaseController extends Controller
         DB::transaction(function () use ($showcase) {
             $showcase->delete();
         });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase deleted successfully.');
+        return redirect()->route('landingpage.showcases.index')->with('success', 'Showcase deleted successfully.');
     }
 }
 

@@ -17,7 +17,7 @@ class OurTeamController extends Controller
     {
         //
         $teams = OurTeam::orderByDesc('id')->paginate(10);
-        return view('admin.teams.index', compact('teams'));
+        return view('landingpage.teams.index', compact('teams'));
     }
 
     /**
@@ -26,7 +26,7 @@ class OurTeamController extends Controller
     public function create()
     {
         //
-        return view('admin.teams.create');
+        return view('landingpage.teams.create');
     }
 
     /**
@@ -46,7 +46,7 @@ class OurTeamController extends Controller
             $newTeam = OurTeam::create($validated);
         });
         // Redirect or return response
-        return redirect()->route('admin.teams.index')->with('success', 'Team member created successfully.');
+        return redirect()->route('landingpage.teams.index')->with('success', 'Team member created successfully.');
     }
 
     /**
@@ -62,7 +62,7 @@ class OurTeamController extends Controller
      */
     public function edit(OurTeam $team)
     {
-        return view('admin.teams.edit', compact('team'));
+        return view('landingpage.teams.edit', compact('team'));
     }
 
     /**
@@ -82,7 +82,7 @@ class OurTeamController extends Controller
             $team->update($validated);
         });
         // Redirect or return response
-        return redirect()->route('admin.teams.index')->with('success', 'Team member updated successfully.');
+        return redirect()->route('landingpage.teams.index')->with('success', 'Team member updated successfully.');
     }
 
     /**
@@ -94,6 +94,6 @@ class OurTeamController extends Controller
         DB::transaction(function () use ($team) {
             $team->delete();
         });
-        return redirect()->route('admin.teams.index')->with('success', 'Team member deleted successfully.');
+        return redirect()->route('landingpage.teams.index')->with('success', 'Team member deleted successfully.');
     }
 }

@@ -18,7 +18,7 @@ class CompanyStatisticController extends Controller
     {
         //
         $statistics = CompanyStatistic::orderByDesc('id')->paginate(10);
-        return view('admin.statistics.index', compact('statistics'));
+        return view('landingpage.statistics.index', compact('statistics'));
     }
 
     /**
@@ -27,7 +27,7 @@ class CompanyStatisticController extends Controller
     public function create()
     {
         //
-        return view('admin.statistics.create');
+        return view('landingpage.statistics.create');
     }
 
     /**
@@ -51,7 +51,7 @@ class CompanyStatisticController extends Controller
         });
 
         // Redirect or return response
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic created successfully.');
+        return redirect()->route('landingpage.statistics.index')->with('success', 'Statistic created successfully.');
     }
 
     /**
@@ -68,7 +68,7 @@ class CompanyStatisticController extends Controller
     public function edit(CompanyStatistic $statistic)
     {
         //
-        return view('admin.statistics.edit', compact('statistic'));
+        return view('landingpage.statistics.edit', compact('statistic'));
     }
 
     /**
@@ -92,7 +92,7 @@ class CompanyStatisticController extends Controller
         });
 
         // Redirect or return response
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic updated successfully.');
+        return redirect()->route('landingpage.statistics.index')->with('success', 'Statistic updated successfully.');
     }
     /**
      * Remove the specified resource from storage.
@@ -103,6 +103,6 @@ class CompanyStatisticController extends Controller
         DB::transaction(function () use ($statistic) {
             $statistic->delete();
         });
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic deleted successfully.');
+        return redirect()->route('landingpage.statistics.index')->with('success', 'Statistic deleted successfully.');
     }
 }

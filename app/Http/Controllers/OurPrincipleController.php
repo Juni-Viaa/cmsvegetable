@@ -17,7 +17,7 @@ class OurPrincipleController extends Controller
     {
         //
         $principles = OurPrinciple::orderByDesc('id')->paginate(10);
-        return view('admin.principles.index', compact('principles'));
+        return view('landingpage.principles.index', compact('principles'));
     }
 
     /**
@@ -26,7 +26,7 @@ class OurPrincipleController extends Controller
     public function create()
     {
         //
-        return view('admin.principles.create');
+        return view('landingpage.principles.create');
     }
 
     /**
@@ -51,7 +51,7 @@ class OurPrincipleController extends Controller
             $newPrinciple = OurPrinciple::create($validated);
         });
 
-        return redirect()->route('admin.principles.index')->with('success', 'Principle created successfully.');
+        return redirect()->route('landingpage.principles.index')->with('success', 'Principle created successfully.');
     }
 
     /**
@@ -67,7 +67,7 @@ class OurPrincipleController extends Controller
      */
     public function edit(OurPrinciple $principle)
     {
-        return view('admin.principles.edit', compact('principle'));
+        return view('landingpage.principles.edit', compact('principle'));
     }
 
     /**
@@ -92,7 +92,7 @@ class OurPrincipleController extends Controller
             $principle->update($validated);
         });
 
-        return redirect()->route('admin.principles.index')->with('success', 'Principle updated successfully.');
+        return redirect()->route('landingpage.principles.index')->with('success', 'Principle updated successfully.');
     }
 
     /**
@@ -104,6 +104,6 @@ class OurPrincipleController extends Controller
         DB::transaction(function () use ($principle) {
             $principle->delete();
         });
-        return redirect()->route('admin.principles.index')->with('success', 'Principle deleted successfully.');
+        return redirect()->route('landingpage.principles.index')->with('success', 'Principle deleted successfully.');
     }
 }

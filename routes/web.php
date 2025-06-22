@@ -26,9 +26,17 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ChgPwController;
 use App\Http\Controllers\AccountSettingsController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\CompanyAboutController;
+use App\Http\Controllers\CompanyStatisticController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\HeroSectionController;
 use App\Http\Controllers\ListBlogController;
-
+use App\Http\Controllers\OurPrincipleController;
+use App\Http\Controllers\OurTeamController;
+use App\Http\Controllers\ProjectClientController;
+use App\Http\Controllers\ShowcaseController;
+use App\Http\Controllers\TestimonialController;
 
 //Landing Page
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
@@ -93,3 +101,14 @@ Route::get('/products/{id}', [ProductController::class, 'product']);
 Route::post('/products/{id}/comment', [ProductController::class, 'submitComment']);
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
+
+//Landing Page New Admin Routes 
+Route::resource('statistics', CompanyStatisticController::class);
+Route::resource('abouts', CompanyAboutController::class);
+Route::resource('showcases', ShowcaseController::class);
+Route::resource('principles', OurPrincipleController::class);
+Route::resource('testimonials', TestimonialController::class);
+Route::resource('clients', ProjectClientController::class);
+Route::resource('teams', OurTeamController::class);
+Route::resource('appointments', AppointmentController::class);
+Route::resource('hero_sections', HeroSectionController::class);
