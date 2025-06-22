@@ -21,17 +21,19 @@
     <!-- Filter -->
     <div x-data="{ open: true }" class="w-full mb-10 bg-gradient-to-br from-green-100 to-green-50 p-6 rounded-2xl shadow-md">
         <div class="flex justify-between items-center cursor-pointer" @click="open = !open">
-            <h2 class="text-xl font-bold text-green-800">🔍 Filter Kategori</h2>
-            <span x-text="open ? '▲' : '▼'" class="text-green-800 text-xl font-bold"></span>
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="size-6 text-black" viewBox="0 0 24 24">
+                    <path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                </svg>
+                <h2 class="text-xl font-bold text-black">Category Filter</h2>
+            </div>
         </div>
-        <form method="GET" action="{{ url('/gallery') }}" id="filterForm"
-              x-show="open" x-transition
-              class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 col-span-full">
-                <h3 class="text-green-700 font-semibold mb-2">Kategori</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <form method="GET" action="{{ url('/gallery') }}" id="filterForm" x-show="open" x-transition class="mt-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300">
+                <h3 class="text-black font-semibold mb-4 text-base">Category</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     @foreach ($categories as $cat)
-                        <label class="inline-flex items-center gap-2">
+                        <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 hover:border-green-400 transition cursor-pointer">
                             <input
                                 type="checkbox"
                                 name="category[]"
@@ -39,7 +41,7 @@
                                 {{ is_array(request('category')) && in_array($cat, request('category')) ? 'checked' : '' }}
                                 class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none"
                             >
-                            <span>{{ ucfirst($cat) }}</span>
+                            <span class="text-sm font-medium text-gray-700">{{ ucfirst($cat) }}</span>
                         </label>
                     @endforeach
                 </div>
@@ -47,15 +49,16 @@
         </form>
     </div>
 
-    <!-- Toggle View -->
+    <!-- Toggle View Button -->
     <div class="flex justify-end mb-6">
-        <button id="toggleView" class="px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 transition">
-            📃 List View
+        <button id="toggleView" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-md flex items-center gap-2 transition-all">
+            <span id="toggleIcon"></span>
+            <span id="toggleText"></span>
         </button>
     </div>
 
-    <!-- Gallery -->
-    <div id="blogContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-all duration-300">
+    <!-- Gallery Container -->
+    <div id="blogContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300">
         @foreach ($vegetables as $item)
         <div class="blog-card cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.03] hover:shadow-xl product-card animate-fade-up border border-transparent hover:border-green-500 hover:ring hover:ring-green-200"
              data-category="{{ strtolower($item->category->category_name ?? 'lainnya') }}"
@@ -63,10 +66,10 @@
              data-image="{{ $item->image_url }}"
              data-desc="{{ $item->description }}">
             <img src="{{ $item->image_url }}" loading="lazy" alt="{{ $item->title }}"
-                 class="w-full h-48 object-cover rounded-t-xl transition duration-300 ease-in-out hover:brightness-110">
+                 class="w-full h-40 object-cover rounded-t-xl transition duration-300 ease-in-out hover:brightness-110">
             <div class="p-4 product-info">
                 <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2">
-                    {{ $item->category->category_name ?? 'Tanpa Kategori' }}
+                    {{ $item->category->category_name ?? 'Uncategorized' }}
                 </span>
                 <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $item->title }}</h3>
                 <p class="text-sm text-gray-600">{{ $item->description }}</p>
@@ -99,13 +102,12 @@
         align-items: center;
         padding: 1rem;
         text-align: left;
-        transition: all 0.3s ease;
         border: 1px solid transparent;
     }
 
     .list-view .product-card:hover {
-        border-color: #22c55e; /* green-500 */
-        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); /* ring */
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
     }
 
     .list-view .product-card img {
@@ -113,12 +115,6 @@
         height: auto;
         margin-right: 1.5rem;
         border-radius: 1rem;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .list-view .product-card img:hover {
-        filter: brightness(1.1);
-        transform: scale(1.05);
     }
 
     .list-view .product-info {
@@ -155,8 +151,21 @@
         const form = document.getElementById('filterForm');
         const inputs = form.querySelectorAll('input[type="checkbox"]');
         const toggleBtn = document.getElementById('toggleView');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
         const container = document.getElementById('blogContainer');
-        let isList = false;
+
+        const iconGrid = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
+        const iconList = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
+
+        let isList = container.classList.contains('list-view');
+
+        const updateToggleUI = () => {
+            toggleIcon.innerHTML = isList ? iconList : iconGrid;
+            toggleText.textContent = isList ? 'List View' : 'Grid View';
+        };
+
+        updateToggleUI();
 
         inputs.forEach(input => {
             input.addEventListener('change', () => form.submit());
@@ -165,14 +174,13 @@
         toggleBtn.addEventListener('click', () => {
             isList = !isList;
             if (isList) {
-                container.classList.remove('grid', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
+                container.classList.remove('grid', 'md:grid-cols-2');
                 container.classList.add('list-view');
-                toggleBtn.textContent = '🧱 Grid View';
             } else {
                 container.classList.remove('list-view');
-                container.classList.add('grid', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
-                toggleBtn.textContent = '📃 List View';
+                container.classList.add('grid', 'md:grid-cols-2');
             }
+            updateToggleUI();
         });
 
         const blogCards = document.querySelectorAll('.blog-card');
@@ -197,12 +205,14 @@
             modal.classList.add('hidden');
             document.body.style.overflow = '';
         });
+
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
                 document.body.style.overflow = '';
             }
         });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 modal.classList.add('hidden');
