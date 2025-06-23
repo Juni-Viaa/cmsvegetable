@@ -17,7 +17,7 @@ class HeroSectionController extends Controller
     {
         //
         $hero_sections = HeroSection::orderByDesc('id')->paginate(10);
-        return view('admin.hero_sections.index', compact('hero_sections'));
+        return view('landingpage.hero_sections.index', compact('hero_sections'));
     }
 
     /**
@@ -26,7 +26,7 @@ class HeroSectionController extends Controller
     public function create()
     {
         //
-        return view('admin.hero_sections.create');
+        return view('landingpage.hero_sections.create');
     }
 
     /**
@@ -46,7 +46,7 @@ class HeroSectionController extends Controller
             $newHeroSection = HeroSection::create($validated);
         });
         // Redirect or return response
-        return redirect()->route('admin.hero_sections.index')->with('success', 'Hero Section created successfully.');
+        return redirect()->route('landingpage.hero_sections.index')->with('success', 'Hero Section created successfully.');
     }
 
     /**
@@ -63,7 +63,7 @@ class HeroSectionController extends Controller
     public function edit(HeroSection $heroSection)
     {
         //
-        return view('admin.hero_sections.edit', compact('heroSection'));
+        return view('landingpage.hero_sections.edit', compact('heroSection'));
     }
 
     /**
@@ -83,7 +83,7 @@ class HeroSectionController extends Controller
             $heroSection->update($validated);
         });
 
-        return redirect()->route('admin.hero_sections.index')->with('success', 'Hero Section updated successfully.');
+        return redirect()->route('landingpage.hero_sections.index')->with('success', 'Hero Section updated successfully.');
     }
 
     /**
@@ -95,6 +95,6 @@ class HeroSectionController extends Controller
         DB::transaction(function () use ($heroSection) {
             $heroSection->delete();
         });
-        return redirect()->route('admin.hero_sections.index')->with('success', 'Hero Section deleted successfully.');
+        return redirect()->route('landingpage.hero_sections.index')->with('success', 'Hero Section deleted successfully.');
     }
 }

@@ -17,7 +17,7 @@
                     @endforeach
                 @endif
 
-                <form method="POST" action="{{ route('admin.teams.update', $team) }}" enctype="multipart/form-data"> 
+                <form method="POST" action="{{ route('landingpage.teams.update', $team) }}" enctype="multipart/form-data"> 
                     @csrf
                     @method('PUT')
                     <div>

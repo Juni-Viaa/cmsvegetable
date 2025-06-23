@@ -9,7 +9,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden p-10 shadow-sm sm:rounded-lg"> 
 
-                <form method="POST" action="{{ route('admin.abouts.update', $about) }}" enctype="multipart/form-data"> 
+                <form method="POST" action="{{ route('landingpage.abouts.update', $about) }}" enctype="multipart/form-data"> 
                     @csrf
                     @method('PUT')
                     <div>

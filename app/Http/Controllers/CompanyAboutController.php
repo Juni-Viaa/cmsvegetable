@@ -17,7 +17,7 @@ class CompanyAboutController extends Controller
     {
         //
         $abouts = CompanyAbout::orderByDesc('id')->paginate(10);
-        return view('admin.abouts.index', compact('abouts'));
+        return view('landingpage.abouts.index', compact('abouts'));
     }
 
     /**
@@ -26,7 +26,7 @@ class CompanyAboutController extends Controller
     public function create()
     {
         //
-        return view('admin.abouts.create');
+        return view('landingpage.abouts.create');
     }
 
     /**
@@ -54,7 +54,7 @@ class CompanyAboutController extends Controller
             }
         });
 
-        return redirect()->route('admin.abouts.index')->with('success', 'About section created successfully.');
+        return redirect()->route('landingpage.abouts.index')->with('success', 'About section created successfully.');
     }
 
     /**
@@ -71,7 +71,7 @@ class CompanyAboutController extends Controller
     public function edit(CompanyAbout $about)
     {
         //
-        return view('admin.abouts.edit', compact('about'));
+        return view('landingpage.abouts.edit', compact('about'));
     }
 
     /**
@@ -102,7 +102,7 @@ class CompanyAboutController extends Controller
             }
         });
 
-        return redirect()->route('admin.abouts.index')->with('success', 'About section updated successfully.');
+        return redirect()->route('landingpage.abouts.index')->with('success', 'About section updated successfully.');
     }
 
     /**
@@ -114,6 +114,6 @@ class CompanyAboutController extends Controller
         DB::transaction(function () use ($about) {
             $about->delete();
         });
-        return redirect()->route('admin.abouts.index')->with('success', 'About section deleted successfully.');
+        return redirect()->route('landingpage.abouts.index')->with('success', 'About section deleted successfully.');
     }
 }

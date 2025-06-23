@@ -17,7 +17,7 @@
                     @endforeach
                 @endif
 
-                <form method="POST" action="{{route('admin.testimonials.store')}}" enctype="multipart/form-data">
+                <form method="POST" action="{{route('landingpage.testimonials.store')}}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mt-4">

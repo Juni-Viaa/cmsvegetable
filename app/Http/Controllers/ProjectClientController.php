@@ -18,7 +18,7 @@ class ProjectClientController extends Controller
     {
         //
         $clients = ProjectClient::orderByDesc('id')->paginate(10);
-        return view('admin.clients.index', compact('clients'));
+        return view('landingpage.clients.index', compact('clients'));
     }
 
     /**
@@ -27,7 +27,7 @@ class ProjectClientController extends Controller
     public function create()
     {
         //
-        return view('admin.clients.create');
+        return view('landingpage.clients.create');
     }
 
     /**
@@ -52,7 +52,7 @@ class ProjectClientController extends Controller
             $newClient = ProjectClient::create($validated);
         });
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client created successfully.');
+        return redirect()->route('landingpage.clients.index')->with('success', 'Client created successfully.');
     }
 
     /**
@@ -69,7 +69,7 @@ class ProjectClientController extends Controller
     public function edit(ProjectClient $client)
     {
         //
-        return view('admin.clients.edit', compact('client'));
+        return view('landingpage.clients.edit', compact('client'));
     }
 
     /**
@@ -94,7 +94,7 @@ class ProjectClientController extends Controller
             $client->update($validated);
         });
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('landingpage.clients.index')->with('success', 'Client updated successfully.');
     }
 
     /**
@@ -106,6 +106,6 @@ class ProjectClientController extends Controller
         DB::transaction(function () use ($client) {
             $client->delete();
         });
-        return redirect()->route('admin.clients.index')->with('success', 'Client deleted successfully.');
+        return redirect()->route('landingpage.clients.index')->with('success', 'Client deleted successfully.');
     }
 }
