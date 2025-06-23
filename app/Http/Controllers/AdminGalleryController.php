@@ -118,7 +118,7 @@ class AdminGalleryController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category_id' => 'required|exists:category,category_id',
+            'category_id' => 'required|exists:categories,category_id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
@@ -139,7 +139,7 @@ class AdminGalleryController extends Controller
                 $data['image_path'] = $path;
             }
 
-            $data['user_id'] = Auth::id();
+            $data['created_by'] = Auth::id();
 
             Gallery::create($data);
 
@@ -190,7 +190,7 @@ class AdminGalleryController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category_id' => 'required|exists:category,category_id',
+            'category_id' => 'required|exists:categories,category_id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 

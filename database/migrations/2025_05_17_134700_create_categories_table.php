@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id('category_id');
             $table->string('category_name');
-            $table->enum('category_type', ['blog', 'gallery', 'product']);
+            $table->enum('category_type', ['product', 'blog', 'gallery']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

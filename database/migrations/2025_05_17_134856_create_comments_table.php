@@ -18,8 +18,8 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
-            $table->foreignId('blog_id')->constrained('blog', 'blog_id')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('product', 'product_id')->onDelete('cascade');
+            $table->foreignId('blog_id')->constrained('blogs', 'blog_id')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products', 'product_id')->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('comments', 'comment_id')->onDelete('cascade');
             $table->timestamps();
         });

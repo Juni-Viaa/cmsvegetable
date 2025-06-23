@@ -77,7 +77,7 @@ class AdminBannerController extends Controller
                 $data['image_path'] = $path;
             }
 
-            $data['user_id'] = Auth::id();
+            $data['created_by'] = Auth::id();
 
             Banner::create($data);
 

@@ -9,11 +9,16 @@ class Blog extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'blog';
+    protected $table = 'blogs';
+
     protected $primaryKey = 'blog_id';
 
     protected $fillable = [
-        'title', 'content', 'image_path', 'category_id', 'user_id'
+        'title', 
+        'content', 
+        'image_path', 
+        'category_id', 
+        'created_by'
     ];
 
     public function comments()

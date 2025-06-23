@@ -11,7 +11,7 @@ class Banner extends Model
     //
     use HasFactory, SoftDeletes;
 
-    protected $table = 'banner';
+    protected $table = 'banners';
 
     protected $primaryKey = 'banner_id';
 

@@ -17,7 +17,7 @@ class AdminProductController extends Controller
     public function index(Request $request)
     {
         $columns = [
-            'name' => 'Product Name',
+            'product_name' => 'Product Name',
             'description' => 'Description',
             'category_id' => 'Category',
             'image_path' => 'Image',
@@ -39,7 +39,7 @@ class AdminProductController extends Controller
         $addFields = [
             [
                 'type' => 'text', 
-                'name' => 'name', 
+                'name' => 'product_name', 
                 'label' => 'Product Name',
                 'placeholder' => 'Enter product name',
                 'required' => true
@@ -70,7 +70,7 @@ class AdminProductController extends Controller
         $editFields = [
             [
                 'type' => 'text', 
-                'name' => 'name', 
+                'name' => 'product_name', 
                 'label' => 'Product Name',
                 'placeholder' => 'Enter product name',
                 'required' => true
@@ -116,9 +116,9 @@ class AdminProductController extends Controller
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
             'description' => 'required|string',
-            'category_id' => 'required|exists:category,category_id',
+            'category_id' => 'required|exists:categories,category_id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
@@ -129,7 +129,7 @@ class AdminProductController extends Controller
         }
 
         try {
-            $data = $request->only(['name', 'description', 'category_id']);
+            $data = $request->only(['product_name', 'description', 'category_id']);
             
             // Handle file upload
             if ($request->hasFile('image')) {
@@ -139,7 +139,7 @@ class AdminProductController extends Controller
                 $data['image_path'] = $path;
             }
 
-            $data['user_id'] = Auth::id();
+            $data['created_by'] = Auth::id();
 
             Product::create($data);
 
@@ -179,9 +179,9 @@ class AdminProductController extends Controller
 
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
             'description' => 'required|string',
-            'category_id' => 'required|exists:category,category_id',
+            'category_id' => 'required|exists:categories,category_id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
@@ -192,7 +192,7 @@ class AdminProductController extends Controller
         }
 
         try {
-            $data = $request->only(['name', 'description', 'category_id']);
+            $data = $request->only(['product_name', 'description', 'category_id']);
             
             // Handle file upload
             if ($request->hasFile('image')) {

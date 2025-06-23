@@ -11,16 +11,16 @@ class Product extends Model
     //
     use HasFactory, SoftDeletes;
 
-    protected $table = 'product';
+    protected $table = 'products';
 
     protected $primaryKey = 'product_id';
 
     protected $fillable = [
-        'name',
+        'product_name',
         'description',
         'image_path',
         'category_id',
-        'user_id',
+        'created_by',
     ];
 
     protected $casts = [

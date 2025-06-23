@@ -12,9 +12,10 @@ class ListProductController extends Controller
     {
         $query = Product::query();
 
+        $categories = Category::where('category_type', 'product')->get();
 
         // Filter berdasarkan kategori (jika ada)
-        if ($request->has('categories') && is_array($request->category)) {
+        if ($request->has('category') && is_array($request->category)) {
         }
 
         // Filter berdasarkan kategori
@@ -32,8 +33,6 @@ class ListProductController extends Controller
         // ✅ Pagination ditambahkan di sini (tanpa konfigurasi)
         $vegetables = $query->paginate(12)->withQueryString();  
 
-        $categories = Category::where('category_type', 'product')->get();
-
-        return view('pages.list_product', compact('vegetables', 'categories'));
+        return view('pages.list_product', compact('categories', 'vegetables'));
     }
 }

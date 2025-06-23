@@ -35,12 +35,8 @@
                 <div class="grid grid-cols-2 gap-2">
                     @foreach ($categories as $cat)
                         <label class="inline-flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                name="category[]"
-                                value="{{ $cat->category_id }}"
-                                {{ is_array(request('category')) && in_array($cat->category_id, request('category')) ? 'checked' : '' }}
-                                class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none"
+                            <input type="checkbox" name="category[]" value="{{ $cat->category_id }}"
+                                {{ is_array(request('categories')) && in_array($cat->category_id, request('categories')) ? 'checked' : '' }} class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none"
                             >
                             <span>{{ $cat->category_name }}</span>
                         </label>

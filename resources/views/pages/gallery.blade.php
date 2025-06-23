@@ -24,9 +24,7 @@
             <h2 class="text-xl font-bold text-green-800">🔍 Filter Kategori</h2>
             <span x-text="open ? '▲' : '▼'" class="text-green-800 text-xl font-bold"></span>
         </div>
-        <form method="GET" action="{{ url('/gallery') }}" id="filterForm"
-              x-show="open" x-transition
-              class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
+        <form method="GET" action="{{ url('/gallery') }}" id="filterForm" x-show="open" x-transition class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 col-span-full">
                 <h3 class="text-green-700 font-semibold mb-2">Kategori</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">

@@ -111,12 +111,10 @@
 
                 <!-- Modal footer -->
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button type="submit" 
-                            class="px-5 py-2.5 text-sm text-center text-white bg-[#4CAF50] hover:bg-[#2E7D32] focus:ring-4 focus:outline-none focus:ring-[#4CAF50] font-medium rounded-lg ">
+                    <button type="submit" class="px-5 py-2.5 text-sm text-center text-white bg-[#4CAF50] hover:bg-[#2E7D32] focus:ring-4 focus:outline-none focus:ring-[#4CAF50] font-medium rounded-lg ">
                         {{ $submit_text ?? 'Save' }}
                     </button>
-                    <button data-modal-hide="{{ $modal_id }}" type="button" 
-                            class="py-2.5 px-5 ms-3 text-sm font-medium text-white focus:outline-none bg-[#A1887F] rounded-lg border border-[#A1887F] hover:bg-[#7A625A] hover:text-white focus:z-10 focus:ring-4 focus:ring-[#A1887F]">
+                    <button data-modal-hide="{{ $modal_id }}" type="button"  class="py-2.5 px-5 ms-3 text-sm font-medium text-white focus:outline-none bg-[#A1887F] rounded-lg border border-[#A1887F] hover:bg-[#7A625A] hover:text-white focus:z-10 focus:ring-4 focus:ring-[#A1887F]">
                         {{ $cancel_text ?? 'Cancel' }}
                     </button>
                 </div>

@@ -11,9 +11,7 @@
             <span x-text="open ? '▲' : '▼'" class="text-green-800 text-xl font-bold"></span>
         </div>
 
-        <form id="filterForm"
-              x-show="open" x-transition
-              class="mt-6 flex flex-wrap gap-4 text-sm text-gray-700">
+        <form id="filterForm" x-show="open" x-transition class="mt-6 flex flex-wrap gap-4 text-sm text-gray-700">
             @foreach ($categories as $cat)
                 <label class="inline-flex items-center gap-2 bg-white p-3 rounded-xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 cursor-pointer">
                     <input
