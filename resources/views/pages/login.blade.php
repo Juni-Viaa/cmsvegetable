@@ -24,11 +24,9 @@
     <!-- Form -->
     <form action="{{ route('auth.login') }}" method="POST">
         @csrf
-        <input type="text" name="username" placeholder="Phone, Username"
-               class="w-full px-4 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="text" name="username" placeholder="Phone, Username" class="w-full px-4 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-        <input type="password" name="password" placeholder="Password"
-               class="w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
         <a href="{{ route('lupa_password') }}" class="text-sm text-blue-600 hover:underline block mb-4">Forgot your password?</a>
 

@@ -1,19 +1,19 @@
 @extends('layouts.admin')
 
-@section('title','Admin Blog')
+@section('title','Admin Product')
 
 @section('content')
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
-
+        
         {{-- Breadcrumb --}}
         @include('components.breadcrumb', [
-            'pages_name' => 'Blog'
+            'pages_name' => 'Product'
         ])
 
-        {{-- Breadcrumb Second--}}
+        {{-- Breadcrumb Second --}}
         @include('components.breadcrumb_child', [
-            'child_name' => 'List Blog'
+            'child_name' => 'List Product'
         ])
 
         {{-- Error Message --}}
@@ -21,32 +21,32 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
-            'modal' => 'Add Blog',
-            'modal_name' => 'Create New Blog',
-            'modal_id' => 'add-blog-modal',
-            'form_action' => route('admin_blog.store'),
+            'modal' => 'Add Product',
+            'modal_name' => 'Create New Product',
+            'modal_id' => 'add-product-modal',
+            'form_action' => route('product.store'),
             'form_method' => 'POST',
             'fields' => $addFields
         ])
 
         {{-- Search Bar --}}
         @include('components.searchbar', [
-            'search' => route('admin_blog.index')
+            'search' => route('product.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
             'modal' => 'Edit',
-            'modal_name' => 'Edit Blog',
-            'modal_id' => 'edit-blog-modal',
-            'form_action' => route('admin_blog.update', ':id'),
-            'form_method' => 'PUT',
-            'id_field' => 'blog_id',
+            'modal_name' => 'Edit Product',
+            'modal_id' => 'edit-product-modal',
+            'form_action' => route('product.update', ':id'),
+            'form_method' => 'PATCH',
+            'id_field' => 'product_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_blog.destroy', ':id'),
-            'edit_route' => 'admin_blog.getBlog'
+            'delete_route' => route('product.destroy', ':id'),
+            'edit_route' => 'product.getProduct'
         ])
     </div>
 </div>
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle edit button click
     document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const blogId = this.getAttribute('data-id');
+            const productId = this.getAttribute('data-id');
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.getElementById(modalId);
             
@@ -70,17 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = modal.querySelector('form');
             
             // Debug
-            console.log('Blog ID:', blogId);
+            console.log('Product ID:', productId);
             console.log('Modal ID:', modalId);
             
             // Update form action jika diperlukan (untuk kasus dinamis)
             if (form.getAttribute('action').includes(':id')) {
-                const actionUrl = form.getAttribute('action').replace(':id', blogId);
+                const actionUrl = form.getAttribute('action').replace(':id', productId);
                 form.setAttribute('action', actionUrl);
             }
             
-            // Fetch blog data untuk populate form
-            fetch(`{{ url('admin_blog') }}/${blogId}`, {
+            // Fetch product data untuk populate form
+            fetch(`{{ url('product') }}/${productId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -94,29 +94,29 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.success) {
-                    const blog = data.data;
+                    const product = data.data;
                     
                     // Populate form fields
-                    const titleInput = modal.querySelector('input[name="title"]');
-                    const contentInput = modal.querySelector('textarea[name="content"]');
+                    const nameInput = modal.querySelector('input[name="name"]');
+                    const descInput = modal.querySelector('textarea[name="description"]');
                     const categorySelect = modal.querySelector('select[name="category_id"]');
                     
-                    if (nameInput) titleInput.value = blog.title || '';
-                    if (descInput) contentInput.value = blog.content || '';
-                    if (categorySelect) categorySelect.value = blog.category_id || '';
+                    if (nameInput) nameInput.value = product.name || '';
+                    if (descInput) descInput.value = product.description || '';
+                    if (categorySelect) categorySelect.value = product.category_id || '';
                     
                     // Show current image if exists
                     const imagePreview = modal.querySelector('#image-preview');
-                    if (blog.image_path && imagePreview) {
-                        imagePreview.src = `/storage/${blog.image_path}`;
+                    if (product.image_path && imagePreview) {
+                        imagePreview.src = `/storage/${product.image_path}`;
                         imagePreview.style.display = 'block';
                     }
                 } else {
-                    console.error('Failed to fetch vlog data:', data);
+                    console.error('Failed to fetch product data:', data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching blog data:', error);
+                console.error('Error fetching product data:', error);
                 // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
@@ -125,13 +125,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle delete button click
     document.querySelectorAll('.delete-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const blogId = this.getAttribute('data-id');
-            const blogTitle = this.getAttribute('data-title');
+            const productId = this.getAttribute('data-id');
+            const productName = this.getAttribute('data-name');
             
-            if (confirm(`Apakah Anda yakin ingin menghapus blog "${blogTitle}"?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus product "${productName}"?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_blog') }}/${blogId}`;
+                form.action = `{{ url('product') }}/${productId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

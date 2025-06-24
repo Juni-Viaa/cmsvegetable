@@ -97,7 +97,7 @@ class AdminBlogController extends Controller
             ],
         ];
 
-        return view('pages.admin_blog', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.admin_blog', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
@@ -142,7 +142,7 @@ class AdminBlogController extends Controller
 
             Blog::create($data);
 
-            return redirect()->route('admin_blog.index')
+            return redirect()->route('blog.index')
                 ->with('success', 'Blog berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -175,7 +175,7 @@ class AdminBlogController extends Controller
     {
         $blog = Blog::findOrFail($id);
         $category = Category::where('category_type', 'Blog')->pluck('category_name', 'category_id')->toArray();
-        return view('pages.admin_blog.edit', compact('blog', 'category'));
+        return view('admin.admin_blog.edit', compact('blog', 'category'));
     }
 
     /**
@@ -217,7 +217,7 @@ class AdminBlogController extends Controller
 
             $product->update($data);
 
-            return redirect()->route('admin_blog.index')
+            return redirect()->route('blog.index')
                 ->with('success', 'Blog berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -241,7 +241,7 @@ class AdminBlogController extends Controller
             
             $blog->delete();
 
-            return redirect()->route('admin_blog.index')
+            return redirect()->route('blog.index')
                 ->with('success', 'Blog berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

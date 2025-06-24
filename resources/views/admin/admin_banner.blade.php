@@ -1,19 +1,19 @@
 @extends('layouts.admin')
 
-@section('title','Admin Product')
+@section('title','Admin Banner')
 
 @section('content')
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
-        
+
         {{-- Breadcrumb --}}
         @include('components.breadcrumb', [
-            'pages_name' => 'Product'
+            'pages_name' => 'Banner'
         ])
 
         {{-- Breadcrumb Second --}}
         @include('components.breadcrumb_child', [
-            'child_name' => 'List Product'
+            'child_name' => 'List Banner'
         ])
 
         {{-- Error Message --}}
@@ -21,32 +21,27 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
-            'modal' => 'Add Product',
-            'modal_name' => 'Create New Product',
-            'modal_id' => 'add-product-modal',
-            'form_action' => route('admin_product.store'),
+            'modal' => 'Add Banner',
+            'modal_name' => 'Create New Banner',
+            'modal_id' => 'add-banner-modal',
+            'form_action' => route('banner.store'),
             'form_method' => 'POST',
             'fields' => $addFields
-        ])
-
-        {{-- Search Bar --}}
-        @include('components.searchbar', [
-            'search' => route('admin_product.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
             'modal' => 'Edit',
-            'modal_name' => 'Edit Product',
-            'modal_id' => 'edit-product-modal',
-            'form_action' => route('admin_product.update', ':id'),
+            'modal_name' => 'Edit Banner',
+            'modal_id' => 'edit-banner-modal',
+            'form_action' => route('banner.update', ':id'),
             'form_method' => 'PATCH',
-            'id_field' => 'product_id',
+            'id_field' => 'banner_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_product.destroy', ':id'),
-            'edit_route' => 'admin_product.getProduct'
+            'delete_route' => route('banner.destroy', ':id'),
+            'edit_route' => 'banner.getBanner'
         ])
     </div>
 </div>
@@ -58,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle edit button click
     document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-id');
+            const bannerId = this.getAttribute('data-id');
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.getElementById(modalId);
             
@@ -70,17 +65,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = modal.querySelector('form');
             
             // Debug
-            console.log('Product ID:', productId);
+            console.log('Banner ID:', bannerId);
             console.log('Modal ID:', modalId);
             
             // Update form action jika diperlukan (untuk kasus dinamis)
             if (form.getAttribute('action').includes(':id')) {
-                const actionUrl = form.getAttribute('action').replace(':id', productId);
+                const actionUrl = form.getAttribute('action').replace(':id', bannerId);
                 form.setAttribute('action', actionUrl);
             }
             
-            // Fetch product data untuk populate form
-            fetch(`{{ url('admin_product') }}/${productId}`, {
+            // Fetch banner data untuk populate form
+            fetch(`{{ url('banner') }}/${bannerId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -94,29 +89,20 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.success) {
-                    const product = data.data;
-                    
-                    // Populate form fields
-                    const nameInput = modal.querySelector('input[name="name"]');
-                    const descInput = modal.querySelector('textarea[name="description"]');
-                    const categorySelect = modal.querySelector('select[name="category_id"]');
-                    
-                    if (nameInput) nameInput.value = product.name || '';
-                    if (descInput) descInput.value = product.description || '';
-                    if (categorySelect) categorySelect.value = product.category_id || '';
+                    const banner = data.data;
                     
                     // Show current image if exists
                     const imagePreview = modal.querySelector('#image-preview');
-                    if (product.image_path && imagePreview) {
-                        imagePreview.src = `/storage/${product.image_path}`;
+                    if (banner.image_path && imagePreview) {
+                        imagePreview.src = `/storage/${banner.image_path}`;
                         imagePreview.style.display = 'block';
                     }
                 } else {
-                    console.error('Failed to fetch product data:', data);
+                    console.error('Failed to fetch banner data:', data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching product data:', error);
+                console.error('Error fetching banner data:', error);
                 // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
@@ -125,13 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle delete button click
     document.querySelectorAll('.delete-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-id');
-            const productName = this.getAttribute('data-name');
+            const bannerId = this.getAttribute('data-id');
             
-            if (confirm(`Apakah Anda yakin ingin menghapus product "${productName}"?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus banner ini ?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_product') }}/${productId}`;
+                form.action = `{{ url('banner') }}/${bannerId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

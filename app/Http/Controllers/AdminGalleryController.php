@@ -98,7 +98,7 @@ class AdminGalleryController extends Controller
             ],
         ];
 
-        return view('pages.admin_gallery', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.admin_gallery', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
@@ -143,7 +143,7 @@ class AdminGalleryController extends Controller
 
             Gallery::create($data);
 
-            return redirect()->route('admin_gallery.index')
+            return redirect()->route('gallery.index')
                 ->with('success', 'Gallery berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -176,7 +176,7 @@ class AdminGalleryController extends Controller
     {
         $gallery = Gallery::findOrFail($id);
         $category = Category::where('category_type', 'Gallery')->pluck('category_name', 'category_id')->toArray();
-        return view('pages.admin_gallery.edit', compact('gallery', 'category'));
+        return view('admin.admin_gallery.edit', compact('gallery', 'category'));
     }
 
     /**
@@ -218,7 +218,7 @@ class AdminGalleryController extends Controller
 
             $gallery->update($data);
 
-            return redirect()->route('admin_gallery.index')
+            return redirect()->route('gallery.index')
                 ->with('success', 'Gallery berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -242,7 +242,7 @@ class AdminGalleryController extends Controller
             
             $gallery->delete();
 
-            return redirect()->route('admin_gallery.index')
+            return redirect()->route('gallery.index')
                 ->with('success', 'Gallery berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

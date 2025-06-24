@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminOnly
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class AdminOnly
     {
         // Cek apakah user sudah login
         if (!Auth::check()) {
-            return redirect('/loginadmin')->with('error', 'Silakan login terlebih dahulu.');
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
         // Cek apakah user memiliki role admin

@@ -27,7 +27,7 @@ class ListProductController extends Controller
         if ($request->sort === 'terbaru') {
             $query->orderBy('created_at', 'desc');
         } elseif ($request->sort === 'az') {
-            $query->orderBy('name', 'asc');
+            $query->orderBy('product_name', 'asc');
         }
 
         // ✅ Pagination ditambahkan di sini (tanpa konfigurasi)

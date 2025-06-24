@@ -86,14 +86,14 @@
     <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 transition-all duration-300">
         @foreach ($vegetables as $index => $veg)
         <div class="product-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up">
-            <img src="{{ asset('storage/' . $veg->image_path) }}" alt="{{ $veg->name }}"
+            <img src="{{ asset('storage/' . $veg->image_path) }}" alt="{{ $veg->product_name }}"
                 @click="openModal({{ $index }})"
                 class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
             <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                 <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
                     {{ $veg->category->category_name ?? 'Tanpa Kategori' }}
                 </span>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $veg->name }}</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $veg->product_name }}</h3>
             </div>
         </div>
         @endforeach
@@ -118,7 +118,9 @@
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0">
             <button @click="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
+            <a :href="`/products/${currentProduct.id}`">
             <img :src="currentProduct.image" alt="" class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50" />
+            </a>
             <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
             <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
             <div class="flex justify-between">
@@ -177,11 +179,14 @@ function productModal() {
     return {
         modalOpen: false,
         currentIndex: 0,
-        products: @json($vegetables->map(fn($v) => [
-            'name' => $v->name,
-            'image' => asset('storage/' . $v->image_path),
-            'description' => $v->description ?? 'Tidak ada deskripsi'
-        ])),
+        products: {!! json_encode($vegetables->map(function($v) {
+            return [
+                'id' => $v->product_id,
+                'name' => $v->product_name,
+                'image' => asset('storage/' . $v->image_path),
+                'description' => $v->description ?? 'Tidak ada deskripsi'
+            ];
+        })) !!},
         get currentProduct() {
             return this.products[this.currentIndex];
         },
