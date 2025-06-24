@@ -27,12 +27,11 @@ class AdminLoginController extends Controller
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            // Simpan data ke session manual
             Session::put('admin_logged_in', true);
             Session::put('admin_id', $user->user_id);
             Session::put('admin_username', $user->username);
 
-            return redirect('admin'); // Ganti dengan dashboard kamu
+            return redirect('admin');
         }
 
         return redirect()->back()->with('error', 'Login gagal. Cek username atau password.');

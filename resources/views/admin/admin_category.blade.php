@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title','Admin Banner')
+@section('title','Admin Category')
 
 @section('content')
 <div class="p-4 sm:ml-64">
@@ -8,12 +8,12 @@
 
         {{-- Breadcrumb --}}
         @include('components.breadcrumb', [
-            'pages_name' => 'Banner'
+            'pages_name' => 'Category'
         ])
 
         {{-- Breadcrumb Second --}}
         @include('components.breadcrumb_child', [
-            'child_name' => 'List Banner'
+            'child_name' => 'List Category'
         ])
 
         {{-- Error Message --}}
@@ -21,28 +21,34 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
-            'modal' => 'Add Banner',
-            'modal_name' => 'Create New Banner',
-            'modal_id' => 'add-banner-modal',
-            'form_action' => route('admin_banner.store'),
+            'modal' => 'Add Category',
+            'modal_name' => 'Create New Category',
+            'modal_id' => 'add-category-modal',
+            'form_action' => route('category.store'),
             'form_method' => 'POST',
             'fields' => $addFields
+        ])
+
+        {{-- Search Bar --}}
+        @include('components.searchbar', [
+            'search' => route('category.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
             'modal' => 'Edit',
-            'modal_name' => 'Edit Banner',
-            'modal_id' => 'edit-banner-modal',
-            'form_action' => route('admin_banner.update', ':id'),
-            'form_method' => 'PATCH',
-            'id_field' => 'banner_id',
+            'modal_name' => 'Edit Category',
+            'modal_id' => 'edit-category-modal',
+            'form_action' => route('category.update', ':id'),
+            'form_method' => 'PUT',
+            'id_field' => 'category_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_banner.destroy', ':id'),
-            'edit_route' => 'admin_banner.getBanner'
+            'delete_route' => route('category.destroy', ':id'),
+            'edit_route' => 'category.getCategory'
         ])
+        
     </div>
 </div>
 
@@ -53,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle edit button click
     document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const bannerId = this.getAttribute('data-id');
+            const categoryId = this.getAttribute('data-id');
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.getElementById(modalId);
             
@@ -65,17 +71,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = modal.querySelector('form');
             
             // Debug
-            console.log('Banner ID:', bannerId);
+            console.log('Category ID:', categoryId);
             console.log('Modal ID:', modalId);
             
             // Update form action jika diperlukan (untuk kasus dinamis)
             if (form.getAttribute('action').includes(':id')) {
-                const actionUrl = form.getAttribute('action').replace(':id', bannerId);
+                const actionUrl = form.getAttribute('action').replace(':id', categoryId);
                 form.setAttribute('action', actionUrl);
             }
             
-            // Fetch banner data untuk populate form
-            fetch(`{{ url('admin_banner') }}/${bannerId}`, {
+            // Fetch category data untuk populate form
+            fetch(`{{ url('category') }}/${categoryId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -89,20 +95,21 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.success) {
-                    const banner = data.data;
+                    const category = data.data;
                     
-                    // Show current image if exists
-                    const imagePreview = modal.querySelector('#image-preview');
-                    if (banner.image_path && imagePreview) {
-                        imagePreview.src = `/storage/${banner.image_path}`;
-                        imagePreview.style.display = 'block';
-                    }
+                    // Populate form fields
+                    const categoryInput = modal.querySelector('input[name="category_name"]');
+                    const typeSelect = modal.querySelector('select[name="category_id"]');
+                    
+                    if (categoryInput) categoryInput.value = category.category_name || '';
+                    if (categorySelect) categorySelect.value = category_id || '';
+
                 } else {
-                    console.error('Failed to fetch banner data:', data);
+                    console.error('Failed to fetch category data:', data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching banner data:', error);
+                console.error('Error fetching category data:', error);
                 // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
@@ -111,12 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle delete button click
     document.querySelectorAll('.delete-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const bannerId = this.getAttribute('data-id');
+            const categoryId = this.getAttribute('data-id');
+            const categoryName = this.getAttribute('data-name');
             
-            if (confirm(`Apakah Anda yakin ingin menghapus banner ini ?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus category "${categoryName}"?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_banner') }}/${bannerId}`;
+                form.action = `{{ url('category') }}/${categoryId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');
@@ -134,28 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 document.body.appendChild(form);
                 form.submit();
-            }
-        });
-    });
-
-    // Preview image before upload
-    document.querySelectorAll('input[type="file"]').forEach(function(input) {
-        input.addEventListener('change', function() {
-            const file = this.files[0];
-            const previewId = this.getAttribute('data-preview');
-            
-            if (file && previewId) {
-                const preview = document.getElementById(previewId);
-                if (preview) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        preview.src = e.target.result;
-                        preview.style.display = 'block';
-                    };
-                    
-                    reader.readAsDataURL(file);
-                }
             }
         });
     });

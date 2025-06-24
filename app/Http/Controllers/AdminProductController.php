@@ -98,7 +98,7 @@ class AdminProductController extends Controller
             ],
         ];
 
-        return view('pages.admin_product', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.admin_product', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
@@ -143,7 +143,7 @@ class AdminProductController extends Controller
 
             Product::create($data);
 
-            return redirect()->route('admin_product.index')
+            return redirect()->route('product.index')
                 ->with('success', 'Product berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -167,7 +167,7 @@ class AdminProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $category = Category::where('category_type', 'Product')->pluck('category_name', 'category_id')->toArray();
-        return view('pages.admin_product.edit', compact('product', 'category'));
+        return view('admin.admin_product.edit', compact('product', 'category'));
     }
 
     /**
@@ -209,7 +209,7 @@ class AdminProductController extends Controller
 
             $product->update($data);
 
-            return redirect()->route('admin_product.index')
+            return redirect()->route('product.index')
                 ->with('success', 'Product berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -233,7 +233,7 @@ class AdminProductController extends Controller
 
             $product->delete();
 
-            return redirect()->route('admin_product.index')
+            return redirect()->route('product.index')
                 ->with('success', 'Product berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

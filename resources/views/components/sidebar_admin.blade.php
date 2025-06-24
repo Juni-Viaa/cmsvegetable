@@ -60,7 +60,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_banner" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/banner" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32">
                         <path
                             d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM6.016 24q0 0.832 0.576 1.44t1.408 0.576h16q0.832 0 1.408-0.576t0.608-1.44v-0.928q-0.224-0.448-1.12-2.688t-1.6-3.584-1.28-2.112q-0.544-0.576-1.12-0.608t-1.152 0.384-1.152 1.12-1.184 1.568-1.152 1.696-1.152 1.6-1.088 1.184-1.088 0.448q-0.576 0-1.664-1.44-0.16-0.192-0.48-0.608-1.12-1.504-1.6-1.824-0.768-0.512-1.184 0.352-0.224 0.512-0.928 2.24t-1.056 2.56v0.64zM6.016 9.024q0 1.248 0.864 2.112t2.112 0.864 2.144-0.864 0.864-2.112-0.864-2.144-2.144-0.864-2.112 0.864-0.864 2.144z" />
@@ -69,7 +69,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_category" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/category" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 32 32">
                         <path id="list--checkbox_1_"
@@ -81,7 +81,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_product" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/product" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 60 60">
                         <path
                             d="M10.553,27.865c0-1.647,0.488-3.231,1.395-4.572c-0.298-0.962-0.452-1.97-0.452-2.969c0-4.308,2.715-8.061,6.651-9.47 c0.351-3.212,2.411-5.976,5.314-7.299c-1.492-2.415-3.847-3.831-6.018-3.479c-1.569,0.255-2.869,1.321-3.633,2.93 c-1.375-0.632-2.805-0.737-4.059-0.296C8.394,3.188,7.34,4.21,6.703,5.665c-0.845,1.927-0.846,4.407-0.029,6.765 c-1.101,0.756-1.924,1.867-2.405,3.26c-0.809,2.339-0.539,5.161,0.74,7.746c0.14,0.282,0.293,0.562,0.46,0.837 c-1.201,0.781-2.1,1.939-2.582,3.352c-0.766,2.242-0.427,4.884,0.93,7.246c0.623,1.085,1.448,2.068,2.409,2.876 c-0.321,1.344-0.078,2.821,0.704,4.158c1.093,1.865,3.062,3.13,5.166,3.343c2.818,5.296,6.224,7.998,11.095,10.339 c-5.787-6.841-9.005-12.507-9.186-21.051C11.875,33.015,10.553,30.516,10.553,27.865z">
@@ -94,7 +94,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_blog" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/blog" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                         <path
                             d="M3 1H1v18h18V1H3zm14 2v14H3V3h14zm4 18H5v2h18V5h-2v16zM15 5H5v2h10V5zM5 9h10v2H5V9zm7 4H5v2h7v-2z" />
@@ -103,7 +103,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_gallery" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/gallery" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
                         <path
                             d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
@@ -112,7 +112,7 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_account" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <a href="/admin/account" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 18">
                         <path
@@ -122,7 +122,10 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                <a href="#" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />

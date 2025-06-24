@@ -15,7 +15,7 @@ class AdminAccountController extends Controller
     public function index(Request $request)
     {
         $columns = [
-            'username' => 'Product Name',
+            'username' => 'Username',
             'phone_number' => 'Phone Number'
         ];
 
@@ -52,7 +52,7 @@ class AdminAccountController extends Controller
 
         $data = $query->paginate(10);
 
-        return view('pages.admin_account', compact('data', 'columns', 'editFields'));
+        return view('admin.admin_account', compact('data', 'columns', 'editFields'));
     }
 
     /**
