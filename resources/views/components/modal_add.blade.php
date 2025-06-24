@@ -30,7 +30,7 @@
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     @foreach ($fields as $field)
                         <div class="col-span-2">
-                            <label for="{{ $field['name'] }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            <label for="{{ $field['name'] }}" class="block mb-2 text-sm font-medium text-gray-900">
                                 {{ $field['label'] }}
                                 @if($field['required'] ?? false)
                                     <span class="text-red-500">*</span>
@@ -81,8 +81,8 @@
 
                                 @case('checkbox')
                                     <div class="flex items-center">
-                                        <input type="checkbox" name="{{ $field['name'] }}" id="{{ $field['name'] }}" value="{{ $field['value'] ?? '1' }}" {{ old($field['name'], $field['checked'] ?? false) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="{{ $field['name'] }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <input type="checkbox" name="{{ $field['name'] }}" id="{{ $field['name'] }}" value="{{ $field['value'] ?? '1' }}" {{ old($field['name'], $field['checked'] ?? false) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                        <label for="{{ $field['name'] }}" class="ml-2 text-sm font-medium text-gray-900">
                                             {{ $field['label'] }}
                                         </label>
                                     </div>
@@ -92,8 +92,8 @@
                                     @if(isset($field['options']) && is_array($field['options']))
                                         @foreach ($field['options'] as $key => $option)
                                             <div class="flex items-center mb-2">
-                                                <input type="radio" name="{{ $field['name'] }}" id="{{ $field['name'] }}_{{ $key }}" value="{{ is_array($option) ? $option['value'] : $key }}"{{ old($field['name'], $field['value'] ?? '') == (is_array($option) ? $option['value'] : $key) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                <label for="{{ $field['name'] }}_{{ $key }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                <input type="radio" name="{{ $field['name'] }}" id="{{ $field['name'] }}_{{ $key }}" value="{{ is_array($option) ? $option['value'] : $key }}"{{ old($field['name'], $field['value'] ?? '') == (is_array($option) ? $option['value'] : $key) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                                <label for="{{ $field['name'] }}_{{ $key }}" class="ml-2 text-sm font-medium text-gray-900">
                                                     {{ is_array($option) ? $option['label'] : $option }}
                                                 </label>
                                             </div>
@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- Modal footer -->
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b">
                     <button type="submit" 
                             class="px-5 py-2.5 text-sm text-center text-white bg-[#4CAF50] hover:bg-[#2E7D32] focus:ring-4 focus:outline-none focus:ring-[#4CAF50] font-medium rounded-lg ">
                         {{ $submit_text ?? 'Save' }}

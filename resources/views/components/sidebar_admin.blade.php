@@ -2,7 +2,7 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
-                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-4 text-sm text-green-700 rounded-lg sm:hidden hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 dark:text-green-700 dark:hover:bg-[#A2D77C] dark:focus:ring-green-700">
+                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-4 text-sm text-green-700 rounded-lg sm:hidden hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -49,8 +49,8 @@
     <div class="h-full px-3 pb-4 overflow-y-auto bg-[#A2D77C]">
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="/admin" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                <a href="/admin" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                         <path
                             d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
                         <path
@@ -60,8 +60,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_banner" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32">
+                <a href="/admin_banner" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32">
                         <path
                             d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM6.016 24q0 0.832 0.576 1.44t1.408 0.576h16q0.832 0 1.408-0.576t0.608-1.44v-0.928q-0.224-0.448-1.12-2.688t-1.6-3.584-1.28-2.112q-0.544-0.576-1.12-0.608t-1.152 0.384-1.152 1.12-1.184 1.568-1.152 1.696-1.152 1.6-1.088 1.184-1.088 0.448q-0.576 0-1.664-1.44-0.16-0.192-0.48-0.608-1.12-1.504-1.6-1.824-0.768-0.512-1.184 0.352-0.224 0.512-0.928 2.24t-1.056 2.56v0.64zM6.016 9.024q0 1.248 0.864 2.112t2.112 0.864 2.144-0.864 0.864-2.112-0.864-2.144-2.144-0.864-2.112 0.864-0.864 2.144z" />
                     </svg>
@@ -69,8 +69,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_category" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                <a href="/admin_category" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 32 32">
                         <path id="list--checkbox_1_"
                             d="M7,31.36H1c-0.199,0-0.36-0.161-0.36-0.36v-6c0-0.199,0.161-0.36,0.36-0.36h6 c0.199,0,0.36,0.161,0.36,0.36v6C7.36,31.199,7.199,31.36,7,31.36z M1.36,30.64h5.28v-5.28H1.36V30.64z M31,28.36H11v-0.72h20V28.36 z M7,19.36H1c-0.199,0-0.36-0.161-0.36-0.36v-6c0-0.199,0.161-0.36,0.36-0.36h6c0.199,0,0.36,0.161,0.36,0.36v6 C7.36,19.199,7.199,19.36,7,19.36z M1.36,18.64h5.28v-5.28H1.36V18.64z M31,16.36H11v-0.72h20V16.36z M7,7.36H1 C0.801,7.36,0.64,7.199,0.64,7V1c0-0.199,0.161-0.36,0.36-0.36h6c0.199,0,0.36,0.161,0.36,0.36v6C7.36,7.199,7.199,7.36,7,7.36z M1.36,6.64h5.28V1.36H1.36V6.64z M31,4.36H11V3.64h20V4.36z">
@@ -81,8 +81,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_product" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 60 60">
+                <a href="/admin_product" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 60 60">
                         <path
                             d="M10.553,27.865c0-1.647,0.488-3.231,1.395-4.572c-0.298-0.962-0.452-1.97-0.452-2.969c0-4.308,2.715-8.061,6.651-9.47 c0.351-3.212,2.411-5.976,5.314-7.299c-1.492-2.415-3.847-3.831-6.018-3.479c-1.569,0.255-2.869,1.321-3.633,2.93 c-1.375-0.632-2.805-0.737-4.059-0.296C8.394,3.188,7.34,4.21,6.703,5.665c-0.845,1.927-0.846,4.407-0.029,6.765 c-1.101,0.756-1.924,1.867-2.405,3.26c-0.809,2.339-0.539,5.161,0.74,7.746c0.14,0.282,0.293,0.562,0.46,0.837 c-1.201,0.781-2.1,1.939-2.582,3.352c-0.766,2.242-0.427,4.884,0.93,7.246c0.623,1.085,1.448,2.068,2.409,2.876 c-0.321,1.344-0.078,2.821,0.704,4.158c1.093,1.865,3.062,3.13,5.166,3.343c2.818,5.296,6.224,7.998,11.095,10.339 c-5.787-6.841-9.005-12.507-9.186-21.051C11.875,33.015,10.553,30.516,10.553,27.865z">
                         </path>
@@ -94,8 +94,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_blog" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <a href="/admin_blog" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                         <path
                             d="M3 1H1v18h18V1H3zm14 2v14H3V3h14zm4 18H5v2h18V5h-2v16zM15 5H5v2h10V5zM5 9h10v2H5V9zm7 4H5v2h7v-2z" />
                     </svg>
@@ -103,8 +103,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_gallery" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                <a href="/admin_gallery" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
                         <path
                             d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                     </svg>
@@ -112,8 +112,8 @@
                 </a>
             </li>
             <li>
-                <a href="/admin_account" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                <a href="/admin_account" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 18">
                         <path
                             d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
@@ -122,8 +122,8 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+                <a href="#" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
                     </svg>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AboutusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminDashboardController;
@@ -38,11 +39,11 @@ use App\Http\Controllers\ProjectClientController;
 use App\Http\Controllers\ShowcaseController;
 use App\Http\Controllers\TestimonialController;
 
+
 //Landing Page
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/team', [FrontController::class, 'team'])->name('front.team');
 Route::get('/about', [FrontController::class, 'about'])->name('front.about');
-
 
 //Admin Routes
 Route::get('/admin', [AdminDashboardController::class, 'index']);
@@ -101,14 +102,32 @@ Route::get('/products/{id}', [ProductController::class, 'product']);
 Route::post('/products/{id}/comment', [ProductController::class, 'submitComment']);
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
+//Auth
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 
 //Landing Page New Admin Routes 
-Route::resource('statistics', CompanyStatisticController::class);
-Route::resource('abouts', CompanyAboutController::class);
-Route::resource('showcases', ShowcaseController::class);
-Route::resource('principles', OurPrincipleController::class);
-Route::resource('testimonials', TestimonialController::class);
-Route::resource('clients', ProjectClientController::class);
-Route::resource('teams', OurTeamController::class);
-Route::resource('appointments', AppointmentController::class);
-Route::resource('hero_sections', HeroSectionController::class);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('statistics', CompanyStatisticController::class);
+    Route::resource('abouts', CompanyAboutController::class);
+    Route::resource('showcases', ShowcaseController::class);
+    Route::resource('principles', OurPrincipleController::class);
+    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('clients', ProjectClientController::class);
+    Route::resource('teams', OurTeamController::class);
+    Route::resource('appointments', AppointmentController::class);
+    Route::resource('hero_sections', HeroSectionController::class);
+});
+require __DIR__.'/auth.php';

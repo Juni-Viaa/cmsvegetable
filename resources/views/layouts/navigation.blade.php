@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('front.index') }}">
+                    <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
@@ -31,25 +31,25 @@
                             </x-slot>
         
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('landingpage.hero_sections.index')">
+                                <x-dropdown-link :href="route('admin.hero_sections.index')">
                                     {{ __('Hero Section') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('landingpage.principles.index')">
+                                <x-dropdown-link :href="route('admin.principles.index')">
                                     {{ __('Our Principles') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('landingpage.statistics.index')">
+                                <x-dropdown-link :href="route('admin.statistics.index')">
                                     {{ __('Company Stats') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
 
-                    <x-nav-link :href="route('landingpage.teams.index')" :active="request()->routeIs('landingpage.teams.index')">
+                    <x-nav-link :href="route('admin.teams.index')" :active="request()->routeIs('admin.teams.index')">
                         {{ __('Our Teams') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('landingpage.products.index')" :active="request()->routeIs('landingpage.products.index')">
-                        {{ __('Our Products') }}
+                    <x-nav-link :href="route('admin.showcases.index')" :active="request()->routeIs('admin.showcases.index')">
+                        {{ __('Our Showcases') }}
                     </x-nav-link>
 
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -67,24 +67,23 @@
                             </x-slot>
         
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('landingpage.testimonials.index')">
+                                <x-dropdown-link :href="route('admin.testimonials.index')">
                                     {{ __('Testimonials') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('landingpage.clients.index')">
+                                <x-dropdown-link :href="route('admin.clients.index')">
                                     {{ __('Our Clients') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
 
-                    <x-nav-link :href="route('landingpage.abouts.index')" :active="request()->routeIs('landingpage.abouts.index')">
+                    <x-nav-link :href="route('admin.abouts.index')" :active="request()->routeIs('admin.abouts.index')">
                         {{ __('About') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('landingpage.appointments.index')" :active="request()->routeIs('landingpage.appointments.index')">
+                    <x-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments.index')">
                         {{ __('Appointments') }}
                     </x-nav-link>
-
                 </div>
             </div>
 
@@ -93,7 +92,10 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>
+                                {{-- {{ Auth::user()->name }} --}}
+                                Name
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -145,8 +147,14 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-base text-gray-800">
+                    {{-- {{ Auth::user()->name }} --}}
+                    Name
+                </div>
+                <div class="font-medium text-sm text-gray-500">
+                    {{-- {{ Auth::user()->email }} --}}
+                    Email
+                </div>
             </div>
 
             <div class="mt-3 space-y-1">

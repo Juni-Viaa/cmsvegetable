@@ -1,16 +1,24 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+import forms from '@tailwindcss/forms';
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./resources/**/*.blade.php",
-    "./resources/**/*.js",
-    "./resources/**/*.vue",
-    "./node_modules/flowbite/**/*.js"
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
+export default {
+    content: [
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+        "./resources/**/*.vue",
+        "./node_modules/flowbite/**/*.js",
+        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+        './storage/framework/views/*.php',
+        './resources/views/**/*.blade.php',
+    ],
+
+    theme: {
+        extend: {
+            fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
         sans: ['Poppins', 'sans-serif'],
+        sans: ['Figtree', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         'cp-dark-blue': '#312ECB',
@@ -46,10 +54,12 @@ module.exports = {
         glow: 'glow 1.8s ease-in-out infinite',
         flicker: 'flicker 0.8s infinite',
         'fade-in-blur': 'fade-in-blur 0.8s ease-out forwards',
-      },
+            },
+        },
     },
-  },
-  plugins: [
-    require('flowbite/plugin')
-  ],
-}
+
+    plugins: [
+        forms,
+        require('flowbite/plugin')
+    ],
+};
