@@ -124,8 +124,8 @@
             <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
             <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
             <div class="flex justify-between">
-                <button @click="previousProduct" class="px-4 py-2 bg-grey-500 hover:bg-green-300 rounded-md">← Previous</button>
-                <button @click="nextProduct" class="px-4 py-2 bg-grey-500 hover:bg-green-300 rounded-md">Next →</button>
+                <button @click="previousProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">← Previous</button>
+                <button @click="nextProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next →</button>
             </div>
         </div>
     </div>
