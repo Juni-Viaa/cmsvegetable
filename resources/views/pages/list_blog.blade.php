@@ -40,9 +40,9 @@
         <div class="blog-card cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] product-card animate-fade-up"
              data-category="{{ strtolower($item->category->category_name ?? 'lainnya') }}"
              data-title="{{ $item->title }}"
-             data-image="{{ $item->image_url }}"
+             data-image="{{ asset('storage/' . $item->image_path) }}"
              data-desc="{{ $item->content }}">
-            <img src="{{ $item->image_url }}" loading="lazy" alt="{{ $item->title }}" class="w-full h-48 object-cover rounded-t-2xl">
+            <img src="{{ asset('storage/' . $item->image_path) }}" loading="lazy" alt="{{ $item->title }}" class="w-full h-48 object-cover rounded-t-2xl">
             <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                 <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
                     {{ $item->category->category_name ?? 'Tanpa Kategori' }}
