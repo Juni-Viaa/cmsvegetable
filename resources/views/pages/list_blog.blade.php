@@ -43,13 +43,12 @@
                     @foreach ($categories as $cat)
                         <label class="inline-flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl border border-green-100 hover:shadow transition">
                             <input
-                                type="checkbox"
-                                name="category[]"
-                                value="{{ $cat }}"
-                                {{ is_array(request('category')) && in_array($cat, request('category')) ? 'checked' : '' }}
-                                class="accent-green-600"
+    type="checkbox"
+    name="category[]"
+    value="{{ $cat->category_name }}"
+    {{ is_array(request('category')) && in_array($cat->category_name, request('category')) ? 'checked' : '' }}
                             >
-                            <span class="text-sm font-medium text-gray-700">{{ $cat }}</span>
+                            <span class="text-sm font-medium text-gray-700">{{ $cat->category_name }}</span>
                         </label>
                     @endforeach
                 </div>
@@ -162,28 +161,48 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const filterForm = document.getElementById('filterForm');
-        const inputs = filterForm.querySelectorAll('input'); // includes checkbox and radio
+        const inputs = filterForm.querySelectorAll('input');
 
-        // Auto submit saat input berubah
         inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                filterForm.submit(); // Menggunakan filterForm yang sudah dideklarasikan
-            });
+            if (input.type === 'radio') {
+                input.addEventListener('mousedown', function () {
+                    this.wasChecked = this.checked;
+                });
+
+                input.addEventListener('click', function (e) {
+                    if (this.wasChecked) {
+                        this.checked = false;
+
+                        // Hapus parameter radio dari URL (misalnya sort=az)
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete(this.name); // Hapus 'sort'
+                        window.location.href = url.toString();
+                    } else {
+                        filterForm.submit();
+                    }
+                });
+            }
+
+            if (input.type === 'checkbox') {
+                input.addEventListener('change', function () {
+                    filterForm.submit();
+                });
+            }
         });
 
+        // Toggle Grid/List View
         const toggleBtn = document.getElementById('toggleView');
         const container = document.getElementById('blogContainer');
         const viewText = document.getElementById('viewText');
         const viewIcon = document.getElementById('viewIcon');
-        let isList = false; // Default view is Grid
+        let isList = false;
 
-        // Icons from product list (SVG strings)
         const iconGrid = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
         const iconList = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
 
-        // Set initial view button state
-        viewText.textContent = 'Grid View'; // Initial state text for toggle
-        viewIcon.innerHTML = iconGrid; // Initial state icon for toggle
+        // Set initial state
+        viewText.textContent = 'Grid View';
+        viewIcon.innerHTML = iconGrid;
 
         toggleBtn.addEventListener('click', () => {
             isList = !isList;
@@ -199,26 +218,18 @@
                 viewIcon.innerHTML = iconGrid;
             }
         });
-
-        // Hapus semua event listener DOM manual untuk modal di sini,
-        // karena Alpine.js akan menanganinya
-        // blogCards.forEach(...)
-        // closeModal.addEventListener(...)
-        // modal.addEventListener(...)
-        // document.addEventListener('keydown', ...)
     });
 
-    // Alpine.js data for blog modal navigation
     function blogPage() {
         return {
             modalOpen: false,
             currentIndex: 0,
             blogs: {!! json_encode($blogs->map(function($b) {
                 return [
-                    'id' => $b->id, // Pastikan 'id' ada di model Blog
+                    'id' => $b->id,
                     'title' => $b->title,
                     'image' => asset('storage/' . $b->image_path),
-                    'description' => strip_tags($b->content) // strip_tags untuk deskripsi modal
+                    'description' => strip_tags($b->content)
                 ];
             })) !!},
             get currentBlog() {
@@ -228,7 +239,6 @@
                 this.currentIndex = index;
                 this.modalOpen = true;
                 document.body.style.overflow = 'hidden';
-                // Alpine.js akan otomatis memperbarui konten modal
             },
             closeModal() {
                 this.modalOpen = false;
