@@ -3,40 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
-use App\Models\Category;
+use App\Models\Category; // Pastikan model Category sudah di-import
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ListBlogController extends Controller
 {
     public function list_blog(Request $request)
-{
-    // Ambil filter dari request
-    $selectedCategories = $request->input('category', []); // array dari checkbox
-    $sort = $request->input('sort', 'latest'); // default: latest
+    {
+        $query = Blog::query();
 
-    // Query dasar blog
-    $query = Blog::with('category');
+        // Load relasi category untuk menghindari N+1 problem
+        $query->with('category');
 
-    // Filter kategori jika ada
-    if (!empty($selectedCategories)) {
-        $query->whereHas('category', function ($q) use ($selectedCategories) {
-            $q->whereIn(DB::raw('LOWER(category_name)'), array_map('strtolower', $selectedCategories));
-        });
+        // Filter berdasarkan kategori (jika ada)
+        if ($request->has('category') && is_array($request->category)) {
+            // Asumsi $request->category berisi nama kategori (string)
+            // Kita perlu mencari ID kategori berdasarkan nama yang diterima
+            $categoryIds = Category::whereIn('category_name', $request->category)->pluck('category_id')->toArray();
+            if (!empty($categoryIds)) {
+                $query->whereIn('category_id', $categoryIds);
+            }
+        }
+
+        // Sortir
+        if ($request->sort === 'latest') {
+            $query->orderBy('created_at', 'desc');
+        } elseif ($request->sort === 'az') {
+            $query->orderBy('title', 'asc'); // Urutkan berdasarkan judul blog A-Z
+        } else {
+            // Default sort jika tidak ada parameter atau parameter tidak valid
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Pagination
+        // ✅ Pagination ditambahkan di sini (tanpa konfigurasi)
+        $blogs = $query->paginate(12)->withQueryString();
+
+        // Ambil semua kategori unik yang memiliki blog, untuk ditampilkan di filter
+        // Menggunakan distinct() pada category_name dari relasi blog
+        $categories = Blog::with('category')->get()
+                        ->pluck('category.category_name')
+                        ->filter()
+                        ->unique()
+                        ->values(); // Reset keys for clean iteration in blade
+
+        return view('pages.list_blog', compact('blogs', 'categories'));
     }
-
-    // Sortir
-    if ($sort === 'az') {
-        $query->orderBy('title', 'asc');
-    } else {
-        $query->orderBy('created_at', 'desc'); // default latest
-    }
-
-    $blogs = $query->get();
-
-    // Ambil semua kategori bertipe 'blog' untuk filter
-    $categories = Category::where('category_type', 'blog')->pluck('category_name');
-
-    return view('pages.list_blog', compact('blogs', 'categories'));
-}
 }

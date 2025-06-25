@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        {{-- BAGIAN BAWAH --}}
+        {{-- BAGIAN BAWAH: Company + Komentar + Artikel Terkait --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- COMPANY + KOMENTAR --}}
@@ -48,51 +48,27 @@
                         @forelse($comments as $comment)
                         <div class="bg-gray-100 p-4 rounded-lg">
                             <div class="flex gap-4 items-start">
-                                <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold">
-                                    {{ strtoupper(substr($comment->user->username ?? 'G', 0, 1)) }}
-                                </div>
+                                <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold">G</div>
                                 <div class="flex-1">
                                     <div class="flex justify-between text-sm">
-                                        <p class="font-semibold">{{ $comment->user->username ?? 'Guest' }}</p>
+                                        <p class="font-semibold">Guest</p>
                                         <p class="text-gray-500">{{ $comment->created_at->format('H:i d/m/Y') }}</p>
                                     </div>
                                     <p class="mt-1 text-gray-700">{{ $comment->content }}</p>
-
-                                    {{-- Tombol balas --}}
-                                    @auth
-                                    <button onclick="document.getElementById('reply-{{ $comment->id }}').classList.toggle('hidden')" class="text-xs text-green-600 mt-2">Balas</button>
-
-                                    {{-- Form Reply --}}
-                                    <form method="POST" action="{{ url('/products/' . $product->product_id . '/comment') }}" id="reply-{{ $comment->id }}" class="mt-2 hidden">
-                                        @csrf
-                                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                                        <textarea name="content" class="w-full p-2 border rounded" placeholder="Tulis balasan..." required></textarea>
-                                        <button type="submit" class="mt-1 px-3 py-1 bg-green-600 text-white rounded text-sm">Kirim Balasan</button>
-                                    </form>
-                                    @endauth
-
-                                    {{-- Tampilkan balasan --}}
-                                    @foreach($comment->replies as $reply)
-                                        <div class="mt-4 ml-6 p-3 bg-white border rounded-lg">
-                                            <p class="text-sm font-semibold">{{ $reply->user->username ?? 'Guest' }}</p>
-                                            <p class="text-xs text-gray-500">{{ $reply->created_at->format('H:i d/m/Y') }}</p>
-                                            <p class="text-sm">{{ $reply->content }}</p>
-                                        </div>
-                                    @endforeach
                                 </div>
                             </div>
                         </div>
                         @empty
                             <p class="text-sm text-gray-500">Belum ada komentar.</p>
                         @endforelse
-
-                        {{-- FORM KOMENTAR --}}
-                        <form method="POST" action="{{ url('/products/' . $product->product_id . '/comment') }}" class="mt-6" id="commentForm">
-                            @csrf
-                            <textarea id="commentContent" name="content" class="w-full p-2 border rounded" placeholder="Tulis komentar anda..." required></textarea>
-                            <button type="submit" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Kirim Komentar</button>
-                        </form>
                     </div>
+
+                    {{-- FORM KOMENTAR --}}
+                    <form method="POST" action="{{ url('/products/' . $product->product_id . '/comment') }}" class="mt-6">
+                        @csrf
+                        <textarea name="content" class="w-full p-2 border rounded" placeholder="Tulis komentar anda..." required></textarea>
+                        <button type="submit" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Kirim Komentar</button>
+                    </form>
 
                 </div>
             </div>
@@ -102,15 +78,13 @@
                 <h2 class="text-xl font-semibold text-gray-700">Artikel Terkait</h2>
 
                 @forelse($related as $item)
-                <a href="{{ url('/products/' . $item->product_id) }}" class="block">
-                    <div class="flex gap-4 bg-white shadow-md rounded-lg p-3 hover:shadow-lg transition">
-                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-20 h-20 object-cover rounded-md">
-                        <div>
-                            <h3 class="font-bold text-sm">{{ $item->name }}</h3>
-                            <p class="text-xs text-gray-600">{{ Str::limit($item->description, 50) }}</p>
-                        </div>
+                <div class="flex gap-4 bg-white shadow-md rounded-lg p-3">
+                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-20 h-20 object-cover rounded-md">
+                    <div>
+                        <h3 class="font-bold text-sm">{{ $item->name }}</h3>
+                        <p class="text-xs text-gray-600">{{ Str::limit($item->description, 50) }}</p>
                     </div>
-                </a>
+                </div>
                 @empty
                     <p class="text-sm text-gray-500">Tidak ada artikel terkait.</p>
                 @endforelse
@@ -119,33 +93,4 @@
         </div>
     </div>
 </div>
-
-{{-- SweetAlert2 CDN --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-@guest
-<script>
-document.getElementById('commentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    Swal.fire({
-        title: 'Login Diperlukan',
-        text: 'Anda harus login terlebih dahulu untuk mengirim komentar.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Login Sekarang',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "{{ route('login') }}";
-        } else {
-            // Kosongkan textarea jika batal
-            document.getElementById('commentContent').value = '';
-        }
-    });
-});
-</script>
-@endguest
-
 @endsection

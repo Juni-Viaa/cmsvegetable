@@ -4,17 +4,17 @@
 
 @section('content')
 <div x-data="productModal()" class="max-w-7xl mx-auto px-4 py-12 font-poppins">
-    
+
     {{-- ============================ FILTER SECTION ============================ --}}
     <div x-data="{ open: true }" class="w-full mb-10 bg-gradient-to-tr from-green-200 via-green-50 to-green-100 p-6 rounded-2xl shadow-lg">
         <div class="flex justify-between items-center cursor-pointer" @click="open = !open">
             <h2 class="text-2xl font-bold text-black flex items-center gap-2">
-               <svg xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 24 24" 
-                    fill="currentColor" 
+               <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
                     class="size-6 text-black fill-current">
                     <path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-                </svg>  
+                </svg>
                 Product Filter
             </h2>
             <span x-text="open ? '' : ''" class="text-black text-xl font-bold"></span>
@@ -24,7 +24,7 @@
         <form method="GET" action="{{ url('/list_product') }}" id="filterForm"
             x-show="open" x-transition
             class="mt-6 flex flex-col lg:flex-row gap-6 text-sm text-gray-800">
-            
+
             {{-- Sort --}}
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 w-full lg:w-1/3">
                 <h3 class="text-black font-semibold mb-4">Sort By</h3>
@@ -85,10 +85,11 @@
     {{-- ============================ PRODUK ============================ --}}
     <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 transition-all duration-300">
         @foreach ($vegetables as $index => $veg)
-        <div class="product-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up">
+        {{-- Pindahkan @click ke div.product-card --}}
+        <div class="product-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up"
+             @click="openModal({{ $index }})"> {{-- KLIK SEKARANG DI SINI --}}
             <img src="{{ asset('storage/' . $veg->image_path) }}" alt="{{ $veg->product_name }}"
-                @click="openModal({{ $index }})"
-                class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
+                 class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
             <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                 <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
                     {{ $veg->category->category_name ?? 'Tanpa Kategori' }}
@@ -137,11 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('productGrid');
     const viewText = document.getElementById('viewText');
     const viewIcon = document.getElementById('viewIcon');
-    let isList = false;
+    let isList = false; // Default: Grid View
 
     const iconGrid = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
     const iconList = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
 
+    // Set initial view button state (assuming Grid View as default)
     viewText.textContent = 'Grid View';
     viewIcon.innerHTML = iconGrid;
 
@@ -160,9 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script>
 
-<script>
 document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filterForm');
     const inputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="radio"]');
@@ -172,9 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-</script>
 
-<script>
 function productModal() {
     return {
         modalOpen: false,
@@ -193,9 +191,11 @@ function productModal() {
         openModal(index) {
             this.currentIndex = index;
             this.modalOpen = true;
+            document.body.style.overflow = 'hidden';
         },
         closeModal() {
             this.modalOpen = false;
+            document.body.style.overflow = '';
         },
         previousProduct() {
             if (this.currentIndex > 0) {
