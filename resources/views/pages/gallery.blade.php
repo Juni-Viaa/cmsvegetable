@@ -4,7 +4,6 @@
 
 @section('content')
 
-<!-- Banner -->
 <div class="relative h-64 flex items-center justify-center bg-fixed bg-center bg-cover" style="background-image: url('{{ asset('images/parallax banner.jpg') }}');">
     <div class="absolute inset-0 bg-black bg-opacity-50"></div>
     <div class="relative z-10 text-center px-4">
@@ -15,8 +14,10 @@
     </div>
 </div>
 
-<!-- Filter & Gallery -->
-<div class="max-w-7xl mx-auto px-4 mt-8">
+{{-- Menggunakan x-data="galleryPage()" untuk seluruh scope Alpine.js, termasuk modal --}}
+<div x-data="galleryPage()" class="max-w-7xl mx-auto px-4 mt-8 font-poppins">
+
+    {{-- Category Filter Section --}}
     <div x-data="{ open: true }" class="w-full mb-10 bg-gradient-to-br from-green-100 to-green-50 p-6 rounded-2xl shadow-md">
         <div class="flex justify-between items-center cursor-pointer" @click="open = !open">
             <h2 class="text-2xl font-bold text-black flex items-center gap-2 ml-1">
@@ -29,9 +30,8 @@
 
         <form method="GET" action="{{ url('/gallery') }}" id="filterForm" x-show="open" x-transition class="mt-4">
             <div class="flex flex-col lg:flex-row gap-6">
-                <!-- Sort By -->
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 w-full lg:w-1/3">
-                    <h3 class="text-black font-semibold mb-4 text-sm">Sort By</h3>
+                    <h3 class="text-black font-semibold mb-4">Sort By</h3>
                     <div class="flex flex-col gap-3">
                         <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
                             <input type="radio" name="sort" value="latest" {{ request('sort') == 'latest' ? 'checked' : '' }}
@@ -46,9 +46,8 @@
                     </div>
                 </div>
 
-                <!-- Filter by Category -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 hover:shadow-md transition w-full lg:w-2/3">
-                    <h3 class="text-black font-semibold mb-4 text-sm">Filter by Category</h3>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-200 hover:shadow-md transition w-full lg:w-2/3">
+                    <h3 class="text-black font-semibold mb-4 flex items-center gap-2">Filter by Category</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($categories as $cat)
                             <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
@@ -64,7 +63,7 @@
         </form>
     </div>
 
-    <!-- View Toggle -->
+    {{-- Toggle View --}}
     <div class="flex justify-end mb-6">
         <button id="toggleView" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-md flex items-center gap-2 transition">
             <span id="toggleIcon"></span>
@@ -72,14 +71,11 @@
         </button>
     </div>
 
-    <!-- Gallery Grid/List -->
-    <div id="blogContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300">
-        @foreach ($vegetables as $item)
+    {{-- Gallery Items --}}
+    <div id="blogContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 transition-all duration-300">
+        @foreach ($vegetables as $index => $item)
             <div class="blog-card cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-xl product-card animate-fade-up border border-transparent hover:border-green-500 hover:ring hover:ring-green-200"
-                 data-category="{{ strtolower($item->category->category_name ?? 'lainnya') }}"
-                 data-title="{{ $item->title }}"
-                 data-image="{{ $item->image_url }}"
-                 data-desc="{{ $item->description }}">
+                 @click="openModal({{ $index }})"> {{-- Menggunakan Alpine.js untuk membuka modal --}}
                 <img src="{{ $item->image_url }}" loading="lazy" alt="{{ $item->title }}"
                      class="w-full h-40 object-cover rounded-t-xl transition hover:brightness-110">
                 <div class="p-4 product-info">
@@ -91,24 +87,33 @@
                 </div>
             </div>
         @endforeach
-    </div>
-</div>
 
-<!-- Modal -->
-<div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-fade-in">
-        <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
-        <img id="modalImage" src="" alt="" class="w-full h-48 object-cover rounded-lg mb-4">
-        <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
-        <p id="modalDesc" class="text-gray-700 text-sm leading-relaxed max-h-48 overflow-y-auto mb-4"></p>
-        <div class="flex justify-between">
-            <button @click="previousProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">← Previous</button>
-            <button @click="nextProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next →</button>
+        @if ($vegetables->isEmpty())
+            <p class="col-span-full text-center text-gray-500">No gallery items found with the selected filter.</p>
+        @endif
+    </div>
+
+    {{-- Modal --}}
+    <div x-show="modalOpen" x-transition x-cloak class="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative overflow-hidden p-6"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="translate-y-full opacity-0"
+            x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="translate-y-full opacity-0">
+            <button @click="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
+            <img :src="currentProduct.image" alt="" class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50" />
+            <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
+            <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
+            <div class="flex justify-between">
+                <button @click="previousProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">← Previous</button>
+                <button @click="nextProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next →</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Styles -->
 <style>
     .list-view {
         display: flex;
@@ -155,15 +160,19 @@
     }
 </style>
 
-<!-- Scripts -->
 @once
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 @endonce
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('filterForm');
-    const inputs = form.querySelectorAll('input[type="checkbox"]');
+    const filterForm = document.getElementById('filterForm');
+    const inputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+    inputs.forEach(input => {
+        // PERBAIKAN DI SINI: Menggunakan filterForm.submit()
+        input.addEventListener('change', () => filterForm.submit());
+    });
+
     const toggleBtn = document.getElementById('toggleView');
     const toggleIcon = document.getElementById('toggleIcon');
     const toggleText = document.getElementById('toggleText');
@@ -181,35 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateToggleUI();
 
-    inputs.forEach(input => {
-        input.addEventListener('change', () => form.submit());
-    });
-
     toggleBtn.addEventListener('click', () => {
         isList = !isList;
         container.classList.toggle('list-view');
         container.classList.toggle('grid');
         container.classList.toggle('md:grid-cols-2');
+        container.classList.toggle('lg:grid-cols-3');
         updateToggleUI();
     });
 
-    const blogCards = document.querySelectorAll('.blog-card');
+    // Manual DOM event listeners for modal (will work alongside Alpine.js)
     const modal = document.getElementById('modalOverlay');
-    const modalImg = document.getElementById('modalImage');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDesc = document.getElementById('modalDesc');
     const closeModal = document.getElementById('closeModal');
-
-    blogCards.forEach(card => {
-        card.addEventListener('click', () => {
-            modalImg.src = card.dataset.image;
-            modalTitle.textContent = card.dataset.title;
-            modalDesc.textContent = card.dataset.desc;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            closeModal.focus();
-        });
-    });
 
     closeModal.addEventListener('click', () => {
         modal.classList.add('hidden');
@@ -229,13 +221,47 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.overflow = '';
         }
     });
-
-    document.querySelectorAll('input[name="sort"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            document.getElementById('filterForm').submit();
-        });
-    });
 });
+
+// Alpine.js data for modal navigation
+function galleryPage() {
+    return {
+        modalOpen: false,
+        currentIndex: 0,
+        // Ensure this data matches the structure of your $vegetables array
+        // Make sure $veg->id is actually the ID for your Gallery model
+        products: {!! json_encode($vegetables->map(function($veg) {
+            return [
+                'id' => $veg->id, // Assuming 'id' exists on your Gallery model
+                'name' => $veg->title,
+                'image' => $veg->image_url,
+                'description' => $veg->description ?? 'No description available'
+            ];
+        })) !!},
+        get currentProduct() {
+            return this.products[this.currentIndex];
+        },
+        openModal(index) {
+            this.currentIndex = index;
+            this.modalOpen = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeModal() {
+            this.modalOpen = false;
+            document.body.style.overflow = '';
+        },
+        previousProduct() {
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+            }
+        },
+        nextProduct() {
+            if (this.currentIndex < this.products.length - 1) {
+                this.currentIndex++;
+            }
+        }
+    }
+}
 </script>
 
 @endsection
