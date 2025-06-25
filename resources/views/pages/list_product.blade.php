@@ -134,16 +134,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // === Toggle View (Grid / List) ===
     const toggleBtn = document.getElementById('toggleView');
     const grid = document.getElementById('productGrid');
     const viewText = document.getElementById('viewText');
     const viewIcon = document.getElementById('viewIcon');
-    let isList = false; // Default: Grid View
+    let isList = false;
 
     const iconGrid = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
     const iconList = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
 
-    // Set initial view button state (assuming Grid View as default)
     viewText.textContent = 'Grid View';
     viewIcon.innerHTML = iconGrid;
 
@@ -161,54 +161,36 @@ document.addEventListener('DOMContentLoaded', () => {
             viewIcon.innerHTML = iconGrid;
         }
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
+    // === Filter Form Logic (Radio + Checkbox) ===
     const filterForm = document.getElementById('filterForm');
-    const inputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+    const inputs = filterForm.querySelectorAll('input');
+
     inputs.forEach(input => {
-        input.addEventListener('change', () => {
-            filterForm.submit();
-        });
+        if (input.type === 'radio') {
+            input.addEventListener('mousedown', function () {
+                this.wasChecked = this.checked;
+            });
+
+            input.addEventListener('click', function () {
+                if (this.wasChecked) {
+                    this.checked = false;
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete(this.name); // hapus parameter 'sort'
+                    window.location.href = url.toString();
+                } else {
+                    filterForm.submit();
+                }
+            });
+        }
+
+        if (input.type === 'checkbox') {
+            input.addEventListener('change', () => {
+                filterForm.submit();
+            });
+        }
     });
 });
-
-function productModal() {
-    return {
-        modalOpen: false,
-        currentIndex: 0,
-        products: {!! json_encode($vegetables->map(function($v) {
-            return [
-                'id' => $v->product_id,
-                'name' => $v->product_name,
-                'image' => asset('storage/' . $v->image_path),
-                'description' => $v->description ?? 'Tidak ada deskripsi'
-            ];
-        })) !!},
-        get currentProduct() {
-            return this.products[this.currentIndex];
-        },
-        openModal(index) {
-            this.currentIndex = index;
-            this.modalOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeModal() {
-            this.modalOpen = false;
-            document.body.style.overflow = '';
-        },
-        previousProduct() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
-            }
-        },
-        nextProduct() {
-            if (this.currentIndex < this.products.length - 1) {
-                this.currentIndex++;
-            }
-        }
-    }
-}
 </script>
 
 <style>
