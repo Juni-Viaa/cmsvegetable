@@ -24,16 +24,21 @@
             
             {{-- Sort By --}}
             <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200">
-                <h3 class="font-semibold mb-3">Sort By</h3>
-                <label class="flex items-center space-x-2 mb-2 bg-green-50 px-4 py-2 rounded-xl">
-                    <input type="radio" name="sort" value="latest" {{ request('sort') == 'latest' ? 'checked' : '' }} class="accent-green-600">
-                    <span>Latest Update</span>
-                </label>
-                <label class="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-xl">
-                    <input type="radio" name="sort" value="az" {{ request('sort') == 'az' ? 'checked' : '' }} class="accent-green-600">
-                    <span>Sort A–Z</span>
-                </label>
-            </div>
+    <h3 class="font-semibold mb-3">Sort By</h3>
+
+    <label class="flex items-center space-x-2 mb-2 bg-green-50 px-4 py-2 rounded-xl">
+        <input type="radio" name="sort" value="latest"
+               {{ request('sort') == 'latest' ? 'checked' : '' }}
+               class="accent-green-600 sort-radio">
+        <span>Latest Update</span>
+    </label>
+    <label class="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-xl">
+        <input type="radio" name="sort" value="az"
+               {{ request('sort') == 'az' ? 'checked' : '' }}
+               class="accent-green-600 sort-radio">
+        <span>Sort A–Z</span>
+    </label>
+</div>
 
             {{-- Filter by Category --}}
             <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200">
@@ -206,4 +211,37 @@
         });
     });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('filterForm');
+    let lastCheckedValue = '{{ request("sort") }}'; // ambil dari blade
+
+    document.querySelectorAll('.sort-radio').forEach(radio => {
+        radio.addEventListener('click', function (e) {
+            const clickedValue = this.value;
+
+            if (lastCheckedValue === clickedValue) {
+                // Klik ulang: uncheck dan hapus dari URL
+                e.preventDefault();
+
+                const url = new URL(window.location.href);
+                url.searchParams.delete('sort');
+
+                // Tambahkan kategori aktif jika ada
+                const checkedCategories = document.querySelectorAll('input[name="category[]"]:checked');
+                checkedCategories.forEach(cat => {
+                    url.searchParams.append('category[]', cat.value);
+                });
+
+                window.location.href = url.toString();
+            } else {
+                // Klik baru: form submit seperti biasa
+                lastCheckedValue = clickedValue;
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+
 @endsection
