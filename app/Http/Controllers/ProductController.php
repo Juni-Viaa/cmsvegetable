@@ -17,7 +17,7 @@ class ProductController extends Controller
             ->where('product_id', $id)
             ->whereNull('parent_id') // hanya komentar utama
             ->orderByDesc('created_at')
-            ->with('replies')
+            ->with(['replies', 'user'])
             ->get();
 
         $related = Product::where('product_id', '!=', $id)
@@ -31,23 +31,24 @@ class ProductController extends Controller
     // Menyimpan komentar
     public function submitComment(Request $request, $id)
     {
-        $request->validate([
-            'content' => 'required|max:500',
-        ]);
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', 'Anda harus login untuk mengirim komentar.');
+    }
 
-        // Debug opsional, aktifkan jika masih error
-        // dd($request->all());
+    $request->validate([
+        'content' => 'required|max:500',
+    ]);
 
-        Comment::create([
-            'content' => $request->input('content'),
-            'user_id' => 0, 
-            'target_type' => 'product',
-            'product_id' => $id,
-            'blog_id' => 0,
-            'parent_id' => null,
-        ]);
+    Comment::create([
+        'content' => $request->input('content'),
+        'user_id' => auth()->id(),
+        'target_type' => 'product',
+        'product_id' => $id,
+        'blog_id' => null,
+        'parent_id' => null,
+    ]);
 
-        return back()->with('success', 'Komentar berhasil dikirim!');
+    return back()->with('success', 'Komentar berhasil dikirim!');
     }
 
     // Halaman list produk

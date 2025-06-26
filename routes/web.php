@@ -96,7 +96,7 @@ Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name
 Route::get('/list_blog', [ListBlogController::class, 'list_blog'])->name('list_blog');
 Route::get('/products', [ProductController::class, 'list'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'product']);
-Route::post('/products/{id}/comment', [ProductController::class, 'submitComment']);
+Route::post('/products/{id}/comment', [ProductController::class, 'submitComment'])->middleware('auth');
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
 
