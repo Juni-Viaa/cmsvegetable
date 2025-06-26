@@ -193,6 +193,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+function productModal() {
+    return {
+        modalOpen: false,
+        currentProduct: {},
+        products: @json($products),
+        openModal(index) {
+            this.currentProduct = this.products[index];
+            this.modalOpen = true;
+        },
+        closeModal() {
+            this.modalOpen = false;
+        },
+        previousProduct() {
+            const index = this.products.findIndex(p => p.id === this.currentProduct.id);
+            if (index > 0) this.openModal(index - 1);
+        },
+        nextProduct() {
+            const index = this.products.findIndex(p => p.id === this.currentProduct.id);
+            if (index < this.products.length - 1) this.openModal(index + 1);
+        }
+    }
+}
+</script>
+
 <style>
 .list-view {
     display: flex;

@@ -14,10 +14,6 @@ class ListProductController extends Controller
 
         $categories = Category::where('category_type', 'product')->get();
 
-        // Filter berdasarkan kategori (jika ada)
-        if ($request->has('category') && is_array($request->category)) {
-        }
-
         // Filter berdasarkan kategori
         if ($request->has('category') && is_array($request->category)) {
             $query->whereIn('category_id', $request->category);
@@ -30,9 +26,28 @@ class ListProductController extends Controller
             $query->orderBy('product_name', 'asc');
         }
 
-        // ✅ Pagination ditambahkan di sini (tanpa konfigurasi)
-        $vegetables = $query->paginate(12)->withQueryString();  
+        // Pagination
+        $vegetables = $query->paginate(12)->withQueryString();
 
-        return view('pages.list_product', compact('categories', 'vegetables'));
+        $products = $vegetables->map(function ($v) {
+        return [
+            'id' => $v->product_id,
+            'name' => $v->product_name,
+            'description' => $v->description,
+            'image' => asset('storage/' . $v->image_path),
+            ];
+        });
+
+        // Untuk modal AlpineJS
+        $products = $vegetables->map(function ($v) {
+            return [
+                'id' => $v->product_id,
+                'name' => $v->product_name,
+                'description' => $v->description,
+                'image' => asset('storage/' . $v->image_path),
+            ];
+        });
+
+        return view('pages.list_product', compact('categories', 'vegetables', 'products'));
     }
 }
