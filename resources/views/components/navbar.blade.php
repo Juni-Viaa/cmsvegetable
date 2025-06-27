@@ -166,20 +166,21 @@
         },
         {
           name: 'products',
-          label: '{{ $productsLabel }}',
-          active: {{ $productsActive ? 'true' : 'false' }},
-          dropdown: [
-            {
-              label: 'Products',
-              href: '{{ route('products') }}',
-              active: {{ request()->routeIs('products') ? 'true' : 'false' }}
-            },
-            {
-              label: 'List Product',
+              label: 'Product',
               href: '{{ route('list_product') }}',
               active: {{ request()->routeIs('list_product') ? 'true' : 'false' }}
-            }
-          ]
+          // dropdown: [
+          //   {
+          //     label: 'Products',
+          //     href: '{{ route('products') }}',
+          //     active: {{ request()->routeIs('products') ? 'true' : 'false' }}
+          //   },
+          //   {
+          //     label: 'List Product',
+          //     href: '{{ route('list_product') }}',
+          //     active: {{ request()->routeIs('list_product') ? 'true' : 'false' }}
+          //   }
+          // ]
         },
         {
           name: 'gallery',
@@ -191,7 +192,7 @@
           name: 'blog',
           label: 'Blog',
           href: '{{ route('list_blog') }}',
-          active: {{ $blogActive ? 'true' : 'false' }},
+          active: {{ request()->routeIs('list_blog') ? 'true' : 'false' }}
           // dropdown: [
           //   {
           //     label: 'Blog',

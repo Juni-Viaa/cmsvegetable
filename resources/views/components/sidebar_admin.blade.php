@@ -2,7 +2,7 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
-                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-4 text-sm text-green-700 rounded-lg sm:hidden hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 dark:text-green-700 dark:hover:bg-[#A2D77C] dark:focus:ring-green-700">
+                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-4 text-sm text-green-700 rounded-lg sm:hidden hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -49,8 +49,8 @@
     <div class="h-full px-3 pb-4 overflow-y-auto bg-[#A2D77C]">
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="/admin" class="flex items-center p-2 text-black-900 rounded-lg dark:text-black hover:bg-white dark:hover:bg-white group">
-                    <svg class="w-5 h-5 text-black-500 transition duration-75 dark:text-black-400 group-hover:text-black-900 dark:group-hover:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                <a href="/admin" class="flex items-center p-2 text-black-900 rounded-lg hover:bg-white group">
+                    <svg class="w-5 h-5 text-black-500 transition duration-75 group-hover:text-black-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                         <path
                             d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
                         <path

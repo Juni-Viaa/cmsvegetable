@@ -2,7 +2,7 @@
       <nav class="flex flex-wrap items-center justify-between bg-white p-[20px_30px] rounded-[20px] gap-y-3">
           <div class="flex items-center gap-3">
               <div class="flex shrink-0 h-[43px] overflow-hidden">
-                  <img src="assets/logo/logo.png" class="object-contain w-full h-full" alt="logo">
+                  <img src="{{ asset('assets/logo/logo.png') }}" class="object-contain w-full h-full" alt="logo">
               </div>
               <div class="flex flex-col">
                 <p id="CompanyName" class="font-extrabold text-xl leading-[30px]">SayurKita</p>
@@ -14,13 +14,13 @@
               <a href="{{route('front.index')}}">Home</a>
             </li>
             <li class="{{request()->routeIs('products') ? 'text-cp-dark-blue' : ''}}font-semibold hover:text-cp-dark-blue transition-all duration-300">
-              <a href="{{route('products')}}">Products</a>
+              <a href="{{route('list_product')}}">Products</a>
             </li>
             <li class="{{request()->routeIs('gallery') ? 'text-cp-dark-blue' : ''}}font-semibold hover:text-cp-dark-blue transition-all duration-300">
               <a href="{{route('gallery')}}">Gallery</a>
             </li>
             <li class="{{request()->routeIs('blog') ? 'text-cp-dark-blue' : ''}} font-semibold hover:text-cp-dark-blue transition-all duration-300">
-              <a href="{{route('blog')}}">Blog</a>
+              <a href="{{route('list_blog')}}">Blog</a>
             </li>
             <li class="{{request()->routeIs('aboutus') ? 'text-cp-dark-blue' : ''}} font-semibold hover:text-cp-dark-blue transition-all duration-300">
               <a href="{{route('aboutus')}}">About</a>

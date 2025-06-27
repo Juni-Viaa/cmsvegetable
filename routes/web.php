@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AboutusController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,7 @@ use App\Http\Controllers\ProjectClientController;
 use App\Http\Controllers\ShowcaseController;
 use App\Http\Controllers\TestimonialController;
 
+
 //Landing Page
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/team', [FrontController::class, 'team'])->name('front.team');
@@ -63,6 +65,22 @@ Route::middleware([
     Route::resource('category', AdminCategoryController::class);
     Route::resource('account', AdminAccountController::class);
 });
+
+Route::middleware([
+    \Illuminate\Auth\Middleware\Authenticate::class,
+    \App\Http\Middleware\AdminMiddleware::class,
+])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('statistics', CompanyStatisticController::class);
+    Route::resource('abouts', CompanyAboutController::class);
+    Route::resource('showcases', ShowcaseController::class);
+    Route::resource('principles', OurPrincipleController::class);
+    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('clients', ProjectClientController::class);
+    Route::resource('teams', OurTeamController::class);
+    Route::resource('appointments', AppointmentController::class);
+    Route::resource('hero_sections', HeroSectionController::class);
+});
+
 
 Route::get('/hash-password', function () {
     return Hash::make('@dmin');
@@ -90,9 +108,9 @@ Route::get('/aboutus', [AboutusController::class, 'aboutus'])->name('aboutus');
 Route::get('/settings', [AccountSettingsController::class, 'settingacc'])->name('settings');
 Route::get('/passwordchg', [ChgPwController::class, 'passwordchg'])->name('passwordchg');
 Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
-Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
-Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
+Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('admin.blog.comment');
 Route::get('/list_blog', [ListBlogController::class, 'list_blog'])->name('list_blog');
 Route::get('/products', [ProductController::class, 'list'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'product']);
@@ -100,14 +118,19 @@ Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->m
 Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
+//Auth
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Landing Page New Admin Routes 
-Route::resource('statistics', CompanyStatisticController::class);
-Route::resource('abouts', CompanyAboutController::class);
-Route::resource('showcases', ShowcaseController::class);
-Route::resource('principles', OurPrincipleController::class);
-Route::resource('testimonials', TestimonialController::class);
-Route::resource('clients', ProjectClientController::class);
-Route::resource('teams', OurTeamController::class);
-Route::resource('appointments', AppointmentController::class);
-Route::resource('hero_sections', HeroSectionController::class);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// require __DIR__.'/auth.php';
