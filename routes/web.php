@@ -130,4 +130,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('appointments', AppointmentController::class);
     Route::resource('hero_sections', HeroSectionController::class);
 });
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
