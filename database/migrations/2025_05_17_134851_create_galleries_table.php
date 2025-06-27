@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gallery', function (Blueprint $table) {
+        Schema::create('galleries', function (Blueprint $table) {
             $table->id('gallery_id');
             $table->string('image_path')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->softDeletes();
-            $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
             $table->foreignId('category_id')->constrained('categories', 'category_id')->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

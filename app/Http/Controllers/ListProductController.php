@@ -12,10 +12,7 @@ class ListProductController extends Controller
     {
         $query = Product::query();
 
-
-        // Filter berdasarkan kategori (jika ada)
-        if ($request->has('categories') && is_array($request->category)) {
-        }
+        $categories = Category::where('category_type', 'product')->get();
 
         // Filter berdasarkan kategori
         if ($request->has('category') && is_array($request->category)) {
@@ -26,14 +23,31 @@ class ListProductController extends Controller
         if ($request->sort === 'terbaru') {
             $query->orderBy('created_at', 'desc');
         } elseif ($request->sort === 'az') {
-            $query->orderBy('name', 'asc');
+            $query->orderBy('product_name', 'asc');
         }
 
-        // ✅ Pagination ditambahkan di sini (tanpa konfigurasi)
-        $vegetables = $query->paginate(12)->withQueryString();  
+        // Pagination
+        $vegetables = $query->paginate(12)->withQueryString();
 
-        $categories = Category::where('category_type', 'product')->get();
+        $products = $vegetables->map(function ($v) {
+        return [
+            'id' => $v->product_id,
+            'name' => $v->product_name,
+            'description' => $v->description,
+            'image' => asset('storage/' . $v->image_path),
+            ];
+        });
 
-        return view('pages.list_product', compact('vegetables', 'categories'));
+        // Untuk modal AlpineJS
+        $products = $vegetables->map(function ($v) {
+            return [
+                'id' => $v->product_id,
+                'name' => $v->product_name,
+                'description' => $v->description,
+                'image' => asset('storage/' . $v->image_path),
+            ];
+        });
+
+        return view('pages.list_product', compact('categories', 'vegetables', 'products'));
     }
 }

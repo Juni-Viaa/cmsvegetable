@@ -24,14 +24,14 @@
             'modal' => 'Add Blog',
             'modal_name' => 'Create New Blog',
             'modal_id' => 'add-blog-modal',
-            'form_action' => route('admin_blog.store'),
+            'form_action' => route('blog.store'),
             'form_method' => 'POST',
             'fields' => $addFields
         ])
 
         {{-- Search Bar --}}
         @include('components.searchbar', [
-            'search' => route('admin_blog.index')
+            'search' => route('blog.index')
         ])
 
         {{-- Table --}}
@@ -39,14 +39,14 @@
             'modal' => 'Edit',
             'modal_name' => 'Edit Blog',
             'modal_id' => 'edit-blog-modal',
-            'form_action' => route('admin_blog.update', ':id'),
+            'form_action' => route('blog.update', ':id'),
             'form_method' => 'PUT',
             'id_field' => 'blog_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_blog.destroy', ':id'),
-            'edit_route' => 'admin_blog.getBlog'
+            'delete_route' => route('blog.destroy', ':id'),
+            'edit_route' => 'blog.getBlog'
         ])
     </div>
 </div>
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Fetch blog data untuk populate form
-            fetch(`{{ url('admin_blog') }}/${blogId}`, {
+            fetch(`{{ url('blog') }}/${blogId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirm(`Apakah Anda yakin ingin menghapus blog "${blogTitle}"?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_blog') }}/${blogId}`;
+                form.action = `{{ url('blog') }}/${blogId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

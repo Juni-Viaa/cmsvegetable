@@ -18,7 +18,7 @@
 
         {{-- Search Bar --}}
         @include('components.searchbar', [
-            'search' => route('admin_account.index')
+            'search' => route('account.index')
         ])
 
         {{-- Table --}}
@@ -26,14 +26,14 @@
             'modal' => 'Edit',
             'modal_name' => 'Edit Account',
             'modal_id' => 'edit-account-modal',
-            'form_action' => route('admin_account.update', ':id'),
+            'form_action' => route('account.update', ':id'),
             'form_method' => 'PATCH',
             'id_field' => 'user_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_account.destroy', ':id'),
-            'edit_route' => 'admin_account.getAccount'
+            'delete_route' => route('account.destroy', ':id'),
+            'edit_route' => 'account.getAccount'
         ])
     </div>
 </div>

@@ -39,7 +39,7 @@ class AdminBannerController extends Controller
             ]
         ];
 
-        return view('pages.admin_banner', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.admin_banner', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
@@ -77,11 +77,11 @@ class AdminBannerController extends Controller
                 $data['image_path'] = $path;
             }
 
-            $data['user_id'] = Auth::id();
+            $data['created_by'] = Auth::id();
 
             Banner::create($data);
 
-            return redirect()->route('admin_banner.index')
+            return redirect()->route('banner.index')
                 ->with('success', 'Banner berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -104,7 +104,7 @@ class AdminBannerController extends Controller
             ]);
         }
 
-        return view('pages.admin_banner.show', compact('banner'));
+        return view('admin.admin_banner.show', compact('banner'));
     }
 
     /**
@@ -113,7 +113,7 @@ class AdminBannerController extends Controller
     public function edit(string $id)
     {
         $banner = Banner::findOrFail($id);
-        return view('pages.admin_banner.edit', compact('banner'));
+        return view('admin.admin_banner.edit', compact('banner'));
     }
 
     /**
@@ -150,7 +150,7 @@ class AdminBannerController extends Controller
 
             $banner->update($data);
 
-            return redirect()->route('admin_banner.index')
+            return redirect()->route('banner.index')
                 ->with('success', 'Banner berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -174,7 +174,7 @@ class AdminBannerController extends Controller
             
             $banner->delete();
 
-            return redirect()->route('admin_banner.index')
+            return redirect()->route('banner.index')
                 ->with('success', 'Banner berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

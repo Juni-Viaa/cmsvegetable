@@ -1,19 +1,19 @@
 @extends('layouts.admin')
 
-@section('title','Admin Category')
+@section('title','Admin Product')
 
 @section('content')
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg mt-14">
-
+        
         {{-- Breadcrumb --}}
         @include('components.breadcrumb', [
-            'pages_name' => 'Category'
+            'pages_name' => 'Product'
         ])
 
         {{-- Breadcrumb Second --}}
         @include('components.breadcrumb_child', [
-            'child_name' => 'List Category'
+            'child_name' => 'List Product'
         ])
 
         {{-- Error Message --}}
@@ -21,34 +21,33 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
-            'modal' => 'Add Category',
-            'modal_name' => 'Create New Category',
-            'modal_id' => 'add-category-modal',
-            'form_action' => route('admin_category.store'),
+            'modal' => 'Add Product',
+            'modal_name' => 'Create New Product',
+            'modal_id' => 'add-product-modal',
+            'form_action' => route('product.store'),
             'form_method' => 'POST',
             'fields' => $addFields
         ])
 
         {{-- Search Bar --}}
         @include('components.searchbar', [
-            'search' => route('admin_category.index')
+            'search' => route('product.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
             'modal' => 'Edit',
-            'modal_name' => 'Edit Category',
-            'modal_id' => 'edit-category-modal',
-            'form_action' => route('admin_category.update', ':id'),
-            'form_method' => 'PUT',
-            'id_field' => 'category_id',
+            'modal_name' => 'Edit Product',
+            'modal_id' => 'edit-product-modal',
+            'form_action' => route('product.update', ':id'),
+            'form_method' => 'PATCH',
+            'id_field' => 'product_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_category.destroy', ':id'),
-            'edit_route' => 'admin_category.getCategory'
+            'delete_route' => route('product.destroy', ':id'),
+            'edit_route' => 'product.getProduct'
         ])
-        
     </div>
 </div>
 
@@ -59,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle edit button click
     document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const categoryId = this.getAttribute('data-id');
+            const productId = this.getAttribute('data-id');
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.getElementById(modalId);
             
@@ -71,17 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = modal.querySelector('form');
             
             // Debug
-            console.log('Category ID:', categoryId);
+            console.log('Product ID:', productId);
             console.log('Modal ID:', modalId);
             
             // Update form action jika diperlukan (untuk kasus dinamis)
             if (form.getAttribute('action').includes(':id')) {
-                const actionUrl = form.getAttribute('action').replace(':id', categoryId);
+                const actionUrl = form.getAttribute('action').replace(':id', productId);
                 form.setAttribute('action', actionUrl);
             }
             
-            // Fetch category data untuk populate form
-            fetch(`{{ url('admin_category') }}/${categoryId}`, {
+            // Fetch product data untuk populate form
+            fetch(`{{ url('product') }}/${productId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -95,21 +94,29 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.success) {
-                    const category = data.data;
+                    const product = data.data;
                     
                     // Populate form fields
-                    const categoryInput = modal.querySelector('input[name="category_name"]');
-                    const typeSelect = modal.querySelector('select[name="category_id"]');
+                    const nameInput = modal.querySelector('input[name="name"]');
+                    const descInput = modal.querySelector('textarea[name="description"]');
+                    const categorySelect = modal.querySelector('select[name="category_id"]');
                     
-                    if (categoryInput) categoryInput.value = category.category_name || '';
-                    if (categorySelect) categorySelect.value = category_id || '';
-
+                    if (nameInput) nameInput.value = product.name || '';
+                    if (descInput) descInput.value = product.description || '';
+                    if (categorySelect) categorySelect.value = product.category_id || '';
+                    
+                    // Show current image if exists
+                    const imagePreview = modal.querySelector('#image-preview');
+                    if (product.image_path && imagePreview) {
+                        imagePreview.src = `/storage/${product.image_path}`;
+                        imagePreview.style.display = 'block';
+                    }
                 } else {
-                    console.error('Failed to fetch category data:', data);
+                    console.error('Failed to fetch product data:', data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching category data:', error);
+                console.error('Error fetching product data:', error);
                 // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
@@ -118,13 +125,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle delete button click
     document.querySelectorAll('.delete-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const categoryId = this.getAttribute('data-id');
-            const categoryName = this.getAttribute('data-name');
+            const productId = this.getAttribute('data-id');
+            const productName = this.getAttribute('data-name');
             
-            if (confirm(`Apakah Anda yakin ingin menghapus category "${categoryName}"?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus product "${productName}"?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_category') }}/${categoryId}`;
+                form.action = `{{ url('product') }}/${productId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');
@@ -142,6 +149,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 document.body.appendChild(form);
                 form.submit();
+            }
+        });
+    });
+
+    // Preview image before upload
+    document.querySelectorAll('input[type="file"]').forEach(function(input) {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            const previewId = this.getAttribute('data-preview');
+            
+            if (file && previewId) {
+                const preview = document.getElementById(previewId);
+                if (preview) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
             }
         });
     });

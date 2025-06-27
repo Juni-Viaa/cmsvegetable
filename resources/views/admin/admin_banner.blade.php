@@ -1,18 +1,19 @@
 @extends('layouts.admin')
 
-@section('title','Admin Gallery')
+@section('title','Admin Banner')
 
 @section('content')
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg mt-14">
+
         {{-- Breadcrumb --}}
         @include('components.breadcrumb', [
-            'pages_name' => 'Gallery'
+            'pages_name' => 'Banner'
         ])
-        
-        {{-- Breadcrumb Second--}}
+
+        {{-- Breadcrumb Second --}}
         @include('components.breadcrumb_child', [
-            'child_name' => 'List Gallery'
+            'child_name' => 'List Banner'
         ])
 
         {{-- Error Message --}}
@@ -20,32 +21,27 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
-            'modal' => 'Add Gallery',
-            'modal_name' => 'Create New Gallery',
-            'modal_id' => 'add-gallery-modal',
-            'form_action' => route('admin_gallery.store'),
+            'modal' => 'Add Banner',
+            'modal_name' => 'Create New Banner',
+            'modal_id' => 'add-banner-modal',
+            'form_action' => route('banner.store'),
             'form_method' => 'POST',
             'fields' => $addFields
-        ])
-
-        {{-- Search Bar --}}
-        @include('components.searchbar', [
-            'search' => route('admin_gallery.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
             'modal' => 'Edit',
-            'modal_name' => 'Edit Gallery',
-            'modal_id' => 'edit-gallery-modal',
-            'form_action' => route('admin_gallery.update', ':id'),
-            'form_method' => 'PUT',
-            'id_field' => 'gallery_id',
+            'modal_name' => 'Edit Banner',
+            'modal_id' => 'edit-banner-modal',
+            'form_action' => route('banner.update', ':id'),
+            'form_method' => 'PATCH',
+            'id_field' => 'banner_id',
             'fields' => $editFields,
             'data' => $data,
             'columns' => $columns,
-            'delete_route' => route('admin_gallery.destroy', ':id'),
-            'edit_route' => 'admin_gallery.getGallery'
+            'delete_route' => route('banner.destroy', ':id'),
+            'edit_route' => 'banner.getBanner'
         ])
     </div>
 </div>
@@ -57,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle edit button click
     document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const galleryId = this.getAttribute('data-id');
+            const bannerId = this.getAttribute('data-id');
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.getElementById(modalId);
             
@@ -69,17 +65,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = modal.querySelector('form');
             
             // Debug
-            console.log('Gallery ID:', galleryId);
+            console.log('Banner ID:', bannerId);
             console.log('Modal ID:', modalId);
             
             // Update form action jika diperlukan (untuk kasus dinamis)
             if (form.getAttribute('action').includes(':id')) {
-                const actionUrl = form.getAttribute('action').replace(':id', galleryId);
+                const actionUrl = form.getAttribute('action').replace(':id', bannerId);
                 form.setAttribute('action', actionUrl);
             }
             
-            // Fetch gallery data untuk populate form
-            fetch(`{{ url('admin_gallery') }}/${galleryId}`, {
+            // Fetch banner data untuk populate form
+            fetch(`{{ url('banner') }}/${bannerId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -93,29 +89,20 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.success) {
-                    const gallery = data.data;
-                    
-                    // Populate form fields
-                    const titleInput = modal.querySelector('input[name="title"]');
-                    const descInput = modal.querySelector('textarea[name="description"]');
-                    const categorySelect = modal.querySelector('select[name="category_id"]');
-                    
-                    if (nameInput) nameInput.value = gallery.title || '';
-                    if (descInput) descInput.value = gallery.description || '';
-                    if (categorySelect) categorySelect.value = gallery.category_id || '';
+                    const banner = data.data;
                     
                     // Show current image if exists
                     const imagePreview = modal.querySelector('#image-preview');
-                    if (gallery.image_path && imagePreview) {
-                        imagePreview.src = `/storage/${gallery.image_path}`;
+                    if (banner.image_path && imagePreview) {
+                        imagePreview.src = `/storage/${banner.image_path}`;
                         imagePreview.style.display = 'block';
                     }
                 } else {
-                    console.error('Failed to fetch gallery data:', data);
+                    console.error('Failed to fetch banner data:', data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching gallery data:', error);
+                console.error('Error fetching banner data:', error);
                 // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
@@ -124,13 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle delete button click
     document.querySelectorAll('.delete-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const galleryId = this.getAttribute('data-id');
-            const galleryName = this.getAttribute('data-name');
+            const bannerId = this.getAttribute('data-id');
             
-            if (confirm(`Apakah Anda yakin ingin menghapus gallery "${galleryName}"?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus banner ini ?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('admin_gallery') }}/${galleryId}`;
+                form.action = `{{ url('banner') }}/${bannerId}`;
                 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

@@ -71,7 +71,7 @@ class AdminCategoryController extends Controller
             ],
         ];
 
-        return view('pages.admin_category', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.admin_category', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
@@ -104,7 +104,7 @@ class AdminCategoryController extends Controller
 
         Category::create($data);
 
-            return redirect()->route('admin_category.index')
+            return redirect()->route('category.index')
                 ->with('success', 'Category berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -136,7 +136,7 @@ class AdminCategoryController extends Controller
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
-        return view('pages.admin_category.edit', compact('category'));
+        return view('admin.admin_category.edit', compact('category'));
     }
 
     /**
@@ -163,7 +163,7 @@ class AdminCategoryController extends Controller
 
             $category->update($data);
 
-            return redirect()->route('admin_category.index')
+            return redirect()->route('category.index')
                 ->with('success', 'Category berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -182,7 +182,7 @@ class AdminCategoryController extends Controller
 
             $category->delete();
 
-            return redirect()->route('admin_category.index')
+            return redirect()->route('category.index')
                 ->with('success', 'Category berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

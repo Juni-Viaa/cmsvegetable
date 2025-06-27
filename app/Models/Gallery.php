@@ -10,7 +10,7 @@ class Gallery extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'gallery';
+    protected $table = 'galleries';
 
     protected $primaryKey = 'gallery_id';
 

@@ -28,7 +28,7 @@
                     @endforeach
                     <td class="px-6 py-4 space-x-2">
                         <!-- Tombol Edit -->
-                        <button data-modal-target="{{ $modal_id }}-{{ $row->{ $id_field } }}" data-modal-toggle="{{ $modal_id }}-{{ $row->{ $id_field } }}" data-id="{{ $row->{ $id_field } }}" data-name="{{ $row->name ?? 'Item' }}" class="text-blue-600 hover:underline">Edit</button>
+                        @include('components.modal_edit')
 
                         <!-- Tombol Delete -->
                         @include('components.modal_delete')
@@ -59,6 +59,8 @@
                         </div>
                     </div>
                 </div>
+                
+                
             @endforeach
         </tbody>
     </table>
