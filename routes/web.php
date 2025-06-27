@@ -64,6 +64,22 @@ Route::middleware([
     Route::resource('account', AdminAccountController::class);
 });
 
+Route::middleware([
+    \Illuminate\Auth\Middleware\Authenticate::class,
+    \App\Http\Middleware\AdminMiddleware::class,
+])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('statistics', CompanyStatisticController::class);
+    Route::resource('abouts', CompanyAboutController::class);
+    Route::resource('showcases', ShowcaseController::class);
+    Route::resource('principles', OurPrincipleController::class);
+    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('clients', ProjectClientController::class);
+    Route::resource('teams', OurTeamController::class);
+    Route::resource('appointments', AppointmentController::class);
+    Route::resource('hero_sections', HeroSectionController::class);
+});
+
+
 Route::get('/hash-password', function () {
     return Hash::make('users');
 });
@@ -92,9 +108,9 @@ Route::get('/aboutus', [AboutusController::class, 'aboutus'])->name('aboutus');
 Route::get('/settings', [AccountSettingsController::class, 'settingacc'])->name('settings');
 Route::get('/passwordchg', [ChgPwController::class, 'passwordchg'])->name('passwordchg');
 Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
-Route::get('/blog/{id}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
-Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
+Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('admin.blog.comment');
 Route::get('/list_blog', [ListBlogController::class, 'list_blog'])->name('list_blog');
 Route::get('/products', [ProductController::class, 'list'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'product']);
@@ -116,17 +132,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-//Landing Page New Admin Routes 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('statistics', CompanyStatisticController::class);
-    Route::resource('abouts', CompanyAboutController::class);
-    Route::resource('showcases', ShowcaseController::class);
-    Route::resource('principles', OurPrincipleController::class);
-    Route::resource('testimonials', TestimonialController::class);
-    Route::resource('clients', ProjectClientController::class);
-    Route::resource('teams', OurTeamController::class);
-    Route::resource('appointments', AppointmentController::class);
-    Route::resource('hero_sections', HeroSectionController::class);
-});
 // require __DIR__.'/auth.php';
