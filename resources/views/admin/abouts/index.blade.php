@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-row justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Manage About') }}
+                {{ __('Manage Vission & Mission') }}
             </h2>
             <a href="{{route('admin.abouts.create')}}" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
                 Add New

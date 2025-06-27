@@ -40,23 +40,26 @@
                                 <x-dropdown-link :href="route('admin.statistics.index')">
                                     {{ __('Company Stats') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.showcases.index')">
+                                    {{ __('Our Showcases') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
 
-                    <x-nav-link :href="route('admin.teams.index')" :active="request()->routeIs('admin.teams.index')">
+                    {{-- <x-nav-link :href="route('admin.teams.index')" :active="request()->routeIs('admin.teams.index')">
                         {{ __('Our Teams') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
 
-                    <x-nav-link :href="route('admin.showcases.index')" :active="request()->routeIs('admin.showcases.index')">
+                    {{-- <x-nav-link :href="route('admin.showcases.index')" :active="request()->routeIs('admin.showcases.index')">
                         {{ __('Our Showcases') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
 
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <div>Stories</div>
+                                    <div>About Us</div>
         
                                     <div class="ms-1">
                                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -73,17 +76,79 @@
                                 <x-dropdown-link :href="route('admin.clients.index')">
                                     {{ __('Our Clients') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.abouts.index')">
+                                    {{ __('Vision & Mission') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.teams.index')">
+                                    {{ __('Our Teams') }}
+                                </x-dropdown-link>
+                                {{-- <x-dropdown-link :href="route('admin.appointments.index')">
+                                    {{ __('Appointments') }}
+                                </x-dropdown-link> --}}
                             </x-slot>
                         </x-dropdown>
                     </div>
-
+                    {{-- 
                     <x-nav-link :href="route('admin.abouts.index')" :active="request()->routeIs('admin.abouts.index')">
                         {{ __('About') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments.index')">
                         {{ __('Appointments') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
+                    
+                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                    <div> {{ __('Data Management') }}</div>
+        
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+        
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('admin_category.index')">
+                                    {{ __('Categories') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin_product.index')">
+                                    {{ __('Products') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin_account.index')">
+                                    {{ __('Accounts') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+
+                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                    <div> {{ __('Content & Media') }}</div>
+        
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+        
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('admin_blog.index')">
+                                    {{ __('Blog') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin_gallery.index')">
+                                    {{ __('Gallery') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
                 </div>
             </div>
 
