@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 // Middleware
 use App\Http\Middleware\AdminMiddleware;
 
-// Admin Controller
+// Admin Routes
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminBannerController;
 use App\Http\Controllers\AdminProductController;
@@ -16,15 +16,17 @@ use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminAccountController;
 use App\Http\Controllers\AuthController;
 
-// Users Controller
+// Auth Routes
 use App\Http\Controllers\ForgetPwController;
 use App\Http\Controllers\ForgetPwController2;
 use App\Http\Controllers\ForgetPwController3;
-use App\Http\Controllers\landingpageController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RegisterController2;
 use App\Http\Controllers\RegisterController3;
+
+// Users Routes
+use App\Http\Controllers\landingpageController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ListProductController;
 use App\Http\Controllers\ProductController;
@@ -63,16 +65,14 @@ Route::middleware([
 });
 
 Route::get('/hash-password', function () {
-    return Hash::make('users');
+    return Hash::make('@dmin');
 });
 
 // Form Register
 Route::get('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store'); // <- ini penting
-
 Route::get('/register2', [RegisterController2::class, 'register2']);
 Route::post('/register2', [RegisterController2::class, 'store2'])->name('register2.store');
-
 Route::get('/register3', [RegisterController3::class, 'register3']);
 
 // Form Login
@@ -96,7 +96,8 @@ Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name
 Route::get('/list_blog', [ListBlogController::class, 'list_blog'])->name('list_blog');
 Route::get('/products', [ProductController::class, 'list'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'product']);
-Route::post('/products/{id}/comment', [ProductController::class, 'submitComment'])->middleware('auth');
+Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->middleware('auth');
+Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
 

@@ -21,14 +21,6 @@ class Blog extends Model
         'created_by'
     ];
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class, 'blog_id', 'blog_id')
-            ->where('target_type', 'blog')
-            ->whereNull('parent_id')
-            ->latest();
-    }
-
     public function related()
     {
         return Blog::where('category_id', $this->category_id)
@@ -40,5 +32,9 @@ class Blog extends Model
     public function category()
     {
     return $this->belongsTo(Category::class, 'category_id');
-    }       
+    }
+
+    public function comments() {
+        return $this->morphMany(Comment::class, 'target');
+    }
 }

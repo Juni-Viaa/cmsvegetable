@@ -9,7 +9,7 @@
     <div x-data="{ open: true }" class="w-full mb-10 bg-gradient-to-tr from-green-200 via-green-50 to-green-100 p-6 rounded-2xl shadow-lg">
         <div class="flex justify-between items-center cursor-pointer" @click="open = !open">
             <h2 class="text-2xl font-bold text-black flex items-center gap-2">
-               <svg xmlns="http://www.w3.org/2000/svg"
+                <svg xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     class="size-6 text-black fill-current">
@@ -87,9 +87,9 @@
         @foreach ($vegetables as $index => $veg)
         {{-- Pindahkan @click ke div.product-card --}}
         <div class="product-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up"
-             @click="openModal({{ $index }})"> {{-- KLIK SEKARANG DI SINI --}}
+            @click="openModal({{ $index }})"> {{-- KLIK SEKARANG DI SINI --}}
             <img src="{{ asset('storage/' . $veg->image_path) }}" alt="{{ $veg->product_name }}"
-                 class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
+                class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
             <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                 <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
                     {{ $veg->category->category_name ?? 'Tanpa Kategori' }}
