@@ -46,6 +46,6 @@ class RegisterController3 extends Controller
         }
 
         // OTP valid, bisa lanjut ke tahap selanjutnya
-        return redirect('/')->with('success', 'Verifikasi berhasil!');
+        return redirect('/login')->with('success', 'Verifikasi berhasil!');
     }
 }

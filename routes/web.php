@@ -116,7 +116,7 @@ Route::get('/test-send-otp', function () {
 });
 
 Route::get('/test-otp', function () {
-    $token = 'hakiUGpdf8MJXNCTSN5V'; // tempel token langsung tanpa spasi
+    $token = 'zYmnGtaD58JUxy3nu59w'; // tempel token langsung tanpa spasi
 
     $response = Http::withToken($token)->post('https://api.fonnte.com/send', [
         'target' => '6282170640976',
