@@ -92,6 +92,39 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 Route::get('/register2', [RegisterController2::class, 'register2']);
 Route::post('/register2', [RegisterController2::class, 'store2'])->name('register2.store');
 Route::get('/register3', [RegisterController3::class, 'register3']);
+Route::post('/register3', [RegisterController3::class, 'verifyOtp'])->name('register3.verify');
+
+Route::get('/test-send-otp', function () {
+    $token = config('services.fonnte.token');
+    $phone = '6282170640976'; // GANTI dengan nomor WhatsApp kamu
+    $otp = rand(1000, 9999); // Bisa juga 1234 untuk fix testing
+
+    $response = Http::withToken($token)->post('https://api.fonnte.com/send', [
+        'target'  => $phone,
+        'message' => "Ini pesan tes.\nKode OTP kamu: *$otp*",
+    ]);
+
+    if ($response->successful()) {
+        return "Sukses kirim OTP ke $phone";
+    } else {
+        return response()->json([
+            'error' => 'Gagal kirim',
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+    }
+});
+
+Route::get('/test-otp', function () {
+    $token = 'hakiUGpdf8MJXNCTSN5V'; // tempel token langsung tanpa spasi
+
+    $response = Http::withToken($token)->post('https://api.fonnte.com/send', [
+        'target' => '6282170640976',
+        'message' => 'Tes kirim dari Laravel langsung',
+    ]);
+
+    return $response->body();
+});
 
 // Form Login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
