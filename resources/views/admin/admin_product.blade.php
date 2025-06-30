@@ -21,32 +21,35 @@
 
         {{-- Modal Add --}}
         @include('components.modal_add', [
+            // Terkoneksi ke AdminProductController@store
             'modal' => 'Add Product',
             'modal_name' => 'Create New Product',
             'modal_id' => 'add-product-modal',
-            'form_action' => route('product.store'),
+            'form_action' => route('product.store'), // POST ke controller
             'form_method' => 'POST',
-            'fields' => $addFields
+            'fields' => $addFields // Diambil dari AdminProductController@index
         ])
 
         {{-- Search Bar --}}
         @include('components.searchbar', [
+            // Pencarian dikirim ke AdminProductController@index
             'search' => route('product.index')
         ])
 
         {{-- Table --}}
         @include('components.table_admin', [
+            // Modal edit, terkoneksi ke AdminProductController@update dan @getProduct
             'modal' => 'Edit',
             'modal_name' => 'Edit Product',
             'modal_id' => 'edit-product-modal',
-            'form_action' => route('product.update', ':id'),
+            'form_action' => route('product.update', ':id'), // PATCH ke controller
             'form_method' => 'PATCH',
-            'id_field' => 'product_id',
-            'fields' => $editFields,
-            'data' => $data,
+            'id_field' => 'product_id', // Kolom unik dari model Product
+            'fields' => $editFields, // Diisi dari AdminProductController@index
+            'data' => $data, // Data hasil paginate() dari model Product
             'columns' => $columns,
-            'delete_route' => route('product.destroy', ':id'),
-            'edit_route' => 'product.getProduct'
+            'delete_route' => route('product.destroy', ':id'), // DELETE ke controller
+            'edit_route' => 'product.getProduct' // AJAX panggil AdminProductController@getProduct
         ])
     </div>
 </div>
@@ -68,19 +71,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const form = modal.querySelector('form');
-            
-            // Debug
+
+             // Debug
             console.log('Product ID:', productId);
             console.log('Modal ID:', modalId);
             
-            // Update form action jika diperlukan (untuk kasus dinamis)
+            // Update form action: mengganti ':id' dengan ID produk nyata
             if (form.getAttribute('action').includes(':id')) {
                 const actionUrl = form.getAttribute('action').replace(':id', productId);
-                form.setAttribute('action', actionUrl);
+                form.setAttribute('action', actionUrl); // Terhubung ke AdminProductController@update
             }
             
-            // Fetch product data untuk populate form
-            fetch(`{{ url('product') }}/${productId}`, {
+            // Ambil data produk dari AdminProductController@getProduct (via fetch)
+            fetch({{ url('product') }}/${productId}, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     const product = data.data;
                     
-                    // Populate form fields
+                    // Populate form fields dari response JSON
                     const nameInput = modal.querySelector('input[name="name"]');
                     const descInput = modal.querySelector('textarea[name="description"]');
                     const categorySelect = modal.querySelector('select[name="category_id"]');
@@ -105,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (descInput) descInput.value = product.description || '';
                     if (categorySelect) categorySelect.value = product.category_id || '';
                     
-                    // Show current image if exists
+                    // Tampilkan preview gambar jika ada
                     const imagePreview = modal.querySelector('#image-preview');
                     if (product.image_path && imagePreview) {
                         imagePreview.src = `/storage/${product.image_path}`;
@@ -117,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error fetching product data:', error);
-                // Tidak perlu alert, karena form masih bisa digunakan untuk edit
             });
         });
     });
@@ -131,16 +133,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirm(`Apakah Anda yakin ingin menghapus product "${productName}"?`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `{{ url('product') }}/${productId}`;
+                form.action = `{{ url('product') }}/${productId}`; // Terkoneksi ke AdminProductController@destroy
                 
-                // Add CSRF token
+                // Tambah CSRF token
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';
                 csrfToken.value = '{{ csrf_token() }}';
                 form.appendChild(csrfToken);
                 
-                // Add method spoofing for DELETE
+                // Tambah method spoofing DELETE
                 const methodInput = document.createElement('input');
                 methodInput.type = 'hidden';
                 methodInput.name = '_method';
@@ -153,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Preview image before upload
+    // Preview image sebelum upload
     document.querySelectorAll('input[type="file"]').forEach(function(input) {
         input.addEventListener('change', function() {
             const file = this.files[0];

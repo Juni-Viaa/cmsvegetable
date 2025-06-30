@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\Validator;
 class AdminProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar produk dalam halaman admin dengan pagination dan pencarian.
      */
     public function index(Request $request)
     {
+        // Kolom yang akan ditampilkan pada tabel
         $columns = [
             'product_name' => 'Product Name',
             'description' => 'Description',
@@ -23,43 +24,48 @@ class AdminProductController extends Controller
             'image_path' => 'Image',
         ];
 
+        // Query awal untuk memilih kolom dari tabel products
         $query = Product::select(array_merge(array_keys($columns), ['product_id']));
 
+        // Jika ada parameter pencarian
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%");
+            $query->where('name', 'like', "%$search%"); // NOTE: kolom yang dicari 'name', pastikan ini sesuai DB
         }
 
+        // Ambil data dengan pagination
         $data = $query->paginate(10);
 
+        // Ambil daftar kategori dengan tipe 'Product'
         $category = Category::where('category_type', 'Product')
                 ->pluck('category_name', 'category_id')
                 ->toArray();
 
+        // Field untuk form tambah produk
         $addFields = [
             [
-                'type' => 'text', 
-                'name' => 'product_name', 
+                'type' => 'text',
+                'name' => 'product_name',
                 'label' => 'Product Name',
                 'placeholder' => 'Enter product name',
                 'required' => true
             ],
             [
-                'type' => 'textarea', 
-                'name' => 'description', 
+                'type' => 'textarea',
+                'name' => 'description',
                 'label' => 'Description',
                 'placeholder' => 'Enter product description',
                 'required' => true
             ],
             [
-                'type' => 'file', 
-                'name' => 'image', 
+                'type' => 'file',
+                'name' => 'image',
                 'label' => 'Select Image',
                 'required' => true
             ],
             [
-                'type' => 'select', 
-                'name' => 'category_id', 
+                'type' => 'select',
+                'name' => 'category_id',
                 'label' => 'Category',
                 'options' => $category,
                 'placeholder' => 'Select category',
@@ -67,30 +73,31 @@ class AdminProductController extends Controller
             ],
         ];
 
+        // Field untuk form edit produk
         $editFields = [
             [
-                'type' => 'text', 
-                'name' => 'product_name', 
+                'type' => 'text',
+                'name' => 'product_name',
                 'label' => 'Product Name',
                 'placeholder' => 'Enter product name',
                 'required' => true
             ],
             [
-                'type' => 'textarea', 
-                'name' => 'description', 
+                'type' => 'textarea',
+                'name' => 'description',
                 'label' => 'Description',
                 'placeholder' => 'Enter product description',
                 'required' => true
             ],
             [
-                'type' => 'file', 
-                'name' => 'image', 
+                'type' => 'file',
+                'name' => 'image',
                 'label' => 'Select New Image',
                 'required' => false
             ],
             [
-                'type' => 'select', 
-                'name' => 'category_id', 
+                'type' => 'select',
+                'name' => 'category_id',
                 'label' => 'Category',
                 'options' => $category,
                 'placeholder' => 'Select category',
@@ -98,11 +105,12 @@ class AdminProductController extends Controller
             ],
         ];
 
+        // Kirim data ke view
         return view('admin.admin_product', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form untuk menambahkan produk (tidak digunakan di implementasi ini).
      */
     public function create()
     {
@@ -110,7 +118,7 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan produk baru ke database.
      */
     public function store(Request $request)
     {
@@ -119,9 +127,10 @@ class AdminProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,category_id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240' // max 10MB
         ]);
 
+        // Jika validasi gagal, kembali ke halaman sebelumnya
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -129,18 +138,21 @@ class AdminProductController extends Controller
         }
 
         try {
+            // Ambil input
             $data = $request->only(['product_name', 'description', 'category_id']);
-            
-            // Handle file upload
+
+            // Upload file gambar jika ada
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('products', $filename, 'public');
+                $path = $file->storeAs('products', $filename, 'public'); // simpan ke folder public/products
                 $data['image_path'] = $path;
             }
 
+            // Tambahkan id user yang membuat
             $data['created_by'] = Auth::id();
 
+            // Simpan ke database
             Product::create($data);
 
             return redirect()->route('product.index')
@@ -153,7 +165,7 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail produk tertentu (tidak digunakan di implementasi ini).
      */
     public function show(Request $request)
     {
@@ -161,7 +173,7 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan form untuk mengedit produk.
      */
     public function edit(string $id)
     {
@@ -171,7 +183,7 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui data produk yang sudah ada.
      */
     public function update(Request $request, $id)
     {
@@ -192,21 +204,22 @@ class AdminProductController extends Controller
         }
 
         try {
+            // Ambil input
             $data = $request->only(['product_name', 'description', 'category_id']);
-            
-            // Handle file upload
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
             if ($request->hasFile('image')) {
-                // Hapus file lama jika ada
                 if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
                     Storage::disk('public')->delete($product->image_path);
                 }
-                
+
                 $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('products', $filename, 'public');
                 $data['image_path'] = $path;
             }
 
+            // Update data
             $product->update($data);
 
             return redirect()->route('product.index')
@@ -219,13 +232,13 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus produk dari database.
      */
     public function destroy(string $id)
     {
         try {
             $product = Product::findOrFail($id);
-            
+
             // Hapus file gambar jika ada
             if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
                 Storage::disk('public')->delete($product->image_path);
@@ -242,7 +255,7 @@ class AdminProductController extends Controller
     }
 
     /**
-     * Get product data for AJAX (untuk modal edit)
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
      */
     public function getProduct($id)
     {
