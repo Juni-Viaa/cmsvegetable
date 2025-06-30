@@ -97,7 +97,8 @@ class AdminBlogController extends Controller
             ],
         ];
 
-        return view('admin.admin_blog', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.blogs.index', compact('data', 'columns', 'addFields', 'editFields'));
+        // return view('admin.admin_blog', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**

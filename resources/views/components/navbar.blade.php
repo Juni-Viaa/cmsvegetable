@@ -88,7 +88,7 @@
       </button>
       <div x-show="open" x-cloak @click.outside="open = false" x-transition
            class="absolute right-0 top-full mt-2 w-48 bg-white border rounded shadow-lg z-50">
-        <a href="{{ route('settings') }}"
+        <a href="{{ route('settings.index') }}"
            class="block px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-blue-700 font-semibold">
           Setting Akun
         </a>

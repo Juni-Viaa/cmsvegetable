@@ -43,7 +43,7 @@ class AdminAccountController extends Controller
             ],
         ];
 
-        $query = User::select(array_merge(array_keys($columns), ['user_id']));
+        $query = User::select(array_merge(array_keys($columns), ['user_id', 'created_at']));
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -52,7 +52,9 @@ class AdminAccountController extends Controller
 
         $data = $query->paginate(10);
 
+        // return view('admin.accounts.index', compact('data', 'columns', 'editFields'));
         return view('admin.admin_account', compact('data', 'columns', 'editFields'));
+
     }
 
     /**

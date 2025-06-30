@@ -81,6 +81,10 @@ Route::middleware([
     Route::resource('hero_sections', HeroSectionController::class);
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::get('/hash-password', function () {
     return Hash::make('@dmin');
@@ -105,7 +109,6 @@ Route::get('/lupa_password3', [ForgetPwController3::class, 'step3']);
 
 // Users Routes
 Route::get('/aboutus', [AboutusController::class, 'aboutus'])->name('aboutus');
-Route::get('/settings', [AccountSettingsController::class, 'settingacc'])->name('settings');
 Route::get('/passwordchg', [ChgPwController::class, 'passwordchg'])->name('passwordchg');
 Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
 Route::get('/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
@@ -118,14 +121,19 @@ Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->m
 Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
+
+Route::get('/settings', [AccountSettingsController::class, 'index'])->name('settings.index');
+Route::get('/settings/password', [AccountSettingsController::class, 'password'])->name('settings.password');
+Route::put('/settings/profile', [AccountSettingsController::class, 'updateProfile'])->name('settings.profile.update');
+Route::put('/settings/password', [AccountSettingsController::class, 'updatePassword'])->name('settings.password.update');
+
+
 //Auth
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

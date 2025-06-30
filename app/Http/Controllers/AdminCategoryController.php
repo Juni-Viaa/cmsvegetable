@@ -72,6 +72,7 @@ class AdminCategoryController extends Controller
         ];
 
         return view('admin.admin_category', compact('data', 'columns', 'addFields', 'editFields'));
+        // return view('admin.categories.index', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
