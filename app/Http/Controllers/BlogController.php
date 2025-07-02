@@ -32,10 +32,10 @@ class BlogController extends Controller
         return view('pages.blogs', compact('blog', 'comments', 'related'));
     }
 
-    public function index()
+    public function list()
     {
-    $blogs = Blog::latest()->paginate(6); // atau ->get() jika tidak ingin pagination
-    return view('pages.list_blog', compact('blogs'));
+    $blog = Blog::latest()->paginate(6); // atau ->get() jika tidak ingin pagination
+    return view('pages.list_blog', compact('blog'));
     }
 
     // Autentikasi Sebelum Komentar dan Menyimpan Komentar

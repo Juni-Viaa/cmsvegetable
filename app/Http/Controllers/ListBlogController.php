@@ -8,44 +8,36 @@ use Illuminate\Http\Request;
 
 class ListBlogController extends Controller
 {
-    public function list_blog(Request $request)
+    public function index(Request $request)
     {
         $query = Blog::query();
 
-        // Load relasi category untuk menghindari N+1 problem
-        $query->with('category');
+        $categories = Category::where('category_type', 'blog')->get();
 
-        // Filter berdasarkan kategori (jika ada)
+       // Filter berdasarkan kategori
         if ($request->has('category') && is_array($request->category)) {
-            // Ambil ID kategori berdasarkan nama kategori yang dipilih
-            $categoryIds = Category::where('category_type', 'blog')
-                ->whereIn('category_name', $request->category)
-                ->pluck('category_id')
-                ->toArray();
-
-            if (!empty($categoryIds)) {
-                $query->whereIn('category_id', $categoryIds);
-            }
+            $query->whereIn('category_id', $request->category);
         }
 
-        // Sortir berdasarkan pilihan pengguna
-        if ($request->sort === 'latest') {
+        // Sortir
+        if ($request->sort === 'terbaru') {
             $query->orderBy('created_at', 'desc');
         } elseif ($request->sort === 'az') {
             $query->orderBy('title', 'asc');
-        } else {
-            // Default sorting
-            $query->orderBy('created_at', 'desc');
         }
 
         // Pagination
         $blogs = $query->paginate(12)->withQueryString();
 
-        // Ambil semua kategori dengan type 'blog' dari tabel categories
-        $categories = Category::where('category_type', 'blog')
-            ->orderBy('category_name', 'asc')
-            ->get(['category_id', 'category_name']);
+        $alpinejs = $blogs->map(function ($v) {
+        return [
+            'id' => $v->blog_id,
+            'name' => $v->title,
+            'description' => $v->content,
+            'image' => asset('storage/' . $v->image_path),
+            ];
+        });
 
-        return view('pages.list_blog', compact('blogs', 'categories'));
+        return view('pages.list_blog', compact('categories', 'blogs', 'alpinejs'));
     }
 }

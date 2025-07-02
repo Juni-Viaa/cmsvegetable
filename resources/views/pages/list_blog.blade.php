@@ -29,7 +29,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 w-full lg:w-1/3">
                     <h3 class="text-black font-semibold mb-4">Sort By</h3>
                     <label class="flex items-center space-x-2 mb-2 bg-green-50 px-4 py-2 rounded-xl">
-                        <input type="radio" name="sort" value="latest"
+                        <input type="radio" name="sort" value="terbaru"
                             {{ request('sort') == 'latest' ? 'checked' : '' }} class="accent-green-600">
                         <span class="text-sm font-medium text-gray-700">Latest Update</span>
                     </label>
@@ -44,13 +44,39 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200 w-full lg:w-2/3">
                     <h3 class="text-black font-semibold mb-3 text-sm">Filter by Category</h3>
                     <div class="flex flex-wrap gap-2">
+                        @php $snackCategory = $categories->firstWhere('category_name', 'Snacks'); @endphp
+
                         @foreach ($categories as $cat)
-                            <label
-                                class="inline-flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl border border-green-100 hover:shadow transition">
-                                <input type="checkbox" name="category[]" value="{{ $cat->category_name }}"
-                                    {{ is_array(request('category')) && in_array($cat->category_name, request('category')) ? 'checked' : '' }}>
-                                <span class="text-sm font-medium text-gray-700">{{ $cat->category_name }}</span>
-                            </label>
+                            @if ($cat->category_name === 'Beverages')
+                                <div class="flex flex-row gap-3">
+                                    <label
+                                        class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                        <input type="checkbox" name="category[]" value="{{ $cat->category_id }}"
+                                            {{ is_array(request('category')) && in_array($cat->category_id, request('category')) ? 'checked' : '' }}
+                                            class="accent-green-600">
+                                        <span class="text-gray-700 font-medium">{{ $cat->category_name }}</span>
+                                    </label>
+                                    @if ($snackCategory)
+                                        <label
+                                            class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                            <input type="checkbox" name="category[]"
+                                                value="{{ $snackCategory->category_id }}"
+                                                {{ is_array(request('category')) && in_array($snackCategory->category_id, request('category')) ? 'checked' : '' }}
+                                                class="accent-green-600">
+                                            <span
+                                                class="text-gray-700 font-medium">{{ $snackCategory->category_name }}</span>
+                                        </label>
+                                    @endif
+                                </div>
+                            @elseif ($cat->category_name !== 'Snacks')
+                                <label
+                                    class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                    <input type="checkbox" name="category[]" value="{{ $cat->category_id }}"
+                                        {{ is_array(request('category')) && in_array($cat->category_id, request('category')) ? 'checked' : '' }}
+                                        class="accent-green-600">
+                                    <span class="text-gray-700 font-medium">{{ $cat->category_name }}</span>
+                                </label>
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -70,19 +96,19 @@
 
         {{-- ============================ PRODUK ============================ --}}
         <div id="blogGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 transition-all duration-300">
-            @foreach ($blogs as $index => $item)
+            @foreach ($blogs as $index => $blog)
                 {{-- Pindahkan @click ke div.blog-card --}}
                 <div class="blog-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up"
                     @click="openModal({{ $index }})"> {{-- KLIK SEKARANG DI SINI --}}
-                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title }}"
+                    <img src="{{ asset('storage/' . $blog->image_path) }}" alt="{{ $blog->title }}"
                         class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
                     <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                         <span
                             class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
-                            {{ $item->category->category_name ?? 'Tanpa Kategori' }}
+                            {{ $blog->category->category_name ?? 'Tanpa Kategori' }}
                         </span>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $item->title }}</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed">{{ \Str::limit(strip_tags($item->content), 100) }}
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $blog->title }}</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ \Str::limit(strip_tags($blog->content), 100) }}
                         </p>
                     </div>
                 </div>
@@ -113,9 +139,8 @@
                         class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50">
                     <h3 class="text-xl font-bold text-gray-900 mb-2" x-text="currentBlog.title"></h3>
                     <p class="text-gray-700 text-sm leading-relaxed max-h-48 overflow-y-auto"
-                        x-text="currentBlog.description"></p>
+                        x-text="currentBlog.content"></p>
                     <div class="flex justify-between mt-6">
-                        {{-- Memanggil fungsi yang benar di Alpine.js --}}
                         <button @click="previousBlog"
                             class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">←
                             Previous</button>
@@ -123,6 +148,7 @@
                             class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next
                             →</button>
                     </div>
+                </a>
             </div>
         </div>
     </div>
@@ -195,21 +221,21 @@
             return {
                 modalOpen: false,
                 currentBlog: {},
-                blogs: @json($blogs),
+                alpinejs: @json($alpinejs),
                 openModal(index) {
-                    this.currentBlog = this.blogs[index];
+                    this.currentBlog = this.alpinejs[index];
                     this.modalOpen = true;
                 },
                 closeModal() {
                     this.modalOpen = false;
                 },
                 previousBlog() {
-                    const index = this.blogs.findIndex(p => p.id === this.currentBlog.id);
+                    const index = this.alpinejs.findIndex(p => p.id === this.currentBlog.id);
                     if (index > 0) this.openModal(index - 1);
                 },
                 nextBlog() {
-                    const index = this.blogs.findIndex(p => p.id === this.currentBlog.id);
-                    if (index < this.blogs.length - 1) this.openModal(index + 1);
+                    const index = this.alpinejs.findIndex(p => p.id === this.currentBlog.id);
+                    if (index < this.alpinejs.length - 1) this.openModal(index + 1);
                 }
             }
         }

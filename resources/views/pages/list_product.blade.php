@@ -51,13 +51,39 @@
                         <span></span> Filter by Category
                     </h3>
                     <div class="flex flex-wrap gap-2">
+                        @php $snackCategory = $categories->firstWhere('category_name', 'Snacks'); @endphp
+
                         @foreach ($categories as $cat)
-                            <label
-                                class="inline-flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl border border-green-100 hover:shadow transition">
-                                <input type="checkbox" name="category[]" value="{{ $cat->category_name }}"
-                                    {{ is_array(request('category')) && in_array($cat->category_name, request('category')) ? 'checked' : '' }}>
-                                <span class="text-sm font-medium text-gray-700">{{ $cat->category_name }}</span>
-                            </label>
+                            @if ($cat->category_name === 'Beverages')
+                                <div class="flex flex-row gap-3">
+                                    <label
+                                        class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                        <input type="checkbox" name="category[]" value="{{ $cat->category_id }}"
+                                            {{ is_array(request('category')) && in_array($cat->category_id, request('category')) ? 'checked' : '' }}
+                                            class="accent-green-600">
+                                        <span class="text-gray-700 font-medium">{{ $cat->category_name }}</span>
+                                    </label>
+                                    @if ($snackCategory)
+                                        <label
+                                            class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                            <input type="checkbox" name="category[]"
+                                                value="{{ $snackCategory->category_id }}"
+                                                {{ is_array(request('category')) && in_array($snackCategory->category_id, request('category')) ? 'checked' : '' }}
+                                                class="accent-green-600">
+                                            <span
+                                                class="text-gray-700 font-medium">{{ $snackCategory->category_name }}</span>
+                                        </label>
+                                    @endif
+                                </div>
+                            @elseif ($cat->category_name !== 'Snacks')
+                                <label
+                                    class="w-40 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 text-sm">
+                                    <input type="checkbox" name="category[]" value="{{ $cat->category_id }}"
+                                        {{ is_array(request('category')) && in_array($cat->category_id, request('category')) ? 'checked' : '' }}
+                                        class="accent-green-600">
+                                    <span class="text-gray-700 font-medium">{{ $cat->category_name }}</span>
+                                </label>
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -75,30 +101,30 @@
 
         {{-- ============================ PRODUK ============================ --}}
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 transition-all duration-300">
-            @foreach ($vegetables as $index => $veg)
+            @foreach ($products as $index => $product)
                 {{-- Pindahkan @click ke div.product-card --}}
                 <div class="product-card bg-white rounded-2xl shadow-md hover:shadow-xl hover:ring-2 hover:ring-green-200 transform transition duration-300 hover:scale-[1.03] animate-fade-up"
                     @click="openModal({{ $index }})"> {{-- KLIK SEKARANG DI SINI --}}
-                    <img src="{{ asset('storage/' . $veg->image_path) }}" alt="{{ $veg->product_name }}"
+                    <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->product_name }}"
                         class="w-full h-48 object-cover rounded-t-2xl cursor-pointer" />
                     <div class="p-4 flex flex-col justify-between flex-grow text-center sm:text-left">
                         <span
                             class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2 self-center sm:self-start">
-                            {{ $veg->category->category_name ?? 'Tanpa Kategori' }}
+                            {{ $product->category->category_name ?? 'Tanpa Kategori' }}
                         </span>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $veg->product_name }}</h3>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $product->product_name }}</h3>
                     </div>
                 </div>
             @endforeach
 
-            @if ($vegetables->isEmpty())
+            @if ($products->isEmpty())
                 <p class="col-span-full text-center text-gray-500">No products found with the selected filter.</p>
             @endif
         </div>
 
         {{-- ============================ PAGINATION ============================ --}}
         <div class="mt-8">
-            {{ $vegetables->links() }}
+            {{ $products->links() }}
         </div>
 
         {{-- ============================ MODAL ============================ --}}
@@ -123,6 +149,7 @@
                             class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next
                             →</button>
                     </div>
+                </a>
             </div>
         </div>
     </div>
@@ -195,21 +222,21 @@
             return {
                 modalOpen: false,
                 currentProduct: {},
-                products: @json($products),
+                alpinejs: @json($alpinejs),
                 openModal(index) {
-                    this.currentProduct = this.products[index];
+                    this.currentProduct = this.alpinejs[index];
                     this.modalOpen = true;
                 },
                 closeModal() {
                     this.modalOpen = false;
                 },
                 previousProduct() {
-                    const index = this.products.findIndex(p => p.id === this.currentProduct.id);
+                    const index = this.alpinejs.findIndex(p => p.id === this.currentProduct.id);
                     if (index > 0) this.openModal(index - 1);
                 },
                 nextProduct() {
-                    const index = this.products.findIndex(p => p.id === this.currentProduct.id);
-                    if (index < this.products.length - 1) this.openModal(index + 1);
+                    const index = this.alpinejs.findIndex(p => p.id === this.currentProduct.id);
+                    if (index < this.alpinejs.length - 1) this.openModal(index + 1);
                 }
             }
         }
