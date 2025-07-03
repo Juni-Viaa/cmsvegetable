@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class ListProductController extends Controller
 {
@@ -27,9 +27,9 @@ class ListProductController extends Controller
         }
 
         // Pagination
-        $vegetables = $query->paginate(12)->withQueryString();
+        $products = $query->paginate(12)->withQueryString();
 
-        $products = $vegetables->map(function ($v) {
+        $alpinejs = $products->map(function ($v) {
         return [
             'id' => $v->product_id,
             'name' => $v->product_name,
@@ -38,16 +38,6 @@ class ListProductController extends Controller
             ];
         });
 
-        // Untuk modal AlpineJS
-        $products = $vegetables->map(function ($v) {
-            return [
-                'id' => $v->product_id,
-                'name' => $v->product_name,
-                'description' => $v->description,
-                'image' => asset('storage/' . $v->image_path),
-            ];
-        });
-
-        return view('pages.list_product', compact('categories', 'vegetables', 'products'));
+        return view('pages.list_product', compact('categories', 'products', 'alpinejs'));
     }
 }

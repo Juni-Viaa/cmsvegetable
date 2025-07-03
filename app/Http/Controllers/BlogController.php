@@ -4,48 +4,88 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\Comment;
+use App\Models\Category;
+use App\Enums\TargetType;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 
 class BlogController extends Controller
 {
-    public function show($id)
+    public function blog($id)
     {
         $blog = Blog::findOrFail($id);
 
-        $comments = Comment::with('user', 'replies.user')
-            ->where('target_type', 'blog')
-            ->where('blog_id', $blog->blog_id)
+        $comments = Comment::with(['user', 'replies' => function ($query) {
+            $query->with('user');
+        }])
+            ->where('target_type', TargetType::Blog)
+            ->where('target_id', $blog->blog_id)
             ->whereNull('parent_id')
-            ->latest()
+            ->orderByDesc('created_at')
             ->get();
 
-        $related = $blog->related();
+        $related = Blog::where('blog_id', '!=', $id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
 
-        return view('pages.blog', compact('blog', 'comments', 'related'));
+        return view('pages.blogs', compact('blog', 'comments', 'related'));
     }
 
-    public function index()
+    public function list()
     {
-    $blogs = Blog::latest()->paginate(6); // atau ->get() jika tidak ingin pagination
-    return view('pages.list_blog', compact('blogs'));
+    $blog = Blog::latest()->paginate(6); // atau ->get() jika tidak ingin pagination
+    return view('pages.list_blog', compact('blog'));
     }
 
-    public function storeComment(Request $request, $id)
-    { 
+    // Autentikasi Sebelum Komentar dan Menyimpan Komentar
+    public function comments(Request $request, $id)
+    {
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', 'Anda harus login untuk mengirim komentar.');
+    }
+
     $request->validate([
-        'content' => 'required|string|max:1000',
+        'content' => 'required|string'
     ]);
 
-    Comment::create([
-        'content' => $request->input('content'),
-        'user_id' => 0, // guest
-        'target_type' => 'blog',
-        'blog_id' => $id,
-        'product_id' => 0,
+    $blog = Blog::findOrFail($id);
+
+    $blog->comments()->create([
+        'content' => $request->content,
+        'user_id' => auth()->id(),
         'parent_id' => null,
     ]);
 
-    return redirect()->back()->with('success', 'Komentar berhasil dikirim.');
+    return back()->with('success', 'Komentar berhasil dikirim!');
+    }
+
+    // Autentikasi Sebelum Komentar dan Menyimpan Komentar
+    public function replies(Request $request, $id)
+    {
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', 'Anda harus login untuk mengirim komentar.');
+    }
+
+    $request->validate([
+        'content' => 'required|string',
+        'parent_id' => 'nullable|integer|exists:comments,comment_id'
+    ]);
+
+    $blog = Blog::findOrFail($id);
+
+    $blog->comments()->create([
+        'content' => $request->content,
+        'user_id' => auth()->id(),
+        'parent_id' => $request->parent_id
+    ]);
+
+
+        try {
+            return back()->with('success', 'Balasan berhasil dikirim!');
+        } catch (\Exception $e) {
+            \Log::error("Reply creation failed: " . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
     }
 }

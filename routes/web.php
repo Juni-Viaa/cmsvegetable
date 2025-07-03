@@ -144,16 +144,19 @@ Route::get('/lupa_password3', [ForgetPwController3::class, 'step3']);
 Route::get('/aboutus', [AboutusController::class, 'aboutus'])->name('aboutus');
 Route::get('/passwordchg', [ChgPwController::class, 'passwordchg'])->name('passwordchg');
 Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
-Route::get('/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
-Route::get('/blog', [BlogController::class, 'index'])->name('blog');
-Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('admin.blog.comment');
-Route::get('/list_blog', [ListBlogController::class, 'list_blog'])->name('list_blog');
+
+
+Route::get('/blogs', [BlogController::class, 'list'])->name('blog');
+Route::get('/blogs/{id}', [BlogController::class, 'blog']);
+Route::post('/blogs/{id}/comment', [BlogController::class, 'comments'])->middleware('auth');
+Route::post('/blogs/{id}/replies', [BlogController::class, 'replies'])->middleware('auth');
+Route::get('/list_blog', [ListBlogController::class, 'index'])->name('list_blog');
+
 Route::get('/products', [ProductController::class, 'list'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'product']);
 Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->middleware('auth');
 Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
 Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
-
 
 Route::get('/settings', [AccountSettingsController::class, 'index'])->name('settings.index');
 Route::get('/settings/password', [AccountSettingsController::class, 'password'])->name('settings.password');
