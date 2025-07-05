@@ -1,5 +1,6 @@
 let videoFrame = document.getElementById('videoFrame');
 const targetEl = document.getElementById('video-modal');
+const pathVideo = document.getElementById('path_video').value;
 
 const options = {
     placement: 'bottom-right',
@@ -10,7 +11,7 @@ const options = {
         videoFrame.removeAttribute('src'); 
     },
     onShow: () => {
-        videoFrame.src = '';
+        videoFrame.src = 'https://www.youtube.com/embed/' + pathVideo;
     },
 };
 

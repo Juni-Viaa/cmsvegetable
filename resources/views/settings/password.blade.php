@@ -1,4 +1,4 @@
-@extends('settings.settings.layouts.app')
+@extends('settings.layouts.app')
 
 @section('title', 'Ubah Informasi Password')
 

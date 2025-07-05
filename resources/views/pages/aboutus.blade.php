@@ -5,15 +5,15 @@
 @section('content')
 <main class="w-full px-4 md:px-16 lg:px-24 py-12 space-y-16">
 
-  <!-- Parallax Banner -->
-  <div class="relative rounded-xl overflow-hidden shadow-2xl">
-    <div class="relative h-[28rem] parallax-banner" style="background-image: url('{{ asset('images/sayur1.jpg') }}');">
-      <div class="absolute inset-0 bg-black/50 z-10"></div>
-      <div class="absolute bottom-8 left-8 z-20 text-white text-4xl md:text-5xl font-bold drop-shadow-xl animate-glow">
-        Sayur Kita — Grow Locally, Export Globally
+    <!-- Parallax Banner -->
+    <div class="relative rounded-xl overflow-hidden shadow-2xl">
+      <div class="relative h-[28rem] parallax-banner" style="background-image: url('{{ asset('images/sayur1.jpg') }}');">
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+        <div class="absolute bottom-8 left-8 z-20 text-white text-4xl md:text-5xl font-bold drop-shadow-xl animate-glow">
+          Sayur Kita — Grow Locally, Export Globally
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- Our Story -->
   <section class="text-center max-w-5xl mx-auto space-y-6" data-reveal>
@@ -27,7 +27,7 @@
   </section>
 
   <!-- Vision & Mission -->
-  <section class="grid md:grid-cols-2 gap-10" data-reveal>
+  {{-- <section class="grid md:grid-cols-2 gap-10" data-reveal>
     <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-green-200 transition duration-300 ease-in-out">
       <h3 class="text-2xl font-semibold mb-4 text-green-700">Our Mission</h3>
       <p class="text-gray-600">To empower Indonesia’s local vegetable industry...</p>
@@ -36,7 +36,38 @@
       <h3 class="text-2xl font-semibold mb-4 text-green-700">Our Vision</h3>
       <p class="text-gray-600">To become the leading digital gateway...</p>
     </div>
-  </section>
+  </section> --}}
+
+  <div id="Products" class="container max-w-[1130px] mx-auto flex flex-col gap-20 mt-20">
+    @forelse($abouts as $about)
+    <div class="product flex flex-wrap justify-center items-center gap-[60px] even:flex-row-reverse">
+      <div class="w-[470px] h-[550px] flex shrink-0 overflow-hidden">
+        <img src="{{Storage::url($about->thumbnail)}}" class="w-full h-full object-contain" alt="thumbnail">
+      </div>
+      <div class="flex flex-col gap-[30px] py-[50px] h-fit max-w-[500px]">
+        <p class="badge w-fit bg-cp-pale-blue text-cp-light-blue p-[8px_16px] rounded-full uppercase font-bold text-sm">OUR {{$about->type}}</p>
+        <div class="flex flex-col gap-[10px]">
+          <h2 class="font-bold text-4xl leading-[45px]">{{$about->name}}</h2>
+          <div class="flex flex-col gap-5">
+            <div class="flex items-center gap-[10px]">
+            @forelse($about->keypoints as $keypoint)
+            <li class="flex items-center gap-[20px]">
+              <div class="w-6 h-6 flex shrink-0">
+                <img src="assets/icons/tick-circle.svg" alt="icon">
+              </div>
+              <p class="leading-[26px] font-semibold">{{$keypoint->keypoint}}</p>
+            </div>
+            @empty
+            <p class="text-cp-light-grey">No key points available.</p>
+            @endforelse
+          </div>
+        </div>
+      </div>
+    </div>
+    @empty
+    <p>No abouts found.</p>
+    @endforelse
+  </div>
 
   <!-- Illustrations -->
   <section class="grid md:grid-cols-3 gap-10" data-reveal>
@@ -63,25 +94,39 @@
   </section>
 
   <!-- Our Team -->
-  <section class="text-center space-y-8" data-reveal>
-    <h2 class="text-3xl font-bold">Meet Our Team</h2>
-    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-      @foreach ([['src' => 'hamid.jpg', 'nim' => '3312411005', 'name' => 'Muhammad Syarif Hamid (Project Leader)', 'desc' => 'Leader pengembangan frontend dan integrasi modul.'],
-                 ['src' => 'dipa.jpg', 'nim' => '3312311101', 'name' => 'Nailah Dipa Khairiyah Lubis', 'desc' => 'Desainer antarmuka dan dokumentasi sistem.'],
-                 ['src' => 'faiz.jpg', 'nim' => '3312411018', 'name' => 'Muhammad Faiz Difa Suanda', 'desc' => 'Backend & frontend integrator.'],
-                 ['src' => 'ilham.jpg', 'nim' => '3312411003', 'name' => 'Muhammad Ilham Tri Adi Putra', 'desc' => 'Testing dan deployment.'],
-                 ['src' => 'junior.jpg', 'nim' => '3312411002', 'name' => 'Junior Dirgantara Betan', 'desc' => 'DevOps dan pengelolaan versi.']] as $member)
-        <div 
-          class="bg-white p-6 rounded-xl shadow hover:shadow-xl transition duration-300 text-center cursor-pointer"
-          onclick="openModal('{{ asset('images/' . $member['src']) }}', '{{ $member['name'] }}', '{{ $member['nim'] }}', '{{ $member['desc'] }}')"
-        >
-          <img src="{{ asset('images/' . $member['src']) }}" class="w-32 h-32 object-cover rounded-full mx-auto mb-4 shadow-md">
-          <p class="font-semibold text-black-700">{{ $member['nim'] }}</p>
-          <p class="font-semibold text-gray-800">{{ $member['name'] }}</p>
+  <div id="Teams" class="w-full px-[10px] relative z-10">
+    <div class="container max-w-[1130px] mx-auto flex flex-col gap-[50px] items-center">
+      <div class="flex flex-col gap-[50px] items-center">
+        <h2 class="font-bold text-4xl leading-[45px] text-center">We’re Here to Show <br> Awesome Teamwork</h2>
+      </div>
+      <div class="teams-card-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[30px] justify-center">
+        
+        @forelse ($teams as $team)
+        <div class="card bg-white flex flex-col h-full justify-center items-center p-[30px] px-[29px] gap-[30px] rounded-[20px] border border-[#E8EAF2] hover:shadow-[0_10px_30px_0_#D1D4DF80] hover:border-cp-dark-blue transition-all duration-300">
+          <div class="w-[100px] h-[100px] flex shrink-0 items-center justify-center rounded-full bg-[linear-gradient(150.55deg,_#007AFF_8.72%,_#312ECB_87.11%)]">
+            <div class="w-[90px] h-[90px] rounded-full overflow-hidden">
+              <img src="{{Storage::url($team->avatar)}}" class="object-cover w-full h-full object-center" alt="photo">
+            </div>
+          </div>
+          <div class="flex flex-col gap-1 text-center">
+            <p class="font-bold text-xl leading-[30px]">{{ $team->name }}</p>
+            <p class="text-cp-light-grey">{{ $team->occupation }}</p>
+          </div>
+          <div class="flex items-center justify-center gap-[10px]">
+            <div class="w-6 h-6 flex shrink-0">
+              <img src="assets/icons/global.svg" alt="icon">
+            </div>
+            <p class="text-cp-dark-blue font-semibold">{{ $team->location }}</p>
+          </div>
         </div>
-      @endforeach
+        @empty
+        <p>No team members found.</p>
+        @endforelse
+
+
+      </div>
     </div>
-  </section>
+  </div>
 
 </main>
 @endsection
