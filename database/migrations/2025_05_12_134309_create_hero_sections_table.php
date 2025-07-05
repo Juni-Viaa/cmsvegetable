@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('hero_sections', function (Blueprint $table) {
-            $table->id();
-            $table->string('achievement');
-            $table->string('subheading');
+            $table->id('hero_id');
             $table->string('heading');
+            $table->string('subheading');
+            $table->string('achievement');
             $table->string('path_video');
-            $table->string('banner');
+            $table->string('image_path');
+            $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

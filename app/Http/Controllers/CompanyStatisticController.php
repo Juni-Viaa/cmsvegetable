@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreStatisticRequest;
-use App\Http\Requests\UpdateStatisticRequest;
 use App\Models\CompanyStatistic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CompanyStatisticController extends Controller
 {
@@ -16,9 +15,54 @@ class CompanyStatisticController extends Controller
      */
     public function index()
     {
-        //
-        $statistics = CompanyStatistic::orderByDesc('id')->paginate(10);
-        return view('admin.statistics.index', compact('statistics'));
+        $addFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter statistic name',
+                'required' => true
+            ],
+            [
+                'type' => 'text',
+                'name' => 'goal',
+                'label' => 'Goal',
+                'placeholder' => 'Enter statistic goal',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'icon',
+                'label' => 'Select Icon Image',
+                'required' => true
+            ],
+        ];
+
+        $editFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter statistic name',
+                'required' => true
+            ],
+            [
+                'type' => 'text',
+                'name' => 'goal',
+                'label' => 'Goal',
+                'placeholder' => 'Enter statistic goal',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'icon',
+                'label' => 'Select Icon Image',
+                'required' => false
+            ],
+        ];
+
+        $data = CompanyStatistic::orderByDesc('statistic_id')->paginate(10);
+        return view('admin.statistics.index', compact('data', 'addFields', 'editFields'));
     }
 
     /**
@@ -27,37 +71,58 @@ class CompanyStatisticController extends Controller
     public function create()
     {
         //
-        return view('admin.statistics.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreStatisticRequest $request)
+    public function store(Request $request)
     {
-        // Insert kepada database pada table tertentu (company_statistics)
-        // Closure-Based Transaction
+         // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'goal' => 'required|string|max:255',
+            'icon' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
 
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-            if($request->hasFile('icon')) {
-                $iconPath = $request->file('icon')->store('icons', 'public');
-                $validated['icon'] = $iconPath;
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'goal']);
+
+            // Upload file gambar jika ada
+            if ($request->hasFile('icon')) {
+                $file = $request->file('icon');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('statistics', $filename, 'public'); // simpan ke folder public/products
+                $data['icon'] = $path;
             }
-        
-            $newDataRecord = CompanyStatistic::create($validated);
 
-        });
+            // Tambahkan id user yang membuat
+            $data['created_by'] = Auth::id();
 
-        // Redirect or return response
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic created successfully.');
+            // Simpan ke database
+            CompanyStatistic::create($data);
+
+            return redirect()->route('admin.statistics.index')
+                ->with('success', 'Company statistic berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CompanyStatistic $companyStatistic)
+    public function show()
     {
         //
     }
@@ -65,44 +130,98 @@ class CompanyStatisticController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CompanyStatistic $statistic)
+    public function edit(Request $request, $id)
     {
         //
-        return view('admin.statistics.edit', compact('statistic'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateStatisticRequest $request, CompanyStatistic $statistic)
+    public function update(Request $request, $id)
     {
-        // Insert kepada database pada table tertentu (company_statistics)
-        // Closure-Based Transaction
+        $stat = CompanyStatistic::findOrFail($id);
 
-        DB::transaction(function () use ($request, $statistic) {
-            $validated = $request->validated();
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'goal' => 'required|string|max:255',
+            'icon' => 'false|image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
 
-            if($request->hasFile('icon')) {
-                $iconPath = $request->file('icon')->store('icons', 'public');
-                $validated['icon'] = $iconPath;
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'goal']);
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
+            if ($request->hasFile('icon')) {
+                if ($stat->image_path && Storage::disk('public')->exists($stat->image_path)) {
+                    Storage::disk('public')->delete($stat->image_path);
+                }
+
+                $file = $request->file('icon');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('statistics', $filename, 'public');
+                $data['icon'] = $path;
             }
+            
+            // Update data
+            $stat->update($data);
 
-            $statistic->update($validated);
-
-        });
-
-        // Redirect or return response
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic updated successfully.');
+            return redirect()->route('admin.statistics.index')
+                ->with('success', 'Company statistic berhasil di update!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompanyStatistic $statistic)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($statistic) {
-            $statistic->delete();
-        });
-        return redirect()->route('admin.statistics.index')->with('success', 'Statistic deleted successfully.');
+        try {
+            $stat = CompanyStatistic::findOrFail($id);
+
+            // Hapus file gambar jika ada
+            if ($stat->image_path && Storage::disk('public')->exists($stat->image_path)) {
+                Storage::disk('public')->delete($stat->image_path);
+            }
+
+            $stat->delete();
+
+            return redirect()->route('admin.statistics.index')
+                ->with('success', 'Company statistic berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
+     */
+    public function getStat($id)
+    {
+        try {
+            $stat = CompanyStatistic::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $stat
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hero Section not found'
+            ], 404);
+        }
     }
 }

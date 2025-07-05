@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTestimonialRequest;
-use App\Http\Requests\UpdateTestimonialRequest;
-use App\Models\ProjectClient;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class TestimonialController extends Controller
 {
@@ -16,9 +15,40 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        //
-        $testimonials = Testimonial::orderByDesc('id')->paginate(10);
-        return view('admin.testimonials.index', compact('testimonials'));
+        $addFields = [
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail Image',
+                'required' => true
+            ],
+            [
+                'type' => 'text',
+                'name' => 'message',
+                'label' => 'Message',
+                'placeholder' => 'Enter testimonial message',
+                'required' => true
+            ]
+        ];
+
+        $editFields = [
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail Image',
+                'required' => false
+            ],
+            [
+                'type' => 'text',
+                'name' => 'message',
+                'label' => 'Message',
+                'placeholder' => 'Enter testimonial message',
+                'required' => true
+            ]
+        ];
+
+        $data = Testimonial::orderByDesc('testimonial_id')->paginate(10);
+        return view('admin.testimonials.index', compact('addFields', 'editFields', 'data'));
     }
 
     /**
@@ -27,28 +57,51 @@ class TestimonialController extends Controller
     public function create()
     {
         //
-        $clients = ProjectClient::orderByDesc('id')->get();
-        return view('admin.testimonials.create', compact('clients'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTestimonialRequest $request)
+    public function store(Request $request)
     {
-        // Insert to the database in a specific table (testimonials)
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'message' => 'required|string|max:255'
+        ]);
 
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['message']);
+
+            // Upload file gambar jika ada
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('testimonials', $filename, 'public'); // simpan ke folder public/products
+                $data['thumbnail'] = $path;
             }
 
-            $newTestimonial = Testimonial::create($validated);
-        });
+            // Tambahkan id user yang membuat
+            $data['created_by'] = Auth::id();
 
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial created successfully.');
+            // Simpan ke database
+            Testimonial::create($data);
+
+            return redirect()->route('admin.testimonials.index')
+                ->with('success', 'Testimonial berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -65,39 +118,95 @@ class TestimonialController extends Controller
     public function edit(Testimonial $testimonial)
     {
         //
-        $clients = ProjectClient::orderByDesc('id')->get();
-        return view('admin.testimonials.edit', compact('testimonial', 'clients'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTestimonialRequest $request, Testimonial $testimonial)
+    public function update(Request $request, $id)
     {
-        // Insert to the database in a specific table (testimonials)
-        DB::transaction(function () use ($request, $testimonial) {
-            $validated = $request->validated();
+        $testimonial = Testimonial::findOrFail($id);
 
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'message' => 'required|string|max:255',
+        ]);
+
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['message']);
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                if ($hero->image_path && Storage::disk('public')->exists($testimonial->image_path)) {
+                    Storage::disk('public')->delete($testimonial->image_path);
+                }
+
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('testimonials', $filename, 'public');
+                $data['image_path'] = $path;
             }
+            
+            // Update data
+            $testimonial->update($data);
 
-            $testimonial->update($validated);
-        });
-
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial updated successfully.');
+            return redirect()->route('admin.testimonials.index')
+                ->with('success', 'Testimonial berhasil di update!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Testimonial $testimonial)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($testimonial) {
+        try {
+            $testimonial = Testimonial::findOrFail($id);
+
+            // Hapus file gambar jika ada
+            if ($testimonial->image_path && Storage::disk('public')->exists($testimonial->image_path)) {
+                Storage::disk('public')->delete($testimonial->image_path);
+            }
+
             $testimonial->delete();
-        });
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial deleted successfully.');
+
+            return redirect()->route('admin.testimonials.index')
+                ->with('success', 'Testimonial berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
+     */
+    public function getTestimonial($id)
+    {
+        try {
+            $testimonial = Testimonial::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $testimonial
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hero Section not found'
+            ], 404);
+        }
     }
 }

@@ -43,7 +43,7 @@
             'modal_name' => 'Edit Product',
             'modal_id' => 'edit-product-modal',
             'form_action' => route('product.update', ':id'), // PATCH ke controller
-            'form_method' => 'PATCH',
+            'form_method' => 'PUT',
             'id_field' => 'product_id', // Kolom unik dari model Product
             'fields' => $editFields, // Diisi dari AdminProductController@index
             'data' => $data, // Data hasil paginate() dari model Product

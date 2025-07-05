@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePrincipleRequest;
-use App\Http\Requests\UpdatePrincipleRequest;
 use App\Models\OurPrinciple;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class OurPrincipleController extends Controller
 {
@@ -15,9 +15,66 @@ class OurPrincipleController extends Controller
      */
     public function index()
     {
-        //
-        $principles = OurPrinciple::orderByDesc('id')->paginate(10);
-        return view('admin.principles.index', compact('principles'));
+        $addFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter name',
+                'required' => true
+            ],
+            [
+                'type' => 'textarea',
+                'name' => 'subtitle',
+                'label' => 'Subtitle',
+                'placeholder' => 'Enter subtitle',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'icon',
+                'label' => 'Select Icon',
+                'required' => true
+            ],
+        ];
+
+        $editFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter name',
+                'required' => true
+            ],
+            [
+                'type' => 'textarea',
+                'name' => 'subtitle',
+                'label' => 'Subtitle',
+                'placeholder' => 'Enter subtitle',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail',
+                'required' => false
+            ],
+            [
+                'type' => 'file',
+                'name' => 'icon',
+                'label' => 'Select Icon',
+                'required' => false
+            ],
+        ];
+
+        $data = OurPrinciple::orderByDesc('principle_id')->paginate(10);
+        return view('admin.principles.index', compact('addFields', 'editFields', 'data'));
     }
 
     /**
@@ -26,38 +83,65 @@ class OurPrincipleController extends Controller
     public function create()
     {
         //
-        return view('admin.principles.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePrincipleRequest $request)
+    public function store(Request $request)
     {
-        // Insert to the database in a specific table (our_principles)
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'icon' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
+
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'subtitle']);
+
+            if ($request->hasFile('thumbnail')) {
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('principles/thumbnail', $filename, 'public');
+                $data['thumbnail'] = $path;
+            }
 
             if ($request->hasFile('icon')) {
-                $iconPath = $request->file('icon')->store('icons', 'public');
-                $validated['icon'] = $iconPath;
-            }
-            
-            if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                $file = $request->file('icon');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('principles/icon', $filename, 'public');
+                $data['icon'] = $path;
             }
 
-            $newPrinciple = OurPrinciple::create($validated);
-        });
+            // Tambahkan id user yang membuat
+            $data['created_by'] = Auth::id();
 
-        return redirect()->route('admin.principles.index')->with('success', 'Principle created successfully.');
+            // Simpan ke database
+            OurPrinciple::create($data);
+
+            return redirect()->route('admin.principles.index')
+                ->with('success', 'Principle berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(OurPrinciple $ourPrinciple)
+    public function show()
     {
         //
     }
@@ -65,45 +149,116 @@ class OurPrincipleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(OurPrinciple $principle)
+    public function edit()
     {
-        return view('admin.principles.edit', compact('principle'));
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePrincipleRequest $request, OurPrinciple $principle)
+    public function update(Request $request, $id)
     {
-        // Insert to the database in a specific table (our_principles)
-        DB::transaction(function () use ($request, $principle) {
-            $validated = $request->validated();
+        $principle = OurPrinciple::findOrFail($id);
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'icon' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
+
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'subtitle']);
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
+            if ($request->hasFile('thumbnail')) {
+                if ($principle->thumbnail && Storage::disk('public')->exists($principle->thumbnail)) {
+                    Storage::disk('public')->delete($principle->thumbnail);
+                }
+
+                $file = $request->file('thumbnail');
+                $filename = time() . '_thumb_' . $file->getClientOriginalName();
+                $path = $file->storeAs('principles/thumbnail', $filename, 'public');
+                $data['thumbnail'] = $path;
+            }
 
             if ($request->hasFile('icon')) {
-                $iconPath = $request->file('icon')->store('icons', 'public');
-                $validated['icon'] = $iconPath;
-            }
-            
-            if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                if ($principle->icon && Storage::disk('public')->exists($principle->icon)) {
+                    Storage::disk('public')->delete($principle->icon);
+                }
+
+                $file = $request->file('icon');
+                $filename = time() . '_icon_' . $file->getClientOriginalName();
+                $path = $file->storeAs('principles/icon', $filename, 'public');
+                $data['icon'] = $path;
             }
 
-            $principle->update($validated);
-        });
+            // Update data
+            $principle->update($data);
 
-        return redirect()->route('admin.principles.index')->with('success', 'Principle updated successfully.');
+            return redirect()->route('admin.principles.index')
+                ->with('success', 'Principle berhasil di update!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OurPrinciple $principle)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($principle) {
+        try {
+            $principle = OurPrinciple::findOrFail($id);
+
+                // Hapus thumbnail jika ada
+            if ($principle->thumbnail && Storage::disk('public')->exists($principle->thumbnail)) {
+                Storage::disk('public')->delete($principle->thumbnail);
+            }
+
+            // Hapus icon jika ada
+            if ($principle->icon && Storage::disk('public')->exists($principle->icon)) {
+                Storage::disk('public')->delete($principle->icon);
+            }
+
             $principle->delete();
-        });
-        return redirect()->route('admin.principles.index')->with('success', 'Principle deleted successfully.');
+
+            return redirect()->route('admin.principles.index')
+                ->with('success', 'Principle berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
+     */
+    public function getPrinciple($id)
+    {
+        try {
+            $principle = OurPrinciple::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $principle
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Principle not found'
+            ], 404);
+        }
     }
 }

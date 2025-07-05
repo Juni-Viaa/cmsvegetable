@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('showcases', function (Blueprint $table) {
-            $table->id();
+            $table->id('showcase_id');
             $table->text('about');
             $table->string('thumbnail');
             $table->string('tagline');
             $table->string('name')->unique();
+            $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

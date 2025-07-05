@@ -1,5 +1,5 @@
 <!-- Modal toggle -->
-<button data-modal-target="{{ $modal_id }}" data-modal-toggle="{{ $modal_id }}" class="mt-6 block text-black bg-[#A2D77C] hover:bg-[#2E7D32] focus:ring-4 focus:outline-none focus:ring-[#2E7D32] font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">
+<button data-modal-target="{{ $modal_id }}" data-modal-toggle="{{ $modal_id }}"  type="button" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
     {{ $modal }}
 </button>
 

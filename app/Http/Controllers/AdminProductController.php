@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -177,9 +177,7 @@ class AdminProductController extends Controller
      */
     public function edit(string $id)
     {
-        $product = Product::findOrFail($id);
-        $category = Category::where('category_type', 'Product')->pluck('category_name', 'category_id')->toArray();
-        return view('admin.admin_product.edit', compact('product', 'category'));
+        //
     }
 
     /**

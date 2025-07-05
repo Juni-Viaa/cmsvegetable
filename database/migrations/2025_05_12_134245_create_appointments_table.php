@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('appointments', function (Blueprint $table) {
-            $table->id();
+            $table->id('appointment_id');
             $table->string('phone_number');
             $table->string('name');
             $table->string('email');
             $table->date('meeting_at');
             $table->unsignedBigInteger('budget');
             $table->text('brief');
-            $table->foreignID('showcase_id')->constrained()->OnDelete('cascade');
+            $table->foreignID('showcase_id')->constrained('showcases', 'showcase_id')->OnDelete('cascade');
+            $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

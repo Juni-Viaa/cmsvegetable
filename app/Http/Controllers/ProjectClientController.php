@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
 use App\Models\ProjectClient;
-use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectClientController extends Controller
 {
@@ -16,9 +15,66 @@ class ProjectClientController extends Controller
      */
     public function index()
     {
-        //
-        $clients = ProjectClient::orderByDesc('id')->paginate(10);
-        return view('admin.clients.index', compact('clients'));
+        $addFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter client name',
+                'required' => true
+            ],
+            [
+                'type' => 'text',
+                'name' => 'occupation',
+                'label' => 'Occupation',
+                'placeholder' => 'Enter occupation',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'avatar',
+                'label' => 'Select Avatar Image',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'logo',
+                'label' => 'Select Logo Image',
+                'required' => true
+            ]
+        ];
+
+        $editFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter client name',
+                'required' => true
+            ],
+            [
+                'type' => 'text',
+                'name' => 'occupation',
+                'label' => 'Occupation',
+                'placeholder' => 'Enter occupation',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'avatar',
+                'label' => 'Select Avatar Image',
+                'required' => false
+            ],
+            [
+                'type' => 'file',
+                'name' => 'logo',
+                'label' => 'Select Logo Image',
+                'required' => false
+            ]
+        ];
+
+        $data = ProjectClient::orderByDesc('client_id')->paginate(10);
+        return view('admin.clients.index', compact('addFields', 'editFields', 'data'));
     }
 
     /**
@@ -27,38 +83,66 @@ class ProjectClientController extends Controller
     public function create()
     {
         //
-        return view('admin.clients.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreClientRequest $request)
+    public function store(Request $request)
     {
-        // Insert to the database in a specific table (project_clients)
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'occupation' => 'required|string|max:255',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
 
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'occupation']);
+
+            // Upload file gambar jika ada
             if ($request->hasFile('avatar')) {
-                $avatarPath = $request->file('avatar')->store('avatars', 'public');
-                $validated['avatar'] = $avatarPath;
+                $file = $request->file('avatar');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('clients/avatar', $filename, 'public');
+                $data['avatar'] = $path;
             }
 
             if ($request->hasFile('logo')) {
-                $logoPath = $request->file('logo')->store('logos', 'public');
-                $validated['logo'] = $logoPath;
+                $file = $request->file('logo');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('clients/avatar', $filename, 'public');
+                $data['logo'] = $path;
             }
 
-            $newClient = ProjectClient::create($validated);
-        });
+            // Tambahkan id user yang membuat
+            $data['created_by'] = Auth::id();
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client created successfully.');
+            // Simpan ke database
+            ProjectClient::create($data);
+
+            return redirect()->route('admin.clients.index')
+                ->with('success', 'Data Client berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ProjectClient $projectClient)
+    public function show()
     {
         //
     }
@@ -66,46 +150,111 @@ class ProjectClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProjectClient $client)
+    public function edit()
     {
         //
-        return view('admin.clients.edit', compact('client'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, ProjectClient $client)
+    public function update(Request $request, $id)
     {
-        // Insert to the database in a specific table (project_clients)
-        DB::transaction(function () use ($request, $client) {
-            $validated = $request->validated();
+        $client = ProjectClient::findOrFail($id);
 
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'occupation' => 'required|string|max:255',
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'logo' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+        ]);
+
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'occupation']);
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
             if ($request->hasFile('avatar')) {
-                $avatarPath = $request->file('avatar')->store('avatars', 'public');
-                $validated['avatar'] = $avatarPath;
+                if ($client->image_path && Storage::disk('public')->exists($client->image_path)) {
+                    Storage::disk('public')->delete($client->image_path);
+                }
+
+                $file = $request->file('avatar');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('clients/avatar', $filename, 'public');
+                $data['avatar'] = $path;
             }
 
             if ($request->hasFile('logo')) {
-                $logoPath = $request->file('logo')->store('logos', 'public');
-                $validated['logo'] = $logoPath;
+                if ($client->image_path && Storage::disk('public')->exists($client->image_path)) {
+                    Storage::disk('public')->delete($client->image_path);
+                }
+
+                $file = $request->file('logo');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('clients/logo', $filename, 'public');
+                $data['logo'] = $path;
             }
+            
+            // Update data
+            $client->update($data);
 
-            $client->update($validated);
-        });
-
-        return redirect()->route('admin.clients.index')->with('success', 'Client updated successfully.');
+            return redirect()->route('admin.clients.index')
+                ->with('success', 'Data Client berhasil di update!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProjectClient $client)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($client) {
+        try {
+            $client = ProjectClient::findOrFail($id);
+
+            // Hapus file gambar jika ada
+            if ($client->image_path && Storage::disk('public')->exists($client->image_path)) {
+                Storage::disk('public')->delete($client->image_path);
+            }
+
             $client->delete();
-        });
-        return redirect()->route('admin.clients.index')->with('success', 'Client deleted successfully.');
+
+            return redirect()->route('admin.clients.index')
+                ->with('success', 'Data Client berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
+     */
+    public function getClient($id)
+    {
+        try {
+            $client = ProjectClient::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $client
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Client not found'
+            ], 404);
+        }
     }
 }

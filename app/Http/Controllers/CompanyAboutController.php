@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAboutRequest;
-use App\Http\Requests\UpdateAboutRequest;
 use App\Models\CompanyAbout;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CompanyAboutController extends Controller
 {
@@ -15,9 +15,63 @@ class CompanyAboutController extends Controller
      */
     public function index()
     {
-        //
-        $abouts = CompanyAbout::orderByDesc('id')->paginate(10);
-        return view('admin.abouts.index', compact('abouts'));
+        $addFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter name',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail Image',
+                'required' => true
+            ],
+            [
+                'type' => 'select', 
+                'name' => 'type', 
+                'label' => 'Select Type',
+                'options' => [
+                    1 => 'Vision',
+                    2 => 'Mission',
+                ], 
+                'placeholder' => 'Select Type',
+                'required' => true
+            ]
+
+        ];
+
+        $editFields = [
+            [
+                'type' => 'text',
+                'name' => 'name',
+                'label' => 'Name',
+                'placeholder' => 'Enter name',
+                'required' => true
+            ],
+            [
+                'type' => 'file',
+                'name' => 'thumbnail',
+                'label' => 'Select Thumbnail Image',
+                'required' => false
+            ],
+            [
+                'type' => 'select', 
+                'name' => 'type', 
+                'label' => 'Select Type',
+                'options' => [
+                    1 => 'Vision',
+                    2 => 'Mission',
+                ], 
+                'placeholder' => 'Select Type',
+                'required' => true
+            ]
+        ];
+
+        $data = CompanyAbout::orderByDesc('id')->paginate(10);
+        return view('admin.abouts.index', compact('addFields', 'editFields', 'data'));
     }
 
     /**
@@ -26,35 +80,52 @@ class CompanyAboutController extends Controller
     public function create()
     {
         //
-        return view('admin.abouts.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAboutRequest $request)
+    public function store(Request $request)
     {
-        // Insert to the database in a specific table (testimonials)
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+                // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'type' => 'required|string'
+        ]);
 
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'type']);
+
+            // Upload file gambar jika ada
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('abouts', $filename, 'public');
+                $data['thumbnail'] = $path;
             }
 
-            $newAbout = CompanyAbout::create($validated);
-            
-            if (!empty($validated['keypoints'])) {
-                foreach ($validated['keypoints'] as $keypoint) {
-                    $newAbout->keypoints()->create([
-                        'keypoint' => $keypoint
-                    ]);
-                }
-            }
-        });
+            // Tambahkan id user yang membuat
+            $data['created_by'] = Auth::id();
 
-        return redirect()->route('admin.abouts.index')->with('success', 'About section created successfully.');
+            // Simpan ke database
+            CompanyAbout::create($data);
+
+            return redirect()->route('admin.abouts.index')
+                ->with('success', 'Company About berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -71,49 +142,96 @@ class CompanyAboutController extends Controller
     public function edit(CompanyAbout $about)
     {
         //
-        return view('admin.abouts.edit', compact('about'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAboutRequest $request, CompanyAbout $about)
+    public function update(Request $request, $id)
     {
-        // Insert to the database in a specific table (testimonials)
-        DB::transaction(function () use ($request, $about) {
-            $validated = $request->validated();
+        $about = CompanyAbout::findOrFail($id);
 
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'type' => 'required|string'
+        ]);
+
+        // Jika validasi gagal, kembali ke halaman sebelumnya
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            // Ambil input
+            $data = $request->only(['name', 'type']);
+
+            // Jika ada file baru, hapus yang lama dan simpan yang baru
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
-            }
-
-            $about -> update($validated);
-            
-            if (!empty($validated['keypoints'])) {
-                // First, delete existing keypoints
-                $about->keypoints()->delete();
-                // Then, create new keypoints
-                foreach ($validated['keypoints'] as $keypoint) {
-                    $about->keypoints()->create([
-                        'keypoint' => $keypoint,
-                    ]);
+                if ($about->image_path && Storage::disk('public')->exists($about->image_path)) {
+                    Storage::disk('public')->delete($hero->image_path);
                 }
-            }
-        });
 
-        return redirect()->route('admin.abouts.index')->with('success', 'About section updated successfully.');
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('abouts', $filename, 'public');
+                $data['image_path'] = $path;
+            }
+            
+            // Update data
+            $about->update($data);
+
+            return redirect()->route('admin.abouts.index')
+                ->with('success', 'Company About berhasil di update!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompanyAbout $about)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($about) {
+        try {
+            $about = CompanyAbout::findOrFail($id);
+
+            // Hapus file gambar jika ada
+            if ($about->image_path && Storage::disk('public')->exists($about->image_path)) {
+                Storage::disk('public')->delete($about->image_path);
+            }
+
             $about->delete();
-        });
-        return redirect()->route('admin.abouts.index')->with('success', 'About section deleted successfully.');
+
+            return redirect()->route('admin.abouts.index')
+                ->with('success', 'Company About berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
+     */
+    public function getAbout($id)
+    {
+        try {
+            $about = CompanyAbout::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $about
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hero Section not found'
+            ], 404);
+        }
     }
 }

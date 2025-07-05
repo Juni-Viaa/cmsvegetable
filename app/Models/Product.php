@@ -20,14 +20,14 @@ class Product extends Model // Mendefinisikan class model Product yang mewarisi 
         'description',      // Deskripsi produk
         'image_path',       // Path atau lokasi gambar
         'category_id',      // Foreign key untuk relasi ke kategori
-        'created_by',       // Foreign key untuk relasi ke user (pembuat produk)
+        'created_by'       // Foreign key untuk relasi ke user (pembuat produk)
     ];
 
     // Casting kolom waktu ke instance Carbon (datetime)
     protected $casts = [
         'created_at' => 'datetime', // Kolom created_at dicasting ke format datetime
         'updated_at' => 'datetime', // Kolom updated_at dicasting ke format datetime
-        'deleted_at' => 'datetime', // Kolom deleted_at dicasting ke format datetime (digunakan oleh SoftDeletes)
+        'deleted_at' => 'datetime' // Kolom deleted_at dicasting ke format datetime (digunakan oleh SoftDeletes)
     ];
 
     // Accessor untuk mengambil URL gambar lengkap, dipanggil sebagai $product->image_url
