@@ -50,11 +50,12 @@
           <h2 class="font-bold text-4xl leading-[45px]">{{$about->name}}</h2>
           <div class="flex flex-col gap-5">
             <div class="flex items-center gap-[10px]">
-                @foreach($about->keypoints as $keypoint)
+            @forelse($about->keypoints as $keypoint)
+            <li class="flex items-center gap-[20px]">
               <div class="w-6 h-6 flex shrink-0">
                 <img src="assets/icons/tick-circle.svg" alt="icon">
               </div>
-              <p class="leading-[26px] font-semibold">{{$keypoint}}</p>
+              <p class="leading-[26px] font-semibold">{{$keypoint->keypoint}}</p>
             </div>
             @empty
             <p class="text-cp-light-grey">No key points available.</p>
@@ -66,7 +67,7 @@
     @empty
     <p>No abouts found.</p>
     @endforelse
-
+  </div>
 
   <!-- Illustrations -->
   <section class="grid md:grid-cols-3 gap-10" data-reveal>

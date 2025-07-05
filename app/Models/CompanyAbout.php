@@ -18,6 +18,6 @@ class CompanyAbout extends Model
 
     public function keypoints()
     {
-        return $this->hasMany(CompanyKeyPoint::class);
+        return $this->hasMany(CompanyKeypoint::class);
     }
 }
