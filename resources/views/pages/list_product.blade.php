@@ -113,6 +113,7 @@
                             {{ $product->category->category_name ?? 'Tanpa Kategori' }}
                         </span>
                         <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $product->product_name }}</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ $product->description }}</p>
                     </div>
                 </div>
             @endforeach
@@ -138,7 +139,7 @@
                     class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
                 <a :href="`/products/${currentProduct.id}`">
                     <img :src="currentProduct.image" alt=""
-                        class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50" />
+                          class="w-full max-h-[260px] object-cover rounded-lg" />
                     <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
                     <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
                     <div class="flex justify-between">
@@ -251,17 +252,18 @@
 
         .list-view .product-card {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             padding: 1rem;
             text-align: left;
         }
 
         .list-view .product-card img {
-            width: 120px;
+            width: 150px;
             height: auto;
             margin-right: 1.5rem;
             border-radius: 1rem;
         }
+
 
         .animate-fade-up {
             opacity: 0;
