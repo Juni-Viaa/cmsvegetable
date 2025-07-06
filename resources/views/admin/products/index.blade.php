@@ -1,57 +1,55 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-row justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Manage Hero Sections') }}
-            </h2>
-            @include('components.modal_add', [
-                'modal' => 'Add Product',
-                'modal_name' => 'Create New Product',
-                'modal_id' => 'add-product-modal',
-                'form_action' => route('admin.products.store'),
-                'form_method' => 'POST',
-                'fields' => $addFields,
-            ])
-        </div>
-    </x-slot>
+@extends('layouts.admin')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
-                @forelse($data as $row)
-                    <div class="item-card flex flex-row justify-between items-center">
-                        <div class="flex flex-row items-center gap-x-3">
-                            <img src="{{ Storage::url($row->banner) }}" alt=""
-                                class="rounded-2xl object-cover w-[90px] h-[90px]">
-                            <div class="flex flex-col">
-                                <h3 class="text-indigo-950 text-xl font-bold">{{ $row->heading }}</h3>
-                            </div>
-                        </div>
-                        <div class="hidden md:flex flex-col">
-                            <p class="text-slate-500 text-sm">Date</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">{{ $row->created_at }}</h3>
-                        </div>
-                        <div class="hidden md:flex flex-row items-center gap-x-3">
-                            @include('components.modal_edit', [
-                                'modal' => 'Edit',
-                                'modal_name' => 'Edit Product',
-                                'modal_id' => 'edit-product-modal',
-                                'form_action' => route('admin.products.update', ':id'),
-                                'form_method' => 'PUT',
-                                'id_field' => 'product_id',
-                                'fields' => $editFields,
-                                'data' => $data
-                            ])
-                            @include('components.modal_delete', [
-                                'id_field' => 'product_id',
-                                'delete_route' => route('admin.products.destroy', ':id'),
-                            ])
-                        </div>
-                    </div>
-                @empty
-                    <p>No hero sections found.</p>
-                @endforelse
-            </div>
-        </div>
+@section('title','Admin Product')
+
+@section('content')
+<div class="p-4 sm:ml-64">
+    <div class="p-4 rounded-lg mt-14">
+        
+        {{-- Breadcrumb --}}
+        @include('components.breadcrumb', [
+            'pages_name' => 'Product'
+        ])
+
+        {{-- Breadcrumb Second --}}
+        @include('components.breadcrumb_child', [
+            'child_name' => 'List Product'
+        ])
+
+        {{-- Error Message --}}
+        @include('components.error_message')
+
+        {{-- Modal Add --}}
+        @include('components.modal_add', [
+            // Terkoneksi ke AdminProductController@store
+            'modal' => 'Add Product',
+            'modal_name' => 'Create New Product',
+            'modal_id' => 'add-product-modal',
+            'form_action' => route('admin.products.store'), // POST ke controller
+            'form_method' => 'POST',
+            'fields' => $addFields // Diambil dari AdminProductController@index
+        ])
+
+        {{-- Search Bar --}}
+        @include('components.searchbar', [
+            // Pencarian dikirim ke AdminProductController@index
+            'search' => route('admin.products.index')
+        ])
+
+        {{-- Table --}}
+        @include('components.table_admin', [
+            // Modal edit, terkoneksi ke AdminProductController@update dan @getProduct
+            'modal' => 'Edit',
+            'modal_name' => 'Edit Product',
+            'modal_id' => 'edit-product-modal',
+            'form_action' => route('admin.products.update', ':id'), // PATCH ke controller
+            'form_method' => 'PUT',
+            'id_field' => 'product_id', // Kolom unik dari model Product
+            'fields' => $editFields, // Diisi dari AdminProductController@index
+            'data' => $data, // Data hasil paginate() dari model Product
+            'columns' => $columns,
+            'delete_route' => route('admin.products.destroy', ':id'), // DELETE ke controller
+            'edit_route' => 'product.getProduct' // AJAX panggil AdminProductController@getProduct
+        ])
     </div>
-</x-app-layout>
+</div>

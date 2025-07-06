@@ -106,7 +106,7 @@ class AdminProductController extends Controller
         ];
 
         // Kirim data ke view
-        return view('admin.admin_product', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.products.index', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**

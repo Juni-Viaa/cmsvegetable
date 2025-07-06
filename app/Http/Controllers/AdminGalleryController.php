@@ -98,7 +98,7 @@ class AdminGalleryController extends Controller
             ],
         ];
 
-        return view('admin.admin_gallery', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.galleries.index', compact('data', 'columns', 'addFields', 'editFields'));
     }
 
     /**
