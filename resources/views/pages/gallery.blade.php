@@ -83,7 +83,7 @@
                         {{ $item->category->category_name ?? 'Uncategorized' }}
                     </span>
                     <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $item->title }}</h3>
-                    <p class="text-sm text-gray-600">{{ $item->description }}</p>
+                    <p class="text-sm text-gray-600 leading-relaxed">{{ $item->description }}</p>
                 </div>
             </div>
         @endforeach
@@ -103,7 +103,7 @@
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0">
             <button @click="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
-            <img :src="currentProduct.image" alt="" class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50" />
+            <img :src="currentProduct.image" alt="" class="w-full max-h-[260px] object-cover rounded-lg" />
             <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
             <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
             <div class="flex justify-between">
@@ -121,13 +121,13 @@
         gap: 1.5rem;
     }
     .list-view .product-card {
-        flex-direction: row;
+        display: flex;
         padding: 1rem;
         text-align: left;
-        align-items: center;
+        align-items: flex-start;
     }
     .list-view .product-card img {
-        width: 120px;
+        width: 150px;
         height: auto;
         margin-right: 1.5rem;
         border-radius: 1rem;

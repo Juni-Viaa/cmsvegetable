@@ -136,7 +136,7 @@
                 {{-- Menggunakan binding Alpine.js untuk modal content --}}
                 <a :href="`/blogs/${currentBlog.id}`">
                     <img :src="currentBlog.image" alt=""
-                        class="w-full h-64 object-contain mb-4 border rounded-md bg-gray-50">
+                        class="w-full max-h-[260px] object-cover rounded-lg">
                     <h3 class="text-xl font-bold text-gray-900 mb-2" x-text="currentBlog.title"></h3>
                     <p class="text-gray-700 text-sm leading-relaxed max-h-48 overflow-y-auto"
                         x-text="currentBlog.content"></p>
@@ -251,13 +251,13 @@
 
         .list-view .blog-card {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             padding: 1rem;
             text-align: left;
         }
 
         .list-view .blog-card img {
-            width: 120px;
+            width: 150px;
             height: auto;
             margin-right: 1.5rem;
             border-radius: 1rem;
