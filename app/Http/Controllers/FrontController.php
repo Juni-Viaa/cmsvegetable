@@ -15,7 +15,7 @@ class FrontController extends Controller
     //
     public function index()
     {
-        $hero_section = HeroSection::orderByDesc('id')->take(1)->get();
+        $hero_section = HeroSection::orderByDesc('hero_id')->take(1)->get();
         $statistics = CompanyStatistic::take(4)->get();
         $principles = OurPrinciple::take(4)->get();
         $showcases = Showcase::take(4)->get();
