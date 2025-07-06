@@ -143,7 +143,7 @@ class AdminBlogController extends Controller
 
             Blog::create($data);
 
-            return redirect()->route('blog.index')
+            return redirect()->route('admin.blogs.index')
                 ->with('success', 'Blog berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -157,16 +157,7 @@ class AdminBlogController extends Controller
      */
     public function show($id)
     {
-        $blog = Blog::findOrFail($id);
-
-        if (request()->wantsJson() || request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'data' => $blog
-            ]);
-        }
-
-        return view('admin_blog.show', compact('blog'));
+        //
     }
 
     /**
@@ -174,9 +165,7 @@ class AdminBlogController extends Controller
      */
     public function edit(string $id)
     {
-        $blog = Blog::findOrFail($id);
-        $category = Category::where('category_type', 'Blog')->pluck('category_name', 'category_id')->toArray();
-        return view('admin.admin_blog.edit', compact('blog', 'category'));
+        //
     }
 
     /**
@@ -218,7 +207,7 @@ class AdminBlogController extends Controller
 
             $product->update($data);
 
-            return redirect()->route('blog.index')
+            return redirect()->route('admin.blogs.index')
                 ->with('success', 'Blog berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -242,7 +231,7 @@ class AdminBlogController extends Controller
             
             $blog->delete();
 
-            return redirect()->route('blog.index')
+            return redirect()->route('admin.blogs.index')
                 ->with('success', 'Blog berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

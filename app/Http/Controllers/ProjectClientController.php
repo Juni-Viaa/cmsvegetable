@@ -238,23 +238,4 @@ class ProjectClientController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getClient($id)
-    {
-        try {
-            $client = ProjectClient::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $client
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data Client not found'
-            ], 404);
-        }
-    }
 }

@@ -190,23 +190,4 @@ class TestimonialController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getTestimonial($id)
-    {
-        try {
-            $testimonial = Testimonial::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $testimonial
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hero Section not found'
-            ], 404);
-        }
-    }
 }

@@ -32,7 +32,7 @@ class LoginController extends Controller
                 return redirect()->intended('/admin');;
             }
 
-            return redirect()->intended('/');; // misalnya halaman user biasa
+            return redirect()->intended('/');;
         }
 
         return back()->withErrors([

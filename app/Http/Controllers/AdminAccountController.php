@@ -52,8 +52,7 @@ class AdminAccountController extends Controller
 
         $data = $query->paginate(10);
 
-        // return view('admin.accounts.index', compact('data', 'columns', 'editFields'));
-        return view('admin.admin_account', compact('data', 'columns', 'editFields'));
+        return view('admin.accounts.index', compact('data', 'columns', 'editFields'));
 
     }
 

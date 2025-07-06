@@ -56,29 +56,26 @@ Route::get('/about', [FrontController::class, 'about'])->name('front.about');
 Route::middleware([
     \Illuminate\Auth\Middleware\Authenticate::class,
     \App\Http\Middleware\AdminMiddleware::class,
-])->prefix('admin')->group(function () {
-    Route::get('', [AdminDashboardController::class, 'index']);
-    Route::resource('banner', AdminBannerController::class);
-    Route::resource('product', AdminProductController::class);
-    Route::resource('blog', AdminBlogController::class);
-    Route::resource('gallery', AdminGalleryController::class);
-    Route::resource('category', AdminCategoryController::class);
-    Route::resource('account', AdminAccountController::class);
-});
-
-Route::middleware([
-    \Illuminate\Auth\Middleware\Authenticate::class,
-    \App\Http\Middleware\AdminMiddleware::class,
 ])->prefix('admin')->name('admin.')->group(function () {
+    //Landing Page
+    Route::resource('hero_sections', HeroSectionController::class);
+    Route::resource('principles', OurPrincipleController::class);
     Route::resource('statistics', CompanyStatisticController::class);
+
+    //Content
+    Route::resource('categories', AdminCategoryController::class);
+    Route::resource('products', AdminProductController::class);
+    Route::resource('blogs', AdminBlogController::class);
+    Route::resource('galleries', AdminGalleryController::class);
+    Route::resource('accounts', AdminAccountController::class);
+    
+    //
     Route::resource('abouts', CompanyAboutController::class);
     Route::resource('showcases', ShowcaseController::class);
-    Route::resource('principles', OurPrincipleController::class);
     Route::resource('testimonials', TestimonialController::class);
     Route::resource('clients', ProjectClientController::class);
     Route::resource('teams', OurTeamController::class);
     Route::resource('appointments', AppointmentController::class);
-    Route::resource('hero_sections', HeroSectionController::class);
 });
 
 Route::get('/dashboard', function () {

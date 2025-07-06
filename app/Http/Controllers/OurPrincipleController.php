@@ -242,23 +242,4 @@ class OurPrincipleController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getPrinciple($id)
-    {
-        try {
-            $principle = OurPrinciple::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $principle
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Principle not found'
-            ], 404);
-        }
-    }
 }

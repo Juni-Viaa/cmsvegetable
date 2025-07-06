@@ -205,23 +205,4 @@ class CompanyStatisticController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getStat($id)
-    {
-        try {
-            $stat = CompanyStatistic::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $stat
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hero Section not found'
-            ], 404);
-        }
-    }
 }

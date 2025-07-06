@@ -238,23 +238,4 @@ class HeroSectionController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getHero($id)
-    {
-        try {
-            $hero = HeroSection::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $hero
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hero Section not found'
-            ], 404);
-        }
-    }
 }

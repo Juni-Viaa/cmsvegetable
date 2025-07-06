@@ -112,13 +112,13 @@
                             </x-slot>
         
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('category.index')">
+                                <x-dropdown-link :href="route('admin.categories.index')">
                                     {{ __('Categories') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('product.index')">
+                                <x-dropdown-link :href="route('admin.products.index')">
                                     {{ __('Products') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('account.index')">
+                                <x-dropdown-link :href="route('admin.accounts.index')">
                                     {{ __('Accounts') }}
                                 </x-dropdown-link>
                             </x-slot>
@@ -140,10 +140,10 @@
                             </x-slot>
         
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('blog.index')">
+                                <x-dropdown-link :href="route('admin.blogs.index')">
                                     {{ __('Blog') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('gallery.index')">
+                                <x-dropdown-link :href="route('admin.galleries.index')">
                                     {{ __('Gallery') }}
                                 </x-dropdown-link>
                             </x-slot>
