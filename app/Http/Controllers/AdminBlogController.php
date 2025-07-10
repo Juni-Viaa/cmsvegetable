@@ -173,7 +173,7 @@ class AdminBlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product = Blog::findOrFail($id);
+        $blog = Blog::findOrFail($id);
 
         // Validasi input
         $validator = Validator::make($request->all(), [
@@ -195,7 +195,7 @@ class AdminBlogController extends Controller
             // Handle file upload
             if ($request->hasFile('image')) {
                 // Hapus file lama jika ada
-                if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
+                if ($blog->image_path && Storage::disk('public')->exists($blog->image_path)) {
                     Storage::disk('public')->delete($product->image_path);
                 }
                 
@@ -205,7 +205,7 @@ class AdminBlogController extends Controller
                 $data['image_path'] = $path;
             }
 
-            $product->update($data);
+            $blog->update($data);
 
             return redirect()->route('admin.blogs.index')
                 ->with('success', 'Blog berhasil diupdate!');
