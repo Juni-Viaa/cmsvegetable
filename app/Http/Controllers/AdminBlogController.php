@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -16,20 +17,14 @@ class AdminBlogController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = [
-            'title' => 'Blog Title',
-            'content' => 'Content',
-            'category_id' => 'Category',
-            'image_path' => 'Image'
-        ];
-        $query = Blog::select(array_merge(array_keys($columns), ['blog_id']));
+        $query = Blog::query();
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%");
+            $query->where('title', 'like', "%$search%");
         }
 
-        $data = $query->paginate(10);
+        $data = $query->paginate(5);
 
         $category = Category::where('category_type', 'Blog')
                 ->pluck('category_name', 'category_id')
@@ -97,8 +92,7 @@ class AdminBlogController extends Controller
             ],
         ];
 
-        return view('admin.blogs.index', compact('data', 'columns', 'addFields', 'editFields'));
-        // return view('admin.admin_blog', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.blogs.index', compact('data', 'addFields', 'editFields'));
     }
 
     /**

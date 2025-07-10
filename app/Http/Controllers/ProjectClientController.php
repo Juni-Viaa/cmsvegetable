@@ -15,6 +15,15 @@ class ProjectClientController extends Controller
      */
     public function index()
     {
+        $query = ProjectClient::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%$search%");
+        }
+
+        $data = $query->paginate(5);
+
         $addFields = [
             [
                 'type' => 'text',

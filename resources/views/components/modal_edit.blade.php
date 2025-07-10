@@ -1,5 +1,5 @@
 <!-- Modal toggle -->
-<button data-modal-target="{{ $modal_id }}-{{ $row->{$id_field} }}" data-modal-toggle="{{ $modal_id }}-{{ $row->{$id_field} }}" data-id="{{ $row->{$id_field} }}" data-name="{{ $row->name ?? 'Item' }}" class="text-blue-600 hover:underline">Edit</button>
+<button data-modal-target="{{ $modal_id }}-{{ $row->{$id_field} }}" data-modal-toggle="{{ $modal_id }}-{{ $row->{$id_field} }}" data-id="{{ $row->{$id_field} }}" data-name="{{ $row->name ?? 'Item' }}" class="font-bold py-1 px-2 bg-indigo-700 text-white rounded-full">Edit</button>
 
 <!-- Modal Edit Per-Baris -->
 <div id="{{ $modal_id }}-{{ $row->{$id_field} }}" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
