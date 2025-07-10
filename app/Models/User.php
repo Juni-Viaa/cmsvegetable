@@ -67,9 +67,9 @@ class User extends Authenticatable
         return $this->hasMany(Blog::class, 'created_by');
     }
 
-    public function banners()
+    public function heroSections()
     {
-        return $this->hasMany(Banner::class, 'created_by');
+        return $this->hasMany(HeroSection::class, 'created_by');
     }
 
     public function comment()

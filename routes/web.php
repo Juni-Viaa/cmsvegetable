@@ -175,3 +175,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // require __DIR__.'/auth.php';
+
+Route::get('/otp-verification', function () {
+    return view('otp-verification');
+});
