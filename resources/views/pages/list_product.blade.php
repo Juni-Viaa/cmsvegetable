@@ -155,68 +155,73 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // === Toggle View (Grid / List) ===
-            const toggleBtn = document.getElementById('toggleView');
-            const grid = document.getElementById('productGrid');
-            const viewText = document.getElementById('viewText');
-            const viewIcon = document.getElementById('viewIcon');
-            let isList = false;
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // === Toggle View (Grid / List) ===
+        const toggleBtn = document.getElementById('toggleView');
+        const grid = document.getElementById('productGrid');
+        const viewText = document.getElementById('viewText');
+        const viewIcon = document.getElementById('viewIcon');
+        let isList = false;
 
-            const iconGrid =
-                `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
-            const iconList =
-                `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
+        const iconGrid =
+            `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h7v7H3zM14 6h7v7h-7zM3 15h7v7H3zM14 15h7v7h-7z"/></svg>`;
+        const iconList =
+            `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Z"/></svg>`;
 
-            viewText.textContent = 'Grid View';
-            viewIcon.innerHTML = iconGrid;
+        viewText.textContent = 'Grid View';
+        viewIcon.innerHTML = iconGrid;
 
-            toggleBtn.addEventListener('click', () => {
-                isList = !isList;
-                if (isList) {
-                    grid.classList.remove('grid', 'sm:grid-cols-2', 'lg:grid-cols-3');
-                    grid.classList.add('list-view');
-                    viewText.textContent = 'List View';
-                    viewIcon.innerHTML = iconList;
-                } else {
-                    grid.classList.remove('list-view');
-                    grid.classList.add('grid', 'sm:grid-cols-2', 'lg:grid-cols-3');
-                    viewText.textContent = 'Grid View';
-                    viewIcon.innerHTML = iconGrid;
-                }
+        toggleBtn.addEventListener('click', () => {
+            isList = !isList;
+            if (isList) {
+                grid.classList.remove('grid', 'sm:grid-cols-2', 'lg:grid-cols-3');
+                grid.classList.add('list-view');
+                viewText.textContent = 'List View';
+                viewIcon.innerHTML = iconList;
+            } else {
+                grid.classList.remove('list-view');
+                grid.classList.add('grid', 'sm:grid-cols-2', 'lg:grid-cols-3');
+                viewText.textContent = 'Grid View';
+                viewIcon.innerHTML = iconGrid;
+            }
+        });
+
+        // === Filter Form Logic (Radio + Checkbox) ===
+        const filterForm = document.getElementById('filterForm');
+
+        // --- Untuk RADIO ---
+        const radioInputs = filterForm.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(radio => {
+            const label = radio.closest('label');
+
+            label.addEventListener('mousedown', () => {
+                radio.wasChecked = radio.checked;
             });
 
-            // === Filter Form Logic (Radio + Checkbox) ===
-            const filterForm = document.getElementById('filterForm');
-            const inputs = filterForm.querySelectorAll('input');
-
-            inputs.forEach(input => {
-                if (input.type === 'radio') {
-                    input.addEventListener('mousedown', function() {
-                        this.wasChecked = this.checked;
-                    });
-
-                    input.addEventListener('click', function() {
-                        if (this.wasChecked) {
-                            this.checked = false;
-                            const url = new URL(window.location.href);
-                            url.searchParams.delete(this.name); // hapus parameter 'sort'
-                            window.location.href = url.toString();
-                        } else {
-                            filterForm.submit();
-                        }
-                    });
-                }
-
-                if (input.type === 'checkbox') {
-                    input.addEventListener('change', () => {
-                        filterForm.submit();
-                    });
+            label.addEventListener('click', (e) => {
+                e.preventDefault(); // cegah default untuk kendali penuh
+                if (radio.wasChecked) {
+                    radio.checked = false;
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete(radio.name);
+                    window.location.href = url.toString();
+                } else {
+                    radio.checked = true;
+                    filterForm.submit();
                 }
             });
         });
-    </script>
+
+        // --- Untuk CHECKBOX ---
+        const checkboxInputs = filterForm.querySelectorAll('input[type="checkbox"]');
+        checkboxInputs.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                filterForm.submit();
+            });
+        });
+    });
+</script>
 
     <script>
         function productModal() {
