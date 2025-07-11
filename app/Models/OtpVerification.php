@@ -8,28 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class OtpVerification extends Model
 {
     //
-        protected $fillable = [
+    protected $fillable = [
         'phone_number',
         'otp_code',
         'expires_at',
-        'is_verified',
-        'attempts'
+        'is_used'
     ];
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'is_used' => 'boolean'
+    ];
 
-    public function isExpired()
+    // Check if OTP is still valid
+    public function isValid()
     {
-        return $this->expires_at < Carbon::now();
+        return !$this->is_used && $this->expires_at > Carbon::now();
     }
 
-    public function canAttempt()
+    // Mark OTP as used
+    public function markAsUsed()
     {
-        return $this->attempts < 3;
-    }
-
-    public function incrementAttempts()
-    {
-        $this->increment('attempts');
+        $this->is_used = true;
+        $this->save();
     }
 }
