@@ -14,15 +14,11 @@ class AdminCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = [
-            'category_name' => 'Category Name',
-            'category_type' => 'Category Type',
-        ];
-        $query = Category::select(array_merge(array_keys($columns), ['category_id']));
+        $query = Category::query();
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%");
+            $query->where('category_name', 'like', "%$search%");
         }
 
         $data = $query->paginate(10);
@@ -71,7 +67,7 @@ class AdminCategoryController extends Controller
             ],
         ];
 
-        return view('admin.categories.index', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.categories.index', compact('data', 'addFields', 'editFields'));
     }
 
     /**

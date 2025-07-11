@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -16,25 +17,16 @@ class AdminProductController extends Controller
      */
     public function index(Request $request)
     {
-        // Kolom yang akan ditampilkan pada tabel
-        $columns = [
-            'product_name' => 'Product Name',
-            'description' => 'Description',
-            'category_id' => 'Category',
-            'image_path' => 'Image',
-        ];
-
         // Query awal untuk memilih kolom dari tabel products
-        $query = Product::select(array_merge(array_keys($columns), ['product_id']));
+        $query = Product::query();
 
         // Jika ada parameter pencarian
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%"); // NOTE: kolom yang dicari 'name', pastikan ini sesuai DB
+            $query->where('product_name', 'like', "%$search%"); // NOTE: kolom yang dicari 'name', pastikan ini sesuai DB
         }
 
-        // Ambil data dengan pagination
-        $data = $query->paginate(10);
+        $data = $query->paginate(5);
 
         // Ambil daftar kategori dengan tipe 'Product'
         $category = Category::where('category_type', 'Product')
@@ -106,7 +98,7 @@ class AdminProductController extends Controller
         ];
 
         // Kirim data ke view
-        return view('admin.products.index', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.products.index', compact('data', 'addFields', 'editFields'));
     }
 
     /**

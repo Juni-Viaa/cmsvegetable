@@ -14,11 +14,6 @@ class AdminAccountController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = [
-            'username' => 'Username',
-            'phone_number' => 'Phone Number'
-        ];
-
         $editFields = [
             [
                 'type' => 'text', 
@@ -43,16 +38,16 @@ class AdminAccountController extends Controller
             ],
         ];
 
-        $query = User::select(array_merge(array_keys($columns), ['user_id', 'created_at']));
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where('name', 'like', "%$search%");
-        }
+        $query = User::query();
 
         $data = $query->paginate(10);
 
-        return view('admin.accounts.index', compact('data', 'columns', 'editFields'));
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('username', 'like', "%$search%");
+        }
+
+        return view('admin.accounts.index', compact('data', 'editFields'));
 
     }
 

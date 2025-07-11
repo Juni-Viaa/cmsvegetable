@@ -15,6 +15,15 @@ class HeroSectionController extends Controller
      */
     public function index()
     {
+        $query = HeroSection::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('heading', 'like', "%$search%");
+        }
+
+        $data = $query->paginate(5);
+        
         $addFields = [
             [
                 'type' => 'text',

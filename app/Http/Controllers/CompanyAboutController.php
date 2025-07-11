@@ -15,6 +15,16 @@ class CompanyAboutController extends Controller
      */
     public function index()
     {
+        $query = CompanyAbout::query();
+
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%$search%");
+        }
+
+        $data = $query->paginate(5);
+
         $addFields = [
             [
                 'type' => 'text',
@@ -40,7 +50,6 @@ class CompanyAboutController extends Controller
                 'placeholder' => 'Select Type',
                 'required' => true
             ]
-
         ];
 
         $editFields = [

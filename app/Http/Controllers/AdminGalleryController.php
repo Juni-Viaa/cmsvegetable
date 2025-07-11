@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Gallery;
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -16,21 +17,14 @@ class AdminGalleryController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = [
-            'title' => 'Gallery Title',
-            'description' => 'Description',
-            'category_id' => 'Category',
-            'image_path' => 'Image',
-        ];
-
-        $query = Gallery::select(array_merge(array_keys($columns), ['gallery_id']));
+        $query = Gallery::query();
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%");
+            $query->where('title', 'like', "%$search%");
         }
 
-        $data = $query->paginate(10);
+        $data = $query->paginate(5);
 
         $category = Category::where('category_type', 'Gallery')
                 ->pluck('category_name', 'category_id')
@@ -98,7 +92,7 @@ class AdminGalleryController extends Controller
             ],
         ];
 
-        return view('admin.galleries.index', compact('data', 'columns', 'addFields', 'editFields'));
+        return view('admin.galleries.index', compact('data', 'addFields', 'editFields'));
     }
 
     /**

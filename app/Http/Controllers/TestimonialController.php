@@ -15,6 +15,15 @@ class TestimonialController extends Controller
      */
     public function index()
     {
+        $query = Testimonial::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('message', 'like', "%$search%");
+        }
+
+        $data = $query->paginate(5);
+
         $addFields = [
             [
                 'type' => 'file',
