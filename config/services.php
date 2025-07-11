@@ -40,9 +40,9 @@ return [
     ],  
 
     'twilio' => [
-    'sid' => env('TWILIO_SID'),
-    'token' => env('TWILIO_TOKEN'),
-    'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'), // Format: +14155238886
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_TOKEN'),
+        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'), // like +6281234567890
     ],
-
+    
 ];
