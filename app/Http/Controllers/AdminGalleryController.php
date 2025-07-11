@@ -232,23 +232,4 @@ class AdminGalleryController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Get gallery data for AJAX (untuk modal edit)
-     */
-    public function getGallery($id)
-    {
-        try {
-            $gallery = Gallery::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $gallery
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gallery not found'
-            ], 404);
-        }
-    }
 }

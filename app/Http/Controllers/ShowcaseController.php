@@ -16,9 +16,76 @@ class ShowcaseController extends Controller
      */
     public function index()
     {
-        //
-        $showcases = Showcase::orderByDesc('id')->paginate(10);
-        return view('admin.showcases.index', compact('showcases'));
+        $query = Showcase::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('title', 'like', "%$search%");
+        }
+
+        $data = $query->paginate(5);
+
+        $addFields = [
+            [
+                'type' => 'text', 
+                'name' => 'about', 
+                'label' => 'About Name',
+                'placeholder' => 'Enter about name',
+                'required' => true
+            ],
+            [
+                'type' => 'text', 
+                'name' => 'tagline', 
+                'label' => 'Tagline Name',
+                'placeholder' => 'Enter Tagline name',
+                'required' => true
+            ],
+            [
+                'type' => 'text', 
+                'name' => 'name', 
+                'label' => 'Showcase Name',
+                'placeholder' => 'Enter shocase name',
+                'required' => true
+            ],
+            [
+                'type' => 'file', 
+                'name' => 'image', 
+                'label' => 'Select Thumbnail Image',
+                'required' => true
+            ]
+        ];
+
+        $editFields = [
+                        [
+                'type' => 'text', 
+                'name' => 'about', 
+                'label' => 'About Name',
+                'placeholder' => 'Enter about name',
+                'required' => true
+            ],
+            [
+                'type' => 'text', 
+                'name' => 'tagline', 
+                'label' => 'Tagline Name',
+                'placeholder' => 'Enter Tagline name',
+                'required' => true
+            ],
+            [
+                'type' => 'text', 
+                'name' => 'name', 
+                'label' => 'Showcase Name',
+                'placeholder' => 'Enter shocase name',
+                'required' => true
+            ],
+            [
+                'type' => 'file', 
+                'name' => 'image', 
+                'label' => 'Select Thumbnail Image',
+                'required' => false
+            ]
+        ];
+
+        return view('admin.showcases.index', compact('addFields', 'editFields', 'data'));
     }
 
     /**
@@ -27,26 +94,49 @@ class ShowcaseController extends Controller
     public function create()
     {
         //
-        return view('admin.showcases.create'); 
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreShowcaseRequest $request)
+    public function store(Request $request)
     {
-        //
-        DB::transaction(function () use ($request) {
-            $validated = $request->validated();
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'about' => 'required|string|max:255',
+            'tagline' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $data = $request->only(['about', 'tagline', 'name']);
+            
+            // Handle file upload
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                $file = $request->file('thumbnail');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('shocases', $filename, 'public');
+                $data['thumbnail'] = $path;
             }
 
-            $newShowcase = Showcase::create($validated);
-        });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase created successfully.');
+            $data['created_by'] = Auth::id();
+
+            Showcase::create($data);
+
+            return redirect()->route('admin.showcases.index')
+                ->with('success', 'Showwcase berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -63,38 +153,77 @@ class ShowcaseController extends Controller
     public function edit(Showcase $showcase)
     {
         //
-        return view('admin.showcases.edit', compact('showcase'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateShowcaseRequest $request, Showcase $showcase)
+    public function update(Request $request, $id)
     {
-        //
-        DB::transaction(function () use ($request, $showcase) {
-            $validated = $request->validated();
+        $showcase = Showcase::findOrFail($id);
 
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'about' => 'required|string|max:255',
+            'tagline' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $data = $request->only(['title', 'description', 'category_id']);
+            
+            // Handle file upload
             if ($request->hasFile('thumbnail')) {
-                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-                $validated['thumbnail'] = $thumbnailPath;
+                // Hapus file lama jika ada
+                if ($gallery->image_path && Storage::disk('public')->exists($showcase->image_path)) {
+                    Storage::disk('public')->delete($showwcase->image_path);
+                }
+                
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('showcases', $filename, 'public');
+                $data['thumbnail'] = $path;
             }
 
-            $showcase->update($validated);
-        });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase updated successfully.');
+            $showcase->update($data);
+
+            return redirect()->route('admin.showcases.index')
+                ->with('success', 'Showcase berhasil diupdate!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Showcase $showcase)
+    public function destroy(string $id)
     {
-        //
-        DB::transaction(function () use ($showcase) {
+        try {
+            $showcase = Showcase::findOrFail($id);
+            
+            // Hapus file gambar jika ada
+            if ($showcase->image_path && Storage::disk('public')->exists($showcase->image_path)) {
+                Storage::disk('public')->delete($shoecase->image_path);
+            }
+            
             $showcase->delete();
-        });
-        return redirect()->route('admin.showcases.index')->with('success', 'Showcase deleted successfully.');
+
+            return redirect()->route('admin.showcases.index')
+                ->with('success', 'Showcase berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }
 
