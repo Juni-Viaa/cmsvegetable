@@ -71,6 +71,12 @@
 @endpush
 
 @section('content')
+{{--
+    OTP Verification (Step 2)
+    - User enters phone number, receives OTP
+    - User enters OTP in 6-box input
+    - On success, user is created in DB and phone is marked as verified
+--}}
 <div class="p-8 rounded-lg w-full max-w-md text-center">
     <!-- Logo + Text -->
     <div class="flex items-center justify-center mb-4">
@@ -80,7 +86,7 @@
     
     <h2 class="text-xl font-bold mb-1">Verification Your Account</h2>
     <p class="mb-6 text-gray-700">Please enter your phone number</p>
-    <!-- Form Input Nomor Telepon -->
+    <!-- Phone Number Input Form -->
     <div id="phone-form">
         <form id="send-otp-form">
             <div class="form-group">
@@ -91,7 +97,7 @@
         </form>
     </div>
 
-    <!-- Form Verifikasi OTP -->
+    <!-- OTP Input Form (6 boxes) -->
     <div id="otp-form" class="hidden">
         <form id="verify-otp-form">
             <div class="form-group mb-4">
@@ -120,6 +126,7 @@
                     </template>
                     <input type="hidden" id="otp_code" name="otp_code" x-model="combinedOtp">
                 </div>
+                <!-- Error message for OTP -->
                 <div x-show="hasError" x-transition 
                     class="text-white text-sm mt-2 bg-red-500/90 border border-red-700 rounded-lg px-3 py-2 shadow-sm flex items-center justify-center gap-2 animate-shake"
                     style="display: none; min-height:2.5rem;">
@@ -135,6 +142,7 @@
         </button>
     </div>
 
+    <!-- Message container for success/error feedback -->
     <div id="message-container"></div>
 </div>
 @endsection
@@ -142,6 +150,10 @@
 @push('scripts')
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
+/**
+ * Alpine.js component for OTP input (6 boxes)
+ * Handles auto-advance, paste, backspace, and error state
+ */
 window.otpInput = function() {
     return {
         otpDigits: Array(6).fill(''),
@@ -209,158 +221,151 @@ window.otpInput = function() {
     }
 }
 
-    // Setup CSRF token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
-    // Form elements
-    const phoneForm = document.getElementById('phone-form');
-    const otpForm = document.getElementById('otp-form');
-    const sendOtpForm = document.getElementById('send-otp-form');
-    const verifyOtpForm = document.getElementById('verify-otp-form');
-    const messageContainer = document.getElementById('message-container');
+// --- OTP Verification Page Logic ---
+// Setup CSRF token
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Send OTP
-    sendOtpForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const phoneNumber = document.getElementById('phone_number').value;
-        const sendBtn = document.getElementById('send-otp-btn');
-        
-        sendBtn.disabled = true;
-        sendBtn.textContent = 'Mengirim...';
-        
-        try {
-            const response = await fetch('/api/otp/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ phone_number: phoneNumber })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showMessage(result.message, 'success');
-                showOtpForm(phoneNumber);
-            } else {
-                showMessage(result.message, 'error');
-            }
-        } catch (error) {
-            showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
-        } finally {
-            sendBtn.disabled = false;
-            sendBtn.textContent = 'Kirim OTP';
+// Form elements
+const phoneForm = document.getElementById('phone-form');
+const otpForm = document.getElementById('otp-form');
+const sendOtpForm = document.getElementById('send-otp-form');
+const verifyOtpForm = document.getElementById('verify-otp-form');
+const messageContainer = document.getElementById('message-container');
+
+// Handle phone number submission and send OTP
+sendOtpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phoneNumber = document.getElementById('phone_number').value;
+    const sendBtn = document.getElementById('send-otp-btn');
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Mengirim...';
+    try {
+        const response = await fetch('/api/otp/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ phone_number: phoneNumber })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showMessage(result.message, 'success');
+            showOtpForm(phoneNumber);
+        } else {
+            showMessage(result.message, 'error');
         }
-    });
+    } catch (error) {
+        showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Kirim OTP';
+    }
+});
 
-    // Verify OTP
-    verifyOtpForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const phoneNumber = document.getElementById('phone_number_hidden').value;
-        const otpCode = document.getElementById('otp_code').value;
-        const verifyBtn = document.getElementById('verify-otp-btn');
-        
-        // Get Alpine.js component instance via ref
-        const otpComponentRoot = document.querySelector('[x-ref="otpRoot"]');
-        const otpComponent = otpComponentRoot && otpComponentRoot.__x ? otpComponentRoot.__x.$data : null;
-        
-        verifyBtn.disabled = true;
-        verifyBtn.textContent = 'Memverifikasi...';
-        
-        try {
-            const response = await fetch('/api/otp/verify', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ 
-                    phone_number: phoneNumber,
-                    otp_code: otpCode 
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showMessage(result.message, 'success');
-                // Redirect atau lakukan aksi selanjutnya
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 1000);
-            } else {
-                showMessage(result.message, 'error');
-                // Show error state on OTP inputs
-                if (otpComponent) otpComponent.setError();
-            }
-        } catch (error) {
-            showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
+// Handle OTP verification
+verifyOtpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phoneNumber = document.getElementById('phone_number_hidden').value;
+    const otpCode = document.getElementById('otp_code').value;
+    const verifyBtn = document.getElementById('verify-otp-btn');
+    // Get Alpine.js component instance via ref
+    const otpComponentRoot = document.querySelector('[x-ref="otpRoot"]');
+    const otpComponent = otpComponentRoot && otpComponentRoot.__x ? otpComponentRoot.__x.$data : null;
+    verifyBtn.disabled = true;
+    verifyBtn.textContent = 'Memverifikasi...';
+    try {
+        const response = await fetch('/api/otp/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ 
+                phone_number: phoneNumber,
+                otp_code: otpCode 
+            })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showMessage(result.message, 'success');
+            // Redirect to login after success
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1000);
+        } else {
+            showMessage(result.message, 'error');
+            // Show error state on OTP inputs
             if (otpComponent) otpComponent.setError();
-        } finally {
-            verifyBtn.disabled = false;
-            verifyBtn.textContent = 'Verifikasi OTP';
         }
-    });
-
-    function showOtpForm(phoneNumber) {
-        phoneForm.classList.add('hidden');
-        otpForm.classList.remove('hidden');
-        document.getElementById('phone_number_hidden').value = phoneNumber;
-        
-        // Focus first OTP input after a short delay
-        setTimeout(() => {
-            const firstOtpInput = document.querySelector('[x-ref="otp0"]');
-            if (firstOtpInput) {
-                firstOtpInput.focus();
-            }
-        }, 100);
+    } catch (error) {
+        showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
+        if (otpComponent) otpComponent.setError();
+    } finally {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verifikasi OTP';
     }
+});
 
-    function showPhoneForm() {
-        otpForm.classList.add('hidden');
-        phoneForm.classList.remove('hidden');
-        document.getElementById('phone_number').focus();
-        
-        // Reset OTP component
-        const otpComponentRoot = document.querySelector('[x-ref="otpRoot"]');
-        if (otpComponentRoot && otpComponentRoot.__x) {
-            otpComponentRoot.__x.$data.reset();
+/**
+ * Show the OTP input form and hide the phone input form.
+ * @param {string} phoneNumber
+ */
+function showOtpForm(phoneNumber) {
+    phoneForm.classList.add('hidden');
+    otpForm.classList.remove('hidden');
+    document.getElementById('phone_number_hidden').value = phoneNumber;
+    // Focus first OTP input after a short delay
+    setTimeout(() => {
+        const firstOtpInput = document.querySelector('[x-ref="otp0"]');
+        if (firstOtpInput) {
+            firstOtpInput.focus();
         }
+    }, 100);
+}
+
+/**
+ * Show the phone input form and hide the OTP input form.
+ * Resets the OTP component.
+ */
+function showPhoneForm() {
+    otpForm.classList.add('hidden');
+    phoneForm.classList.remove('hidden');
+    document.getElementById('phone_number').focus();
+    // Reset OTP component
+    const otpComponentRoot = document.querySelector('[x-ref="otpRoot"]');
+    if (otpComponentRoot && otpComponentRoot.__x) {
+        otpComponentRoot.__x.$data.reset();
     }
+}
 
-    /**
-     * Display a styled message in the message container.
-     * @param {string} message - The message text to display.
-     * @param {string} type - 'success' or 'error' for styling.
-     */
-    function showMessage(message, type) {
-        // SVG icons for success and error
-        const icons = {
-            success: `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`,
-            error: `<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>`
-        };
-
-        // Tailwind classes for each message type
-        const classes = {
-            success: 'flex items-center gap-2 bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded-lg shadow mt-2 mb-1',
-            error:   'flex items-center gap-2 bg-red-100 border border-red-400 text-red-800 px-4 py-2 rounded-lg shadow mt-2 mb-1'
-        };
-
-        // Compose the message HTML
-        messageContainer.innerHTML = `
-            <div class="${classes[type] || classes.error}">
-                ${icons[type] || icons.error}
-                <span>${message}</span>
-            </div>
-        `;
-
-        // Automatically clear the message after 5 seconds
-        setTimeout(() => {
-            messageContainer.innerHTML = '';
-        }, 5000);
-    }
+/**
+ * Display a styled message in the message container.
+ * @param {string} message - The message text to display.
+ * @param {string} type - 'success' or 'error' for styling.
+ */
+function showMessage(message, type) {
+    // SVG icons for success and error
+    const icons = {
+        success: `<svg class=\"w-5 h-5 text-green-600\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 13l4 4L19 7\"/></svg>`,
+        error: `<svg class=\"w-5 h-5 text-red-600\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"/></svg>`
+    };
+    // Tailwind classes for each message type
+    const classes = {
+        success: 'flex items-center gap-2 bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded-lg shadow mt-2 mb-1',
+        error:   'flex items-center gap-2 bg-red-100 border border-red-400 text-red-800 px-4 py-2 rounded-lg shadow mt-2 mb-1'
+    };
+    // Compose the message HTML
+    messageContainer.innerHTML = `
+        <div class="${classes[type] || classes.error}">
+            ${icons[type] || icons.error}
+            <span>${message}</span>
+        </div>
+    `;
+    // Automatically clear the message after 5 seconds
+    setTimeout(() => {
+        messageContainer.innerHTML = '';
+    }, 5000);
+}
 </script>
 @endpush
