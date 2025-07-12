@@ -33,15 +33,15 @@
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 w-full lg:w-1/3">
                     <h3 class="text-black font-semibold mb-4">Sort By</h3>
                     <div class="flex flex-col gap-3">
-                        <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                             <input type="radio" name="sort" value="latest" {{ request('sort') == 'latest' ? 'checked' : '' }}
                                    class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
-                            <span class="text-sm font-medium text-gray-700">Latest Update</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Latest Update</span>
                         </label>
-                        <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                             <input type="radio" name="sort" value="az" {{ request('sort') == 'az' ? 'checked' : '' }}
                                    class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
-                            <span class="text-sm font-medium text-gray-700">Sort A–Z</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Sort A–Z</span>
                         </label>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                     <h3 class="text-black font-semibold mb-4 flex items-center gap-2">Filter by Category</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($categories as $cat)
-                            <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                            <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                                 <input type="checkbox" name="category[]" value="{{ $cat }}"
                                        {{ is_array(request('category')) && in_array($cat, request('category')) ? 'checked' : '' }}
                                        class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
@@ -167,12 +167,37 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filterForm');
-    const inputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    inputs.forEach(input => {
-        // PERBAIKAN DI SINI: Menggunakan filterForm.submit()
-        input.addEventListener('change', () => filterForm.submit());
+
+    // RADIO BUTTON: Allow uncheck when clicked again
+    const radioInputs = filterForm.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(radio => {
+        const label = radio.closest('label');
+
+        label.addEventListener('mousedown', () => {
+            radio.wasChecked = radio.checked;
+        });
+
+        label.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (radio.wasChecked) {
+                radio.checked = false;
+                const url = new URL(window.location.href);
+                url.searchParams.delete(radio.name);
+                window.location.href = url.toString();
+            } else {
+                radio.checked = true;
+                filterForm.submit();
+            }
+        });
     });
 
+    // CHECKBOX: Submit on change
+    const checkboxInputs = filterForm.querySelectorAll('input[type="checkbox"]');
+    checkboxInputs.forEach(cb => {
+        cb.addEventListener('change', () => filterForm.submit());
+    });
+
+    // TOGGLE VIEW (Grid/List)
     const toggleBtn = document.getElementById('toggleView');
     const toggleIcon = document.getElementById('toggleIcon');
     const toggleText = document.getElementById('toggleText');
@@ -197,29 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
         container.classList.toggle('md:grid-cols-2');
         container.classList.toggle('lg:grid-cols-3');
         updateToggleUI();
-    });
-
-    // Manual DOM event listeners for modal (will work alongside Alpine.js)
-    const modal = document.getElementById('modalOverlay');
-    const closeModal = document.getElementById('closeModal');
-
-    closeModal.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
     });
 });
 

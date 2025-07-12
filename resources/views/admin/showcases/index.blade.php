@@ -4,44 +4,91 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Manage Showcases') }}
             </h2>
-            <a href="{{route('admin.showcases.create')}}" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
-                Add New
-            </a>
+            @include('components.searchbar', [
+                'search' => route('admin.products.index'),
+            ])
+            @include('components.modal_add', [
+                'modal' => 'Add Showcase',
+                'modal_name' => 'Create New Showcase',
+                'modal_id' => 'add-showcase-modal',
+                'form_action' => route('admin.showcases.store'),
+                'form_method' => 'POST',
+                'fields' => $addFields,
+            ])
         </div>
     </x-slot>
-    
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
                 @forelse($showcases as $showcase)
-                <div class="item-card flex flex-row justify-between items-center">
-                    <div class="flex flex-row items-center gap-x-3">
-                        <img src="{{Storage::url($showcase->thumbnail)}}" alt="" class="rounded-2xl object-cover w-[90px] h-[90px]">
-                        <div class="flex flex-col">
-                            <h3 class="text-indigo-950 text-xl font-bold">{{$showcase->name}}</h3>
+                    <div class="item-card flex flex-row justify-between items-center">
+                        <!-- Header Kolom -->
+                        <div
+                            class="flex flex-row items-center justify-between border-b shadow-sm sm:rounded-lg border-gray-400 px-2 py-3 bg-gray-100 font-semibold text-sm uppercase">
+                            <div class="w-1/12 text-center border-r border-gray-300">
+                                No
+                            </div>
+                            <div class="w-4/12 pl-4 border-r border-gray-300">
+                                Showcase Name
+                            </div>
+                            <div class="w-4/12 border-r text-center border-gray-300 hidden md:block">
+                                Date Created
+                            </div>
+                            <div class="w-2/12 px-4 border-r text-center border-gray-300 hidden md:block">
+                                Image
+                            </div>
+                            <div class="w-1/12 pl-1 text-center hidden md:block">
+                                Actions
+                            </div>
                         </div>
-                    </div> 
-                    <div  class="hidden md:flex flex-col">
-                        <p class="text-slate-500 text-sm">Date</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">{{$showcase->created_at}}</h3>
+                        @forelse($data as $index => $row)
+                            <!-- Baris Data -->
+                            <div class="item-card flex flex-row items-center justify-between border-b border-gray-300 py-2 px-2">
+
+                                <!-- Kolom: Nomor Urut -->
+                                <div class="w-1/12 text-center font-medium text-slate-700 border-r border-gray-300">
+                                    {{ $index + 1 }}
+                                </div>
+                                <!-- Kolom: Nama Showcase -->
+                                <div class="flex flex-col w-4/12 pl-4 border-r border-gray-300">
+                                    <h3 class="text-indigo-950 text-xl font-bold break-words">{{ $row->name }}
+                                    </h3>
+                                </div>
+
+                                <!-- Kolom: Tanggal -->
+                                <div class="hidden md:flex flex-col text-center w-4/12 border-r border-gray-300">
+                                    <h3 class="text-indigo-950 text-xl font-bold">
+                                        {{ $row->created_at ? $row->created_at->format('d M Y') : '-' }}</h3>
+                                </div>
+
+                                <!-- Kolom: Preview Gambar -->
+                                <img src="{{ Storage::url($row->thumbnail) }}" alt=""
+                                    class="hidden md:flex w-2/12 border-gray-300">
+
+                                <!-- Kolom: Tombol Aksi -->
+                                <div
+                                    class="hidden md:flex flex-col items-center justify-center w-1/12 border-l gap-y-2">
+                                    @include('components.modal_edit', [
+                                        'modal' => 'Edit',
+                                        'modal_name' => 'Edit Showcase',
+                                        'modal_id' => 'edit-showcase-modal',
+                                        'form_action' => route('admin.showcases.update', ':id'),
+                                        'form_method' => 'PUT',
+                                        'id_field' => 'showcase_id',
+                                        'fields' => $editFields,
+                                        'data' => $data,
+                                    ])
+                                    @include('components.modal_delete', [
+                                        'id_field' => 'showcase_id',
+                                        'delete_route' => route('admin.showcases.destroy', ':id'),
+                                    ])
+                                </div>
+                            </div>
+                        @empty
+                            <p>No showcases found.</p>
+                        @endforelse
                     </div>
-                    <div class="hidden md:flex flex-row items-center gap-x-3">
-                        <a href="{{route('admin.showcases.edit', $showcase)}}" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
-                            Edit
-                        </a>
-                        <form action="{{route('admin.showcases.destroy', $showcase)}}" method="POST"> 
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="font-bold py-4 px-6 bg-red-700 text-white rounded-full">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-                </div> 
-                @empty
-                <p>No showcases found.</p>
-                @endforelse
             </div>
         </div>
-    </div>
 </x-app-layout>
