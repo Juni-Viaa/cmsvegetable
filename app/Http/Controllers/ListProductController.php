@@ -2,42 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class ListProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        // Ambil semua kategori untuk ditampilkan di filter
+        $categories = Category::all();
 
-        $categories = Category::where('category_type', 'product')->get();
+        // Query awal untuk produk
+        $query = Product::with('category');
 
-        // Filter berdasarkan kategori
-        if ($request->has('category') && is_array($request->category)) {
-            $query->whereIn('category_id', $request->category);
+        // === Filter berdasarkan kategori (checkbox) ===
+        if ($request->has('category')) {
+            $selectedCategories = $request->input('category');
+            if (is_array($selectedCategories)) {
+                $query->whereIn('category_id', $selectedCategories);
+            }
         }
 
-        // Sortir
-        if ($request->sort === 'terbaru') {
-            $query->orderBy('created_at', 'desc');
-        } elseif ($request->sort === 'az') {
-            $query->orderBy('product_name', 'asc');
+        // === Sort berdasarkan input radio ===
+        if ($request->has('sort')) {
+            $sort = $request->input('sort');
+            if ($sort === 'az') {
+                $query->orderBy('product_name', 'asc');
+            } elseif ($sort === 'terbaru') {
+                $query->orderBy('updated_at', 'desc');
+            }
+        } else {
+            // Default sorting
+            $query->orderBy('updated_at', 'desc');
         }
 
-        // Pagination
-        $products = $query->paginate(12)->withQueryString();
+        // Ambil hasil query dan paginasi
+        $products = $query->paginate(9)->appends($request->query());
 
-        $alpinejs = $products->map(function ($v) {
-        return [
-            'id' => $v->product_id,
-            'name' => $v->product_name,
-            'description' => $v->description,
-            'image' => asset('storage/' . $v->image_path),
-            ];
-        });
-
-        return view('pages.list_product', compact('categories', 'products', 'alpinejs'));
+        return view('pages.list_product', compact('products', 'categories'));
     }
 }
+
+
+
+
+
+
+
+
+

@@ -129,30 +129,54 @@
         </div>
 
         {{-- ============================ MODAL ============================ --}}
-        <div x-show="modalOpen" x-transition x-cloak
-            class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative overflow-hidden p-6"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
-                x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-full opacity-0">
-                <button @click="closeModal"
-                    class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
-                <a :href="`/products/${currentProduct.id}`">
-                    <img :src="currentProduct.image" alt=""
-                          class="w-full max-h-[260px] object-cover rounded-lg" />
-                    <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
-                    <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
-                    <div class="flex justify-between">
-                        <button @click="previousProduct"
-                            class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">←
-                            Previous</button>
-                        <button @click="nextProduct"
-                            class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next
-                            →</button>
-                    </div>
-                </a>
-            </div>
+        <div 
+        x-show="modalOpen" 
+        x-transition 
+        x-cloak
+        @click.self="closeModal"
+        class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative overflow-hidden p-6"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="translate-y-full opacity-0"
+        x-transition:enter-end="translate-y-0 opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="translate-y-0 opacity-100"
+        x-transition:leave-end="translate-y-full opacity-0">
+
+        <!-- Tombol Close -->
+        <button @click="closeModal"
+            class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
+
+        <!-- Gambar dan Info Produk -->
+        <a :href="`/products/${currentProduct.id}`" class="block mb-4">
+            <img
+            :src="currentProduct.image"
+            alt=""
+            class="w-full max-h-[260px] object-cover rounded-lg transition-all duration-300 ease-in-out"
+            :class="{
+               'translate-x-full opacity-0': isTransitioning && transitionDirection === 'next',
+               '-translate-x-full opacity-0': isTransitioning && transitionDirection === 'prev',
+               'translate-x-0 opacity-100': !isTransitioning
+    }"
+/>
+            <h2 class="text-xl font-bold text-gray-900 mt-3" x-text="currentProduct.name"></h2>
+            <p class="text-sm text-gray-600" x-text="currentProduct.description"></p>
+        </a>
+
+        <!-- Tombol Navigasi -->
+        <div class="flex justify-between">
+            <button @click="previousProduct"
+                class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">
+                ← Previous
+            </button>
+            <button @click="nextProduct"
+                class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">
+                Next →
+            </button>
         </div>
+    </div>
+</div>
+
     </div>
 
 <script>
@@ -224,28 +248,48 @@
 </script>
 
     <script>
-        function productModal() {
+         function productModal() {
+    return {
+        modalOpen: false,
+        products: @json($products->values()),
+        currentIndex: 0,
+        isTransitioning: false,
+        transitionDirection: '',
+
+        get currentProduct() {
+            const current = this.products[this.currentIndex];
             return {
-                modalOpen: false,
-                currentProduct: {},
-                alpinejs: @json($alpinejs),
-                openModal(index) {
-                    this.currentProduct = this.alpinejs[index];
-                    this.modalOpen = true;
-                },
-                closeModal() {
-                    this.modalOpen = false;
-                },
-                previousProduct() {
-                    const index = this.alpinejs.findIndex(p => p.id === this.currentProduct.id);
-                    if (index > 0) this.openModal(index - 1);
-                },
-                nextProduct() {
-                    const index = this.alpinejs.findIndex(p => p.id === this.currentProduct.id);
-                    if (index < this.alpinejs.length - 1) this.openModal(index + 1);
-                }
-            }
-        }
+                id: current.product_id,
+                name: current.product_name,
+                image: `/storage/${current.image_path}`,
+                description: current.description,
+            };
+        },
+        openModal(index) {
+            this.currentIndex = index;
+            this.modalOpen = true;
+        },
+        closeModal() {
+            this.modalOpen = false;
+        },
+        nextProduct() {
+            this.transitionDirection = 'next';
+            this.isTransitioning = true;
+            setTimeout(() => {
+                this.currentIndex = (this.currentIndex + 1) % this.products.length;
+                this.isTransitioning = false;
+            }, 300);
+        },
+        previousProduct() {
+            this.transitionDirection = 'prev';
+            this.isTransitioning = true;
+            setTimeout(() => {
+                this.currentIndex = (this.currentIndex - 1 + this.products.length) % this.products.length;
+                this.isTransitioning = false;
+            }, 300);
+        },
+    };
+}
     </script>
 
     <style>
