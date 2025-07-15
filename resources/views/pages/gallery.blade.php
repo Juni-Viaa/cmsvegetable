@@ -94,7 +94,11 @@
     </div>
 
     {{-- Modal --}}
-    <div x-show="modalOpen" x-transition x-cloak class="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+    <div 
+    x-show="modalOpen" 
+    x-transition 
+    @click.self="closeModal"
+    x-cloak class="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative overflow-hidden p-6"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="translate-y-full opacity-0"
@@ -102,10 +106,23 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0">
-            <button @click="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
-            <img :src="currentProduct.image" alt="" class="w-full max-h-[260px] object-cover rounded-lg" />
+
+            <button @click="closeModal" 
+            class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
+
+            <img 
+            :src="currentProduct.image" 
+            alt="" 
+            class="w-full max-h-[260px] object-cover rounded-lg transition-all duration-300 ease-in-out"
+            :class="{
+            'translate-x-full opacity-0': isTransitioning && transitionDirection === 'next',
+            '-translate-x-full opacity-0': isTransitioning && transitionDirection === 'prev',
+            'translate-x-0 opacity-100': !isTransitioning
+            }" />
+
             <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
             <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
+
             <div class="flex justify-between">
                 <button @click="previousProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">← Previous</button>
                 <button @click="nextProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next →</button>
@@ -226,44 +243,57 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Alpine.js data for modal navigation
-function galleryPage() {
-    return {
-        modalOpen: false,
-        currentIndex: 0,
-        // Ensure this data matches the structure of your $vegetables array
-        // Make sure $veg->id is actually the ID for your Gallery model
-        products: {!! json_encode($vegetables->map(function($veg) {
-            return [
-                'id' => $veg->id, // Assuming 'id' exists on your Gallery model
-                'name' => $veg->title,
-                'image' => $veg->image_url,
-                'description' => $veg->description ?? 'No description available'
-            ];
-        })) !!},
-        get currentProduct() {
-            return this.products[this.currentIndex];
-        },
-        openModal(index) {
-            this.currentIndex = index;
-            this.modalOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeModal() {
-            this.modalOpen = false;
-            document.body.style.overflow = '';
-        },
-        previousProduct() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
+ function galleryPage() {
+        return {
+            modalOpen: false,
+            currentIndex: 0,
+            isTransitioning: false,
+            transitionDirection: null,
+            products: {!! json_encode($vegetables->map(function($veg) {
+                return [
+                    'id' => $veg->id,
+                    'name' => $veg->title,
+                    'image' => $veg->image_url,
+                    'description' => $veg->description,
+                ];
+            })) !!},
+
+            get currentProduct() {
+                return this.products[this.currentIndex];
+            },
+
+            openModal(index) {
+                this.currentIndex = index;
+                this.modalOpen = true;
+            },
+
+            closeModal() {
+                this.modalOpen = false;
+            },
+
+            nextProduct() {
+                if (this.currentIndex < this.products.length - 1) {
+                    this.transitionDirection = 'next';
+                    this.isTransitioning = true;
+                    setTimeout(() => {
+                        this.currentIndex++;
+                        this.isTransitioning = false;
+                    }, 150);
+                }
+            },
+
+            previousProduct() {
+                if (this.currentIndex > 0) {
+                    this.transitionDirection = 'prev';
+                    this.isTransitioning = true;
+                    setTimeout(() => {
+                        this.currentIndex--;
+                        this.isTransitioning = false;
+                    }, 150);
+                }
             }
-        },
-        nextProduct() {
-            if (this.currentIndex < this.products.length - 1) {
-                this.currentIndex++;
-            }
-        }
+        };
     }
-}
 </script>
 
 @endsection

@@ -10,8 +10,8 @@ class ListProductController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua kategori untuk ditampilkan di filter
-        $categories = Category::all();
+        // Ambil kategori untuk ditampilkan di filter
+        $categories = Category::where('category_type', 'product')->get();
 
         // Query awal untuk produk
         $query = Product::with('category');
@@ -43,12 +43,3 @@ class ListProductController extends Controller
         return view('pages.list_product', compact('products', 'categories'));
     }
 }
-
-
-
-
-
-
-
-
-
