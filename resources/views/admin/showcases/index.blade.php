@@ -21,9 +21,9 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
-                @forelse($showcases as $showcase)
+                @include('components.error_message')
                     <div class="item-card flex flex-row justify-between items-center">
-                        <!-- Header Kolom -->
+                        {{-- <!-- Header Kolom -->
                         <div
                             class="flex flex-row items-center justify-between border-b shadow-sm sm:rounded-lg border-gray-400 px-2 py-3 bg-gray-100 font-semibold text-sm uppercase">
                             <div class="w-1/12 text-center border-r border-gray-300">
@@ -41,7 +41,7 @@
                             <div class="w-1/12 pl-1 text-center hidden md:block">
                                 Actions
                             </div>
-                        </div>
+                        </div> --}}
                         @forelse($data as $index => $row)
                             <!-- Baris Data -->
                             <div class="item-card flex flex-row items-center justify-between border-b border-gray-300 py-2 px-2">

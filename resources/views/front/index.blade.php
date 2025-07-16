@@ -35,7 +35,7 @@
           </div>          
           <!-- Right: Banner Image -->
           <div class="flex justify-end items-center mt-10 lg:mt-0">
-            <img src="{{Storage::url($hero->banner)}}"
+            <img src="{{Storage::url($hero->image_path)}}"
                  style="width:650px; height:650px; object-fit:cover; border-radius:10px; margin-top: 10px;"
                  class="shadow-lg"
                  alt="banner">

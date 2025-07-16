@@ -11,7 +11,7 @@ class UpdateShowcaseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,10 @@ class UpdateShowcaseRequest extends FormRequest
     {
         return [
             //
+            'name' => ['required', 'string', 'max:255'],
+            'tagline' => ['required', 'string', 'max:255'],
+            'thumbnail' => ['required', 'image', 'mimes:png,jpg,jpeg'],
+            'about' => ['required', 'string', 'max:65535'],
         ];
     }
 }

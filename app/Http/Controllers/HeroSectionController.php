@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreHeroSectionRequest;
 use App\Models\HeroSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ class HeroSectionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = HeroSection::query();
 
@@ -113,31 +114,31 @@ class HeroSectionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreHeroSectionRequest $request)
     {
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'heading' => 'required|string|max:255',
-            'subheading' => 'required|string|max:255',
-            'achievement' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
-            'path_video' => 'required|string|max:255'
-        ]);
+        // // Validasi input
+        // $validator = Validator::make($request->all(), [
+        //     'heading' => 'required|string|max:255',
+        //     'subheading' => 'required|string|max:255',
+        //     'achievement' => 'required|string|max:255',
+        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+        //     'path_video' => 'required|string|max:255'
+        // ]);
 
-        // Jika validasi gagal, kembali ke halaman sebelumnya
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // // Jika validasi gagal, kembali ke halaman sebelumnya
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
 
         try {
             // Ambil input
             $data = $request->only(['heading', 'subheading', 'achievement', 'path_video']);
 
             // Upload file gambar jika ada
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
+            if ($request->hasFile('banner')) {
+                $file = $request->file('banner');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('banners', $filename, 'public');
                 $data['image_path'] = $path;
