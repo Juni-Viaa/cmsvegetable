@@ -13,7 +13,7 @@ class OurPrincipleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = OurPrinciple::query();
 
@@ -82,7 +82,6 @@ class OurPrincipleController extends Controller
             ],
         ];
 
-        $data = OurPrinciple::orderByDesc('principle_id')->paginate(10);
         return view('admin.principles.index', compact('addFields', 'editFields', 'data'));
     }
 

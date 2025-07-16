@@ -44,5 +44,9 @@ return [
         'token' => env('TWILIO_TOKEN'),
         'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'), // like +6281234567890
     ],
+
+    'tinymce' => [
+        'api_key' => env('TINYMCE_API_KEY'),
+    ],
     
 ];

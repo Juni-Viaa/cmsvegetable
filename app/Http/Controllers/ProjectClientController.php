@@ -13,7 +13,7 @@ class ProjectClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = ProjectClient::query();
 
@@ -82,7 +82,6 @@ class ProjectClientController extends Controller
             ]
         ];
 
-        $data = ProjectClient::orderByDesc('client_id')->paginate(10);
         return view('admin.clients.index', compact('addFields', 'editFields', 'data'));
     }
 

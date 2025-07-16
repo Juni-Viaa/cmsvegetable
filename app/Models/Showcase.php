@@ -17,8 +17,8 @@ class Showcase extends Model
     protected $fillable = [
         'name',
         'tagline',  
-        'thumbnail',
         'about',
+        'thumbnail',
         'created_by'
     ];
 

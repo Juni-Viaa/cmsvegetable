@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Showcase;
-use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreShowcaseRequest;
-use App\Http\Requests\UpdateShowcaseRequest;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ShowcaseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Showcase::query();
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('title', 'like', "%$search%");
+            $query->where('name', 'like', "%$search%");
         }
 
         $data = $query->paginate(5);
@@ -28,9 +28,9 @@ class ShowcaseController extends Controller
         $addFields = [
             [
                 'type' => 'text', 
-                'name' => 'about', 
-                'label' => 'About Name',
-                'placeholder' => 'Enter about name',
+                'name' => 'name', 
+                'label' => 'Showcase name',
+                'placeholder' => 'Enter showcase name',
                 'required' => true
             ],
             [
@@ -41,26 +41,26 @@ class ShowcaseController extends Controller
                 'required' => true
             ],
             [
-                'type' => 'text', 
-                'name' => 'name', 
-                'label' => 'Showcase Name',
-                'placeholder' => 'Enter shocase name',
+                'type' => 'textarea', 
+                'name' => 'about', 
+                'label' => 'Showcase about',
+                'placeholder' => 'Enter showcase about',
                 'required' => true
             ],
             [
                 'type' => 'file', 
-                'name' => 'image', 
+                'name' => 'thumbnail', 
                 'label' => 'Select Thumbnail Image',
                 'required' => true
             ]
         ];
 
         $editFields = [
-                        [
+            [
                 'type' => 'text', 
-                'name' => 'about', 
-                'label' => 'About Name',
-                'placeholder' => 'Enter about name',
+                'name' => 'name', 
+                'label' => 'Showcase name',
+                'placeholder' => 'Enter showcase name',
                 'required' => true
             ],
             [
@@ -71,15 +71,15 @@ class ShowcaseController extends Controller
                 'required' => true
             ],
             [
-                'type' => 'text', 
-                'name' => 'name', 
-                'label' => 'Showcase Name',
-                'placeholder' => 'Enter shocase name',
+                'type' => 'textarea', 
+                'name' => 'about', 
+                'label' => 'Showcase about',
+                'placeholder' => 'Enter showcase about',
                 'required' => true
             ],
             [
                 'type' => 'file', 
-                'name' => 'image', 
+                'name' => 'thumbnail', 
                 'label' => 'Select Thumbnail Image',
                 'required' => false
             ]
@@ -103,9 +103,9 @@ class ShowcaseController extends Controller
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'about' => 'required|string|max:255',
-            'tagline' => 'required|string|max:255',
             'name' => 'required|string|max:255',
+            'tagline' => 'required|string|max:255',
+            'about' => 'required|string|max:255',
             'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
@@ -122,7 +122,7 @@ class ShowcaseController extends Controller
             if ($request->hasFile('thumbnail')) {
                 $file = $request->file('thumbnail');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('shocases', $filename, 'public');
+                $path = $file->storeAs('showcases', $filename, 'public');
                 $data['thumbnail'] = $path;
             }
 
@@ -131,7 +131,7 @@ class ShowcaseController extends Controller
             Showcase::create($data);
 
             return redirect()->route('admin.showcases.index')
-                ->with('success', 'Showwcase berhasil ditambahkan!');
+                ->with('success', 'Showcase berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
@@ -177,16 +177,16 @@ class ShowcaseController extends Controller
         }
 
         try {
-            $data = $request->only(['title', 'description', 'category_id']);
+            $data = $request->only(['about', 'tagline', 'name']);
             
             // Handle file upload
             if ($request->hasFile('thumbnail')) {
                 // Hapus file lama jika ada
-                if ($gallery->image_path && Storage::disk('public')->exists($showcase->image_path)) {
+                if ($showcase->image_path && Storage::disk('public')->exists($showcase->image_path)) {
                     Storage::disk('public')->delete($showwcase->image_path);
                 }
                 
-                $file = $request->file('image');
+                $file = $request->file('thumbnail');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('showcases', $filename, 'public');
                 $data['thumbnail'] = $path;

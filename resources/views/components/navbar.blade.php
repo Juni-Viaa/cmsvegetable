@@ -166,42 +166,18 @@
                     label: 'Product',
                     href: '{{ route('list_product') }}',
                     active: {{ request()->routeIs('list_product') ? 'true' : 'false' }}
-                    // dropdown: [
-                    //   {
-                    //     label: 'Products',
-                    //     href: '{{ route('products') }}',
-                    //     active: {{ request()->routeIs('products') ? 'true' : 'false' }}
-                    //   },
-                    //   {
-                    //     label: 'List Product',
-                    //     href: '{{ route('list_product') }}',
-                    //     active: {{ request()->routeIs('list_product') ? 'true' : 'false' }}
-                    //   }
-                    // ]
-                },
-                {
-                    name: 'gallery',
-                    label: 'Gallery',
-                    href: '{{ route('gallery') }}',
-                    active: {{ request()->routeIs('gallery') ? 'true' : 'false' }}
                 },
                 {
                     name: 'blog',
                     label: 'Blog',
                     href: '{{ route('list_blog') }}',
                     active: {{ request()->routeIs('list_blog') ? 'true' : 'false' }}
-                    // dropdown: [
-                    //   {
-                    //     label: 'Blog',
-                    //     href: '{{ route('blog') }}',
-                    //     active: {{ request()->routeIs('blog') ? 'true' : 'false' }}
-                    //   },
-                    //   {
-                    //     label: 'List Blog',
-                    //     href: '{{ route('list_blog') }}',
-                    //     active: {{ request()->routeIs('list_blog') ? 'true' : 'false' }}
-                    //   }
-                    // ]
+                },
+                {
+                    name: 'gallery',
+                    label: 'Gallery',
+                    href: '{{ route('gallery') }}',
+                    active: {{ request()->routeIs('gallery') ? 'true' : 'false' }}
                 },
                 {
                     name: 'aboutus',

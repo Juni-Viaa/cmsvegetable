@@ -68,9 +68,10 @@
                         </div>
                     </div>
                 @empty
-                    <p>No hero sections found.</p>
+                    <p>No accounts found.</p>
                 @endforelse
             </div>
+            {{ $data->appends(['search' => request('search')])->links() }}
         </div>
     </div>
 </x-app-layout>

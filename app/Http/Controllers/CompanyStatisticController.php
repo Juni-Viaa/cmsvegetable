@@ -13,7 +13,7 @@ class CompanyStatisticController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = CompanyStatistic::query();
 
@@ -70,7 +70,6 @@ class CompanyStatisticController extends Controller
             ],
         ];
 
-        $data = CompanyStatistic::orderByDesc('statistic_id')->paginate(10);
         return view('admin.statistics.index', compact('data', 'addFields', 'editFields'));
     }
 

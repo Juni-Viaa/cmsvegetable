@@ -23,7 +23,7 @@ class AdminProductController extends Controller
         // Jika ada parameter pencarian
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('product_name', 'like', "%$search%"); // NOTE: kolom yang dicari 'name', pastikan ini sesuai DB
+            $query->where('product_name', 'like', "%$search%");
         }
 
         $data = $query->paginate(5);
@@ -119,7 +119,7 @@ class AdminProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,category_id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240' // max 10MB
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
         // Jika validasi gagal, kembali ke halaman sebelumnya
@@ -137,7 +137,7 @@ class AdminProductController extends Controller
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('products', $filename, 'public'); // simpan ke folder public/products
+                $path = $file->storeAs('products', $filename, 'public');
                 $data['image_path'] = $path;
             }
 
@@ -241,25 +241,6 @@ class AdminProductController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Mengambil data produk untuk kebutuhan AJAX (misal: untuk edit modal).
-     */
-    public function getProduct($id)
-    {
-        try {
-            $product = Product::findOrFail($id);
-            return response()->json([
-                'success' => true,
-                'data' => $product
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
         }
     }
 }

@@ -42,8 +42,7 @@
                 </div>
                 @forelse($data as $index => $row)
                     <!-- Baris Data -->
-                    <div
-                        class="item-card flex flex-row items-center justify-between border-b border-gray-300 py-2 px-2">
+                    <div class="item-card flex flex-row items-center justify-between border-b border-gray-300 py-2 px-2">
 
                         <!-- Kolom: Nomor Urut -->
                         <div class="w-1/12 text-center font-medium text-slate-700 border-r border-gray-300">
@@ -81,9 +80,10 @@
                         </div>
                     </div>
                 @empty
-                    <p>No hero sections found.</p>
+                    <p>No products found.</p>
                 @endforelse
             </div>
+        {{ $data->appends(['search' => request('search')])->links() }}
         </div>
     </div>
 </x-app-layout>

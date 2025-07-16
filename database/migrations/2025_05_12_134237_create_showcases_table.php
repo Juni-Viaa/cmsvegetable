@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('showcases', function (Blueprint $table) {
             $table->id('showcase_id');
+            $table->string('name')->unique();
+            $table->string('tagline');
             $table->text('about');
             $table->string('thumbnail');
-            $table->string('tagline');
-            $table->string('name')->unique();
             $table->foreignId('created_by')->constrained('users', 'user_id')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

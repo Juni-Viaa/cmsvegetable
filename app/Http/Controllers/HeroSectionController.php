@@ -13,7 +13,7 @@ class HeroSectionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = HeroSection::query();
 
@@ -98,7 +98,6 @@ class HeroSectionController extends Controller
             ]
         ];
 
-        $data = HeroSection::orderByDesc('hero_id')->paginate(10);
         return view('admin.hero_sections.index', compact('data', 'addFields', 'editFields'));
     }
 

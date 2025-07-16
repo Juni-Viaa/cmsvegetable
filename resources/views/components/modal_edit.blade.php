@@ -80,8 +80,8 @@
                     @endforeach
                 </div>
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <button type="button"
+                        class="btn-edit text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Save
                     </button>
                     <button data-modal-hide="{{ $modal_id }}-{{ $row->{$id_field} }}" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-white focus:outline-none bg-[#A1887F] rounded-lg border border-[#A1887F] hover:bg-[#7A625A] hover:text-white focus:z-10 focus:ring-4 focus:ring-[#A1887F]">
@@ -92,3 +92,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function () {
+                const form = this.closest('form');
+                const name = this.dataset.name || 'item ini';
+                Swal.fire({
+                    title: 'Simpan perubahan?',
+                    text: `Perubahan "${name}" akan disimpan!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Simpan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>

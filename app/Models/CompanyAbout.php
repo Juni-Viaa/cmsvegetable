@@ -12,7 +12,7 @@ class CompanyAbout extends Model
 
     protected $table = 'company_abouts';
 
-    protected $primatyKey = 'about_id';
+    protected $primaryKey = 'about_id';
 
     protected $fillable = [
         'name',

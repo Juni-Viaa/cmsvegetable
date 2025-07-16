@@ -13,7 +13,7 @@ class OurTeamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = OurTeam::query();
 
@@ -84,7 +84,6 @@ class OurTeamController extends Controller
             ]
         ];
 
-        $data = OurTeam::orderByDesc('team_id')->paginate(10);
         return view('admin.teams.index', compact('addFields', 'editFields', 'data'));
     }
 

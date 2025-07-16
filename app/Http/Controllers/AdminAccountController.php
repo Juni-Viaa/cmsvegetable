@@ -40,12 +40,12 @@ class AdminAccountController extends Controller
 
         $query = User::query();
 
-        $data = $query->paginate(10);
-
         if ($request->has('search')) {
             $search = $request->search;
             $query->where('username', 'like', "%$search%");
         }
+
+        $data = $query->paginate(10);
 
         return view('admin.accounts.index', compact('data', 'editFields'));
 

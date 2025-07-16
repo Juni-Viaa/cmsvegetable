@@ -5,7 +5,7 @@
                 {{ __('Manage Galleries') }}
             </h2>
             @include('components.searchbar', [
-                'search' => route('admin.galleries.index')
+                'search' => route('admin.galleries.index'),
             ])
             @include('components.modal_add', [
                 'modal' => 'Add Gallery',
@@ -57,11 +57,13 @@
 
                         <!-- Kolom: Tanggal -->
                         <div class="hidden md:flex flex-col text-center w-4/12 border-r border-gray-300">
-                            <h3 class="text-indigo-950 text-xl font-bold">{{ $row->created_at ? $row->created_at->format('d M Y') : '-' }}</h3>
+                            <h3 class="text-indigo-950 text-xl font-bold">
+                                {{ $row->created_at ? $row->created_at->format('d M Y') : '-' }}</h3>
                         </div>
 
                         <!-- Kolom: Preview Gambar -->
-                        <img src="{{ Storage::url($row->image_path) }}" alt="" class="hidden md:flex w-2/12 border-gray-300">
+                        <img src="{{ Storage::url($row->image_path) }}" alt=""
+                            class="hidden md:flex w-2/12 border-gray-300">
 
                         <!-- Kolom: Tombol Aksi -->
                         <div class="hidden md:flex flex-col items-center justify-center w-1/12 border-l gap-y-2">
@@ -81,10 +83,11 @@
                             ])
                         </div>
                     </div>
-                    @empty
-                        <p>No hero sections found.</p>
-                    @endforelse
-                </div>
+                @empty
+                    <p>No galleries found.</p>
+                @endforelse
             </div>
+            {{ $data->appends(['search' => request('search')])->links() }}
         </div>
-    </x-app-layout>
+    </div>
+</x-app-layout>

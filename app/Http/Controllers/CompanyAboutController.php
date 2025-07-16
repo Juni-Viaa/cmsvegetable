@@ -13,10 +13,9 @@ class CompanyAboutController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = CompanyAbout::query();
-
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -79,7 +78,6 @@ class CompanyAboutController extends Controller
             ]
         ];
 
-        $data = CompanyAbout::orderByDesc('id')->paginate(10);
         return view('admin.abouts.index', compact('addFields', 'editFields', 'data'));
     }
 

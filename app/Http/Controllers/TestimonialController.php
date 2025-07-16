@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Testimonial;
+use App\Models\ProjectClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +14,7 @@ class TestimonialController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Testimonial::query();
 
@@ -23,6 +24,8 @@ class TestimonialController extends Controller
         }
 
         $data = $query->paginate(5);
+
+        $client = ProjectClient::all()->pluck('name', 'client_id')->toArray();
 
         $addFields = [
             [
@@ -36,6 +39,14 @@ class TestimonialController extends Controller
                 'name' => 'message',
                 'label' => 'Message',
                 'placeholder' => 'Enter testimonial message',
+                'required' => true
+            ],
+            [
+                'type' => 'select',
+                'name' => 'project_client_id',
+                'label' => 'Select Client',
+                'options' => $client,
+                'placeholder' => 'Select category',
                 'required' => true
             ]
         ];
@@ -53,10 +64,17 @@ class TestimonialController extends Controller
                 'label' => 'Message',
                 'placeholder' => 'Enter testimonial message',
                 'required' => true
+            ],
+            [
+                'type' => 'select',
+                'name' => 'project_client_id',
+                'label' => 'Select Client',
+                'options' => $client,
+                'placeholder' => 'Select category',
+                'required' => true
             ]
         ];
 
-        $data = Testimonial::orderByDesc('testimonial_id')->paginate(10);
         return view('admin.testimonials.index', compact('addFields', 'editFields', 'data'));
     }
 
@@ -76,7 +94,8 @@ class TestimonialController extends Controller
         // Validasi input
         $validator = Validator::make($request->all(), [
             'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
-            'message' => 'required|string|max:255'
+            'message' => 'required|string|max:255',
+            'project_client_id' => 'required|exists:project_clients,client_id'
         ]);
 
         // Jika validasi gagal, kembali ke halaman sebelumnya
@@ -88,7 +107,7 @@ class TestimonialController extends Controller
 
         try {
             // Ambil input
-            $data = $request->only(['message']);
+            $data = $request->only(['message', 'project_client_id']);
 
             // Upload file gambar jika ada
             if ($request->hasFile('thumbnail')) {
@@ -140,6 +159,7 @@ class TestimonialController extends Controller
         $validator = Validator::make($request->all(), [
             'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'message' => 'required|string|max:255',
+            'project_client_id' => 'required|exists:project_clients,client_id'
         ]);
 
         // Jika validasi gagal, kembali ke halaman sebelumnya
@@ -151,11 +171,11 @@ class TestimonialController extends Controller
 
         try {
             // Ambil input
-            $data = $request->only(['message']);
+            $data = $request->only(['message', 'project_client_id']);
 
             // Jika ada file baru, hapus yang lama dan simpan yang baru
             if ($request->hasFile('thumbnail')) {
-                if ($hero->image_path && Storage::disk('public')->exists($testimonial->image_path)) {
+                if ($testimonial->image_path && Storage::disk('public')->exists($testimonial->image_path)) {
                     Storage::disk('public')->delete($testimonial->image_path);
                 }
 

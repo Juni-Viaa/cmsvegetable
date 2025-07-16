@@ -87,6 +87,7 @@
                     <p>No principles found.</p>
                 @endforelse
             </div>
+            {{ $data->appends(['search' => request('search')])->links() }}
         </div>
     </div>
 </x-app-layout>
