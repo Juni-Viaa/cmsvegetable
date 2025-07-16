@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>@yield('title', 'Sayur Kita')</title>
+  @stack('meta')
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/flowbite@1.6.6/dist/flowbite.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/flowbite@1.6.6/dist/flowbite.min.js" defer></script>
@@ -106,5 +107,6 @@ button:active::after {
       bgEl.style.backgroundImage = `url('${images[index]}')`;
     }, 5000); // ganti tiap 5 detik
   </script>
+  @stack('scripts')
 </body>
 </html>

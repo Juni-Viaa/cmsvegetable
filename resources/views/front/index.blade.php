@@ -1,43 +1,49 @@
 @extends('front.layouts.app')
 @section('content')
-    <div id="header" class="bg-[#F6F7FA] relative overflow-hidden">
-        <div class="container max-w-[1130px] mx-auto relative pt-10 z-10">
-            <x-navbarlp />
+<div id="header" class="bg-[#F6F7FA] relative overflow-hidden">
+    <div class="container max-w-[1130px] mx-auto relative pt-10 z-10">
+        <x-navbarlp />
 
-            @forelse($hero_section as $hero)
-                <input type="hidden" name="path_video" id="path_video" value="{{ $hero->path_video }}" />
-                <div id="Hero" class="flex flex-col gap-[30px] mt-20 pb-20">
-                    <div class="flex items-center bg-white p-[8px_16px] gap-[10px] rounded-full w-fit">
-                        <div class="w-5 h-5 flex shrink-0 overflow-hidden">
-                            <img src="{{ asset('assets/icons/crown.svg') }}" class="object-contain" alt="icon">
-                        </div>
-                        <p class="font-semibold text-sm">{{ $hero->achievement }}</p>
-                    </div>
-                    <div class="flex flex-col gap-[10px]">
-                        <h1 class="font-extrabold text-[50px] leading-[65px] max-w-[536px]">{{ $hero->heading }}</h1>
-                        <p class="text-cp-light-grey leading-[30px] max-w-[437px]">{{ $hero->subheading }}</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <a href=""
-                            class="bg-cp-dark-blue p-5 w-fit rounded-xl hover:shadow-[0_12px_30px_0_#312ECB66] transition-all duration-300 font-bold text-white">Explore
-                            Now</a>
-                        <button class="bg-cp-black p-5 w-fit rounded-xl font-bold text-white flex items-center gap-[10px]"
-                            onclick="{modal.show()}">
-                            <div class="w-6 h-6 flex shrink-0 overflow-hidden">
-                                <img src="{{ asset('assets/icons/play-circle.svg') }}" class="w-full h-full object-contain"
-                                    alt="icon">
-                            </div>
-                            <span>Watch Video</span>
-                        </button>
-                    </div>
+        @forelse($hero_section as $hero)
+        <input type="hidden" name="path_video" id="path_video" value="{{ $hero->path_video }}" />
+        <div id="Hero" class="flex flex-col lg:flex-row items-center gap-[120px]">
+          <!-- Left: Text Content -->
+          <div class="flex-1 flex flex-col gap-[30px] z-10">
+            <div class="flex items-center bg-white p-[8px_16px] gap-[10px] rounded-full w-fit">
+              <div class="w-5 h-5 flex shrink-0 overflow-hidden">
+                <img src="{{ asset('assets/icons/crown.svg') }}" class="object-contain" alt="icon">
+              </div>
+              <p class="font-semibold text-sm">{{ $hero->achievement }}</p>
+            </div>
+            <div class="flex flex-col gap-[10px]">
+              <h1 class="font-extrabold text-[50px] leading-[65px] max-w-[536px]">{{ $hero->heading }}</h1>
+              <p class="text-cp-light-grey leading-[30px] max-w-[437px]">{{ $hero->subheading }}</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <a href="#Products" 
+              class="bg-cp-dark-blue p-5 w-fit rounded-xl hover:shadow-[0_12px_30px_0_#312ECB66] transition-all duration-300 font-bold text-white">Explore 
+                Now</a>
+              <button class="bg-cp-black p-5 w-fit rounded-xl font-bold text-white flex items-center gap-[10px]" 
+              onclick="{modal.show()}">
+                <div class="w-6 h-6 flex shrink-0 overflow-hidden">
+                  <img src="{{ asset('assets/icons/play-circle.svg') }}" class="w-full h-full object-contain" 
+                  alt="icon">
                 </div>
-        </div>
-        <div class="absolute w-[43%] h-full top-0 right-0 overflow-hidden z-0">
-            <img src="{{ Storage::url($hero->banner) }}" class="object-cover w-full h-full" alt="banner">
+                <span>Watch Video</span>
+              </button>
+            </div>
+          </div>          
+          <!-- Right: Banner Image -->
+          <div class="flex justify-end items-center mt-10 lg:mt-0">
+            <img src="{{Storage::url($hero->image_path)}}"
+                 style="width:650px; height:650px; object-fit:cover; border-radius:10px; margin-top: 10px;"
+                 class="shadow-lg"
+                 alt="banner">
+          </div>
         </div>
     @empty
-        <p>No hero section data available.</p>
-        @endforelse
+    <p>No hero section data available.</p>
+    @endforelse
 
     </div>
     <div id="Clients" class="container max-w-[1130px] mx-auto flex flex-col justify-center text-center gap-5 mt-20">
@@ -172,9 +178,9 @@
                         <h2 class="font-bold text-4xl leading-[45px]">{{ $showcase->name }}</h2>
                         <p class="leading-[30px] text-cp-light-grey">{{ $showcase->about }}</p>
                     </div>
-                    <a href=""
-                        class="bg-cp-dark-blue p-[14px_20px] w-fit rounded-xl hover:shadow-[0_12px_30px_0_#312ECB66] transition-all duration-300 font-bold text-white">Book
-                        Appointment</a>
+                    <a href="{{ route('list_product') }}"
+                        class="bg-cp-dark-blue p-[14px_20px] w-fit rounded-xl hover:shadow-[0_12px_30px_0_#312ECB66] transition-all duration-300 font-bold text-white">Explore 
+                        More</a>
                 </div>
             </div>
         @empty
@@ -236,8 +242,8 @@
         <div class="flex flex-col gap-[14px] items-center">
             <p
                 class="badge w-fit bg-cp-pale-blue text-cp-light-blue p-[8px_16px] rounded-full uppercase font-bold text-sm">
-                SUCCESS CLIENTS</p>
-            <h2 class="font-bold text-4xl leading-[45px] text-center">Our Satisfied Clients<br>From Worldwide Company</h2>
+                SUCCESS FARMERS</p>
+            <h2 class="font-bold text-4xl leading-[45px] text-center">Our Satisfied Farmers<br>From Local Farmers Across the Region</h2>
         </div>
         <div class="main-carousel w-full">
 
@@ -309,7 +315,7 @@
                     OUR AWARDS</p>
                 <h2 class="font-bold text-4xl leading-[45px]">We’ve Dedicated Our<br>Best Team Efforts</h2>
             </div>
-            <a href="" class="bg-cp-black p-[14px_20px] w-fit rounded-xl font-bold text-white">Explore More</a>
+            <a href="{{ route('aboutus') }}" class="bg-cp-black p-[14px_20px] w-fit rounded-xl font-bold text-white">Explore More</a>
         </div>
         <div
             class="awards-card-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[30px] justify-center">

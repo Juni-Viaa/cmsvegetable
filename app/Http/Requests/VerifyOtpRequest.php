@@ -6,13 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+/**
+ * Handles validation for verifying OTP (phone number and OTP code).
+ */
 class VerifyOtpRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     */
     public function rules(): array
     {
         return [
@@ -31,22 +40,31 @@ class VerifyOtpRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom error messages for validation rules.
+     */
     public function messages(): array
     {
         return [
-            'phone_number.required' => 'Nomor telepon wajib diisi',
-            'phone_number.regex' => 'Format nomor telepon tidak valid',
-            'otp_code.required' => 'Kode OTP wajib diisi',
-            'otp_code.size' => 'Kode OTP harus 6 digit',
-            'otp_code.regex' => 'Kode OTP hanya boleh berisi angka',
+            'phone_number.required' => 'Phone number is required.',
+            'phone_number.regex' => 'Invalid phone number format. Use +62xxxxxxxxxx.',
+            'phone_number.max' => 'Phone number is too long.',
+            'otp_code.required' => 'OTP code is required.',
+            'otp_code.size' => 'OTP code must be 6 digits.',
+            'otp_code.regex' => 'OTP code must be numeric.',
         ];
     }
 
+    /**
+     * Return a JSON response on validation failure.
+     * The 'message' will be the first error message for user clarity.
+     */
     protected function failedValidation(Validator $validator)
     {
+        $firstError = collect($validator->errors()->all())->first() ?: 'Validation failed.';
         throw new HttpResponseException(response()->json([
             'success' => false,
-            'message' => 'Validasi gagal',
+            'message' => $firstError,
             'errors' => $validator->errors(),
         ], 422));
     }

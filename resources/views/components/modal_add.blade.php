@@ -1,6 +1,5 @@
 <!-- Modal toggle -->
-<button data-modal-target="{{ $modal_id }}" data-modal-toggle="{{ $modal_id }}" type="button"
-    class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
+<button data-modal-target="{{ $modal_id }}" data-modal-toggle="{{ $modal_id }}" type="button" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full hover:bg-indigo-800 transition">
     {{ $modal }}
 </button>
 
@@ -33,10 +32,10 @@
                     @method($form_method)
                 @endif
 
-                <div class="grid gap-4 mb-4 grid-cols-2">
+                <div class="grid gap-5 mb-6 grid-cols-2">
                     @foreach ($fields as $field)
                         <div class="col-span-2">
-                            <label for="{{ $field['name'] }}" class="block mb-2 text-sm font-medium text-gray-900">
+                            <label for="{{ $field['name'] }}" class="block mb-2 text-sm font-medium text-neutral-800">
                                 {{ $field['label'] }}
                                 @if ($field['required'] ?? false)
                                     <span class="text-red-500">*</span>
@@ -55,6 +54,7 @@
                                         class="bg-[#F5F5F5] border border-gray-300 text-black placeholder-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 @error($field['name']) border-red-500 @enderror"
                                         {{ $field['required'] ?? false ? 'required' : '' }}>
                                 @break
+
 
                                 @case('file')
                                     <div x-data="{

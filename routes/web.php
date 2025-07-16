@@ -87,13 +87,14 @@ Route::get('/hash-password', function () {
     return Hash::make('@dmin');
 });
 
-// Form Register
-Route::get('/register', [RegisterController::class, 'register'])->name('register');
-Route::post('/register', [RegisterController::class, 'store'])->name('register.store'); // <- ini penting
-Route::get('/register2', [RegisterController2::class, 'register2']);
-Route::post('/register2', [RegisterController2::class, 'store2'])->name('register2.store');
-Route::get('/register3', [RegisterController3::class, 'register3']);
-Route::post('/register3', [RegisterController3::class, 'verifyOtp'])->name('register3.verify');
+// Registration routes
+Route::get('/register', [\App\Http\Controllers\RegisterController::class, 'register'])->name('register');
+Route::post('/register', [\App\Http\Controllers\RegisterController::class, 'store'])->name('register.store');
+
+// OTP Verification routes
+Route::get('/otp-verification', [\App\Http\Controllers\OtpVerificationController::class, 'show'])->name('otp.verification');
+Route::post('/api/otp/send', [\App\Http\Controllers\OtpVerificationController::class, 'sendOtp']);
+Route::post('/api/otp/verify', [\App\Http\Controllers\OtpVerificationController::class, 'verifyOtp']);
 
 Route::get('/test-send-otp', function () {
     $token = config('services.fonnte.token');
@@ -143,17 +144,17 @@ Route::get('/passwordchg', [ChgPwController::class, 'passwordchg'])->name('passw
 Route::get('/gallery', [GalleryController::class, 'gallery'])->name('gallery');
 
 
-Route::get('/blogs', [BlogController::class, 'list'])->name('blog');
+Route::get('/blogs', [BlogController::class, 'index'])->name('list_blog');
 Route::get('/blogs/{id}', [BlogController::class, 'blog']);
 Route::post('/blogs/{id}/comment', [BlogController::class, 'comments'])->middleware('auth');
 Route::post('/blogs/{id}/replies', [BlogController::class, 'replies'])->middleware('auth');
-Route::get('/list_blog', [ListBlogController::class, 'index'])->name('list_blog');
+// Route::get('/list_blog', [ListBlogController::class, 'index'])->name('list_blog');
 
-Route::get('/products', [ProductController::class, 'list'])->name('products');
+Route::get('/products', [ProductController::class, 'index'])->name('list_product');
 Route::get('/products/{id}', [ProductController::class, 'product']);
 Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->middleware('auth');
 Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
-Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
+// Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
 Route::get('/settings', [AccountSettingsController::class, 'index'])->name('settings.index');
 Route::get('/settings/password', [AccountSettingsController::class, 'password'])->name('settings.password');
@@ -175,7 +176,3 @@ Route::middleware('auth')->group(function () {
 });
 
 // require __DIR__.'/auth.php';
-
-Route::get('/otp-verification', function () {
-    return view('otp-verification');
-});

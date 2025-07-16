@@ -33,15 +33,15 @@
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-200 hover:shadow-md transition-all duration-300 w-full lg:w-1/3">
                     <h3 class="text-black font-semibold mb-4">Sort By</h3>
                     <div class="flex flex-col gap-3">
-                        <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                             <input type="radio" name="sort" value="latest" {{ request('sort') == 'latest' ? 'checked' : '' }}
                                    class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
-                            <span class="text-sm font-medium text-gray-700">Latest Update</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Latest Update</span>
                         </label>
-                        <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                             <input type="radio" name="sort" value="az" {{ request('sort') == 'az' ? 'checked' : '' }}
                                    class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
-                            <span class="text-sm font-medium text-gray-700">Sort A–Z</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Sort A–Z</span>
                         </label>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                     <h3 class="text-black font-semibold mb-4 flex items-center gap-2">Filter by Category</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($categories as $cat)
-                            <label class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 cursor-pointer">
+                            <label class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2 cursor-pointer hover:border-green-400 transition-all duration-200">
                                 <input type="checkbox" name="category[]" value="{{ $cat }}"
                                        {{ is_array(request('category')) && in_array($cat, request('category')) ? 'checked' : '' }}
                                        class="accent-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
@@ -94,7 +94,11 @@
     </div>
 
     {{-- Modal --}}
-    <div x-show="modalOpen" x-transition x-cloak class="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+    <div 
+    x-show="modalOpen" 
+    x-transition 
+    @click.self="closeModal"
+    x-cloak class="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative overflow-hidden p-6"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="translate-y-full opacity-0"
@@ -102,10 +106,23 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0">
-            <button @click="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
-            <img :src="currentProduct.image" alt="" class="w-full max-h-[260px] object-cover rounded-lg" />
+
+            <button @click="closeModal" 
+            class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg font-bold">&times;</button>
+
+            <img 
+            :src="currentProduct.image" 
+            alt="" 
+            class="w-full max-h-[260px] object-cover rounded-lg transition-all duration-300 ease-in-out"
+            :class="{
+            'translate-x-full opacity-0': isTransitioning && transitionDirection === 'next',
+            '-translate-x-full opacity-0': isTransitioning && transitionDirection === 'prev',
+            'translate-x-0 opacity-100': !isTransitioning
+            }" />
+
             <h2 class="text-xl font-bold text-gray-900" x-text="currentProduct.name"></h2>
             <p class="text-sm text-gray-600 mb-6" x-text="currentProduct.description"></p>
+
             <div class="flex justify-between">
                 <button @click="previousProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">← Previous</button>
                 <button @click="nextProduct" class="px-4 py-2 bg-white text-gray-800 hover:bg-green-500 hover:text-white rounded-md transition">Next →</button>
@@ -167,12 +184,37 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filterForm');
-    const inputs = filterForm.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    inputs.forEach(input => {
-        // PERBAIKAN DI SINI: Menggunakan filterForm.submit()
-        input.addEventListener('change', () => filterForm.submit());
+
+    // RADIO BUTTON: Allow uncheck when clicked again
+    const radioInputs = filterForm.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(radio => {
+        const label = radio.closest('label');
+
+        label.addEventListener('mousedown', () => {
+            radio.wasChecked = radio.checked;
+        });
+
+        label.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (radio.wasChecked) {
+                radio.checked = false;
+                const url = new URL(window.location.href);
+                url.searchParams.delete(radio.name);
+                window.location.href = url.toString();
+            } else {
+                radio.checked = true;
+                filterForm.submit();
+            }
+        });
     });
 
+    // CHECKBOX: Submit on change
+    const checkboxInputs = filterForm.querySelectorAll('input[type="checkbox"]');
+    checkboxInputs.forEach(cb => {
+        cb.addEventListener('change', () => filterForm.submit());
+    });
+
+    // TOGGLE VIEW (Grid/List)
     const toggleBtn = document.getElementById('toggleView');
     const toggleIcon = document.getElementById('toggleIcon');
     const toggleText = document.getElementById('toggleText');
@@ -198,70 +240,60 @@ document.addEventListener('DOMContentLoaded', () => {
         container.classList.toggle('lg:grid-cols-3');
         updateToggleUI();
     });
-
-    // Manual DOM event listeners for modal (will work alongside Alpine.js)
-    const modal = document.getElementById('modalOverlay');
-    const closeModal = document.getElementById('closeModal');
-
-    closeModal.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    });
 });
 
 // Alpine.js data for modal navigation
-function galleryPage() {
-    return {
-        modalOpen: false,
-        currentIndex: 0,
-        // Ensure this data matches the structure of your $vegetables array
-        // Make sure $veg->id is actually the ID for your Gallery model
-        products: {!! json_encode($vegetables->map(function($veg) {
-            return [
-                'id' => $veg->id, // Assuming 'id' exists on your Gallery model
-                'name' => $veg->title,
-                'image' => $veg->image_url,
-                'description' => $veg->description ?? 'No description available'
-            ];
-        })) !!},
-        get currentProduct() {
-            return this.products[this.currentIndex];
-        },
-        openModal(index) {
-            this.currentIndex = index;
-            this.modalOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeModal() {
-            this.modalOpen = false;
-            document.body.style.overflow = '';
-        },
-        previousProduct() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
+ function galleryPage() {
+        return {
+            modalOpen: false,
+            currentIndex: 0,
+            isTransitioning: false,
+            transitionDirection: null,
+            products: {!! json_encode($vegetables->map(function($veg) {
+                return [
+                    'id' => $veg->id,
+                    'name' => $veg->title,
+                    'image' => $veg->image_url,
+                    'description' => $veg->description,
+                ];
+            })) !!},
+
+            get currentProduct() {
+                return this.products[this.currentIndex];
+            },
+
+            openModal(index) {
+                this.currentIndex = index;
+                this.modalOpen = true;
+            },
+
+            closeModal() {
+                this.modalOpen = false;
+            },
+
+            nextProduct() {
+                if (this.currentIndex < this.products.length - 1) {
+                    this.transitionDirection = 'next';
+                    this.isTransitioning = true;
+                    setTimeout(() => {
+                        this.currentIndex++;
+                        this.isTransitioning = false;
+                    }, 150);
+                }
+            },
+
+            previousProduct() {
+                if (this.currentIndex > 0) {
+                    this.transitionDirection = 'prev';
+                    this.isTransitioning = true;
+                    setTimeout(() => {
+                        this.currentIndex--;
+                        this.isTransitioning = false;
+                    }, 150);
+                }
             }
-        },
-        nextProduct() {
-            if (this.currentIndex < this.products.length - 1) {
-                this.currentIndex++;
-            }
-        }
+        };
     }
-}
 </script>
 
 @endsection

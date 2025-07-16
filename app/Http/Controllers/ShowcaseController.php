@@ -15,6 +15,7 @@ class ShowcaseController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
+    public function index(Request $request)
     {
         $query = Showcase::query();
 
@@ -99,7 +100,7 @@ class ShowcaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreShowcaseRequest $request)
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
@@ -109,11 +110,11 @@ class ShowcaseController extends Controller
             'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
 
         try {
             $data = $request->only(['about', 'tagline', 'name']);
@@ -123,7 +124,10 @@ class ShowcaseController extends Controller
                 $file = $request->file('thumbnail');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('showcases', $filename, 'public');
+                $path = $file->storeAs('showcases', $filename, 'public');
                 $data['thumbnail'] = $path;
+            } else {
+                $data['thumbnail'] = 'default-thumbnail.png'; // or handle as needed
             }
 
             $data['created_by'] = Auth::id();
@@ -131,7 +135,7 @@ class ShowcaseController extends Controller
             Showcase::create($data);
 
             return redirect()->route('admin.showcases.index')
-                ->with('success', 'Showcase berhasil ditambahkan!');
+                ->with('success', 'Showcase successfully added!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
@@ -158,23 +162,23 @@ class ShowcaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateShowcaseRequest $request, $id)
     {
-        $showcase = Showcase::findOrFail($id);
+        // $showcase = Showcase::findOrFail($id);
 
         // Validasi input
-        $validator = Validator::make($request->all(), [
-            'about' => 'required|string|max:255',
-            'tagline' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'about' => 'required|string|max:255',
+        //     'tagline' => 'required|string|max:255',
+        //     'name' => 'required|string|max:255',
+        //     'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
+        // ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
 
         try {
             $data = $request->only(['about', 'tagline', 'name']);
@@ -182,8 +186,8 @@ class ShowcaseController extends Controller
             // Handle file upload
             if ($request->hasFile('thumbnail')) {
                 // Hapus file lama jika ada
-                if ($showcase->image_path && Storage::disk('public')->exists($showcase->image_path)) {
-                    Storage::disk('public')->delete($showwcase->image_path);
+                if ($request->image_path && Storage::disk('public')->exists($request->image_path)) {
+                    Storage::disk('public')->delete($request->image_path);
                 }
                 
                 $file = $request->file('thumbnail');
@@ -192,7 +196,7 @@ class ShowcaseController extends Controller
                 $data['thumbnail'] = $path;
             }
 
-            $showcase->update($data);
+            $request->update($data);
 
             return redirect()->route('admin.showcases.index')
                 ->with('success', 'Showcase berhasil diupdate!');
@@ -213,7 +217,7 @@ class ShowcaseController extends Controller
             
             // Hapus file gambar jika ada
             if ($showcase->image_path && Storage::disk('public')->exists($showcase->image_path)) {
-                Storage::disk('public')->delete($shoecase->image_path);
+                Storage::disk('public')->delete($showcase->image_path);
             }
             
             $showcase->delete();
