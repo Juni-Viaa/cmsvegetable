@@ -40,7 +40,7 @@ class GalleryController extends Controller
 
         // Ambil kategori unik yang tersedia di semua galeri (untuk filter checklist)
         // Ini memastikan hanya kategori yang memiliki item galeri yang ditampilkan di filter
-        $categories = Category::whereIn('category_id', Gallery::pluck('category_id')->unique())->pluck('category_name')->unique();
+        $categories = Category::where('category_type', 'gallery')->get();
 
         return view('pages.gallery', compact('vegetables', 'categories'));
     }

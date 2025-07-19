@@ -57,28 +57,31 @@
                                 @break
 
                                 @case('file')
+                                    @php
+                                        $prefix = $mode ?? 'add';
+                                    @endphp
                                     <div x-data="{
-                                        fileName: '',
-                                        fileChosen: false,
-                                        handleDrop(event) {
+                                        fileName_{{ $prefix }}: '',
+                                        fileChosen_{{ $prefix }}: false,
+                                        handleDrop_{{ $prefix }}(event) {
                                             const files = event.dataTransfer.files;
                                             if (files.length > 0) {
-                                                const input = this.$refs.fileInput;
+                                                const input = this.$refs.fileInput_{{ $prefix }};
                                                 input.files = files;
-                                                this.fileName = files[0].name;
-                                                this.fileChosen = true;
+                                                this.fileName_{{ $prefix }} = files[0].name;
+                                                this.fileChosen_{{ $prefix }} = true;
                                             }
                                         },
-                                        clearFile() {
-                                            this.fileName = '';
-                                            this.fileChosen = false;
-                                            this.$refs.fileInput.value = null;
+                                        clearFile_{{ $prefix }}() {
+                                            this.fileName_{{ $prefix }} = '';
+                                            this.fileChosen_{{ $prefix }} = false;
+                                            this.$refs.fileInput_{{ $prefix }}.value = null;
                                         }
                                     }" class="flex items-center justify-center w-full"
-                                        @dragover.prevent @drop.prevent="handleDrop($event)">
+                                        @dragover.prevent @drop.prevent="handleDrop_{{ $prefix }}($event)">
 
                                         <!-- DRAG & DROP -->
-                                        <label x-show="!fileChosen" for="{{ $field['name'] }}"
+                                        <label x-show="!fileChosen_{{ $prefix }}" for="{{ $prefix }}_{{ $field['name'] }}"
                                             class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                                 <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
@@ -95,17 +98,17 @@
                                         </label>
 
                                         <!-- FILE INPUT (HIDDEN) -->
-                                        <input x-ref="fileInput" type="{{ $field['type'] }}" name="{{ $field['name'] }}"
-                                            id="{{ $field['name'] }}" accept="{{ $field['accept'] ?? 'image/*' }}"
+                                        <input x-ref="fileInput_{{ $prefix }}" type="{{ $field['type'] }}" name="{{ $field['name'] }}"
+                                            id="{{ $prefix }}_{{ $field['name'] }}" accept="{{ $field['accept'] ?? 'image/*' }}"
                                             class="hidden"
-                                            @change="if ($event.target.files.length > 0) { fileName = $event.target.files[0].name; fileChosen = true }" />
+                                            @change="if ($event.target.files.length > 0) { fileName_{{ $prefix }} = $event.target.files[0].name; fileChosen_{{ $prefix }} = true }" />
 
                                         <!-- FILE SELECTED VIEW -->
-                                        <div x-show="fileChosen"
+                                        <div x-show="fileChosen_{{ $prefix }}"
                                             class="flex items-center justify-between w-full px-4 py-3 bg-gray-100 rounded-lg space-x-2">
-                                            <span class="text-sm text-gray-700 truncate max-w-[70%]" x-text="fileName"></span>
+                                            <span class="text-sm text-gray-700 truncate max-w-[70%]" x-text="fileName_{{ $prefix }}"></span>
                                             <!-- HAPUS -->
-                                            <button type="button" @click="clearFile()"
+                                            <button type="button" @click="clearFile_{{ $prefix }}()"
                                                 class="text-sm text-red-500 hover:text-red-700" title="Hapus file">
                                                 ❌
                                             </button>
@@ -114,8 +117,7 @@
                                 @break
 
                                 @case('textarea')
-                                    <label for="{{ $field['name'] }}"
-                                        class="block mb-2 font-medium text-gray-700">Konten:</label>
+                                    <label for="{{ $field['name'] }}" class="block mb-2 font-medium text-gray-700"></label>
                                     <textarea name="{{ $field['name'] }}" id="{{ $field['name'] }}" rows="{{ $field['rows'] ?? 4 }}"
                                         class="w-full border border-gray-300 rounded p-2"></textarea>
                                     <script>

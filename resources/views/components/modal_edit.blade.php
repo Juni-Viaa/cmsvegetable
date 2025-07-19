@@ -53,15 +53,77 @@
                                 @break
 
                                 @case('file')
-                                    <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
-                                        accept="{{ $field['accept'] ?? 'image/*' }}"
-                                        data-preview="preview-{{ $field['name'] }}"
-                                        class="block w-full text-sm text-neutral-900 border border-neutral-200 rounded-lg cursor-pointer bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-200 @error($field['name']) border-red-400 @enderror transition"
-                                        {{ $field['required'] ?? false ? 'required' : '' }}>
-                                    <!-- Image preview -->
-                                    <img id="preview-{{ $field['name'] }}" src="" alt="Preview"
-                                        class="mt-2 max-w-full h-auto rounded-lg shadow-sm border border-neutral-100"
-                                        style="display: none; max-height: 200px;">
+                                    @php
+                                        $prefix = $mode ?? 'edit';
+                                        $uniqueId = $uniqueId ?? uniqid();
+                                    @endphp
+
+                                    <div x-data="fileUploadComponent('{{ $prefix }}', '{{ $uniqueId }}')" class="flex items-center justify-center w-full"
+                                        @dragover.prevent @drop.prevent="handleDrop($event)">
+
+                                        <!-- DRAG & DROP -->
+                                        <label x-show="!fileChosen"
+                                            for="{{ $prefix }}_{{ $field['name'] }}_{{ $uniqueId }}"
+                                            class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"
+                                                    aria-hidden="true">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                                    <span class="font-semibold">Click to upload</span> or drag and drop
+                                                </p>
+                                            </div>
+                                        </label>
+
+                                        <!-- FILE INPUT (HIDDEN) -->
+                                        <input x-ref="fileInput" type="{{ $field['type'] }}" name="{{ $field['name'] }}"
+                                            id="{{ $prefix }}_{{ $field['name'] }}_{{ $uniqueId }}"
+                                            accept="{{ $field['accept'] ?? 'image/*' }}" class="hidden"
+                                            @change="if ($event.target.files.length > 0) { 
+                                                fileName = $event.target.files[0].name; 
+                                                fileChosen = true 
+                                            }" />
+
+                                        <!-- FILE SELECTED VIEW -->
+                                        <div x-show="fileChosen"
+                                            class="flex items-center justify-between w-full px-4 py-3 bg-gray-100 rounded-lg space-x-2">
+                                            <span class="text-sm text-gray-700 truncate max-w-[70%]" x-text="fileName"></span>
+                                            <!-- HAPUS -->
+                                            <button type="button" @click="clearFile()"
+                                                class="text-sm text-red-500 hover:text-red-700" title="Hapus file">
+                                                ❌
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function fileUploadComponent(prefix, uniqueId) {
+                                            return {
+                                                fileName: '',
+                                                fileChosen: false,
+                                                prefix: prefix,
+                                                uniqueId: uniqueId,
+                                                handleDrop(event) {
+                                                    const files = event.dataTransfer.files;
+                                                    if (files.length > 0) {
+                                                        const input = this.$refs.fileInput;
+                                                        input.files = files;
+                                                        this.fileName = files[0].name;
+                                                        this.fileChosen = true;
+                                                    }
+                                                },
+                                                clearFile() {
+                                                    this.fileName = '';
+                                                    this.fileChosen = false;
+                                                    this.$refs.fileInput.value = null;
+                                                }
+                                            }
+                                        }
+                                    </script>
                                 @break
 
                                 @case('textarea')

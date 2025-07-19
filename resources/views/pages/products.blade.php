@@ -23,7 +23,7 @@
                     </h2>
 
                     <p class="text-sm text-gray-700 leading-relaxed">
-                        {{!! $product->description }}
+                        {!! $product->description !!}
                     </p>
                 </div>
             </div>

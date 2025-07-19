@@ -113,7 +113,7 @@
                             {{ $product->category->category_name ?? 'Tanpa Kategori' }}
                         </span>
                         <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $product->product_name }}</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed">{{!! $product->description }}</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ \Str::limit($product->description, 50) }}</p>
                     </div>
                 </div>
             @endforeach
