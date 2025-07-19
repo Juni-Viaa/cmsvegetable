@@ -184,7 +184,7 @@ class AdminProductController extends Controller
             'product_name' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,category_id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:15240'
         ]);
 
         if ($validator->fails()) {
