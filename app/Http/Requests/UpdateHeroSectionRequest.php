@@ -27,7 +27,7 @@ class UpdateHeroSectionRequest extends FormRequest
             'achievement' => ['required', 'string', 'max:255'],
             'subheading' => ['required', 'string', 'max:255'],
             'path_video' => ['required', 'string', 'max:255'],
-            'banner' => ['sometimes', 'image', 'mimes:png,jpg,jpeg'],
+            'image' => ['sometimes', 'image', 'mimes:png,jpg,jpeg'],
         ];
     }
 }

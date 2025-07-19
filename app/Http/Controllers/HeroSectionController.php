@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHeroSectionRequest;
+use App\Http\Requests\UpdateHeroSectionRequest;
 use App\Models\HeroSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,7 +46,7 @@ class HeroSectionController extends Controller
                 'type' => 'text',
                 'name' => 'achievement',
                 'label' => 'Achievement',
-                'placeholder' => 'Enter achivement',
+                'placeholder' => 'Enter achievement',
                 'required' => true
             ],
             [
@@ -115,39 +117,31 @@ class HeroSectionController extends Controller
      */
     public function store(StoreHeroSectionRequest $request)
     {
-        // // Validasi input
-        // $validator = Validator::make($request->all(), [
-        //     'heading' => 'required|string|max:255',
-        //     'subheading' => 'required|string|max:255',
-        //     'achievement' => 'required|string|max:255',
-        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
-        //     'path_video' => 'required|string|max:255'
-        // ]);
-
-        // // Jika validasi gagal, kembali ke halaman sebelumnya
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
-
         try {
+            // Debug: Log the request data
+            Log::info('Hero Section Store Request:', $request->all());
+            
             // Ambil input
             $data = $request->only(['heading', 'subheading', 'achievement', 'path_video']);
 
             // Upload file gambar jika ada
-            if ($request->hasFile('banner')) {
-                $file = $request->file('banner');
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('banners', $filename, 'public');
                 $data['image_path'] = $path;
+                Log::info('File uploaded:', ['path' => $path]);
+            } else {
+                Log::warning('No image file found in request');
             }
 
             // Tambahkan id user yang membuat
             $data['created_by'] = Auth::id();
+            Log::info('Data to be saved:', $data);
 
             // Simpan ke database
-            HeroSection::create($data);
+            $heroSection = HeroSection::create($data);
+            Log::info('Hero Section created:', ['id' => $heroSection->hero_id]);
 
             return redirect()->route('admin.hero_sections.index')
                 ->with('success', 'Hero Section berhasil ditambahkan!');
@@ -177,25 +171,9 @@ class HeroSectionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateHeroSectionRequest $request, $id)
     {
         $hero = HeroSection::findOrFail($id);
-
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'heading' => 'required|string|max:255',
-            'subheading' => 'required|string|max:255',
-            'achievement' => 'required|string|max:255',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'path_video' => 'required|string|max:255'
-        ]);
-
-        // Jika validasi gagal, kembali ke halaman sebelumnya
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
 
         try {
             // Ambil input

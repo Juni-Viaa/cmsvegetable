@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreShowcaseRequest;
+use App\Http\Requests\UpdateShowcaseRequest;
 use App\Models\Showcase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,7 +16,6 @@ class ShowcaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
     public function index(Request $request)
     {
         $query = Showcase::query();
@@ -103,12 +104,12 @@ class ShowcaseController extends Controller
     public function store(StoreShowcaseRequest $request)
     {
         // Validasi input
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'tagline' => 'required|string|max:255',
-            'about' => 'required|string|max:255',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string|max:255',
+        //     'tagline' => 'required|string|max:255',
+        //     'about' => 'required|string|max:255',
+        //     'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+        // ]);
 
         // if ($validator->fails()) {
         //     return redirect()->back()
@@ -123,7 +124,6 @@ class ShowcaseController extends Controller
             if ($request->hasFile('thumbnail')) {
                 $file = $request->file('thumbnail');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('showcases', $filename, 'public');
                 $path = $file->storeAs('showcases', $filename, 'public');
                 $data['thumbnail'] = $path;
             } else {
