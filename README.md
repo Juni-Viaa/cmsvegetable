@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href=""><strong>🚀 Live Demo</strong></a> •
+  <a href="https://youtu.be/UO63PTp0t-c"><strong>🚀 Project Demo</strong></a> •
   <a href=""><strong>📁 Project Assets</strong></a> •
   <a href="#-features-that-make-a-difference"><strong>✨ Features</strong></a> •
   <a href="#-installation-guide"><strong>📦 Installation</strong></a> •
