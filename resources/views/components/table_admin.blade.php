@@ -18,7 +18,8 @@
                     @foreach ($columns as $key => $label)
                         <td class="px-6 py-4 text-black">
                             @if ($key === 'image_path' && $row->$key)
-                                <img src="{{ asset('storage/' . $row->$key) }}" alt="Image" class="w-12 h-12 object-cover rounded">
+                                <img src="{{ asset('storage/' . $row->$key) }}" alt="Image"
+                                    class="w-12 h-12 object-cover rounded">
                             @elseif ($key === 'created_at' || $key === 'updated_at')
                                 {{ $row->$key ? $row->$key->format('Y-m-d H:i') : '-' }}
                             @else

@@ -1,4 +1,4 @@
-@extends('layouts.blog')
+@extends('layouts.content')
 
 @section('title', 'Blog')
 
@@ -54,7 +54,7 @@
                         <span>{{ $blog->created_at->format('H:i d/m/Y') }}</span>
                     </div>
                     <p class="text-gray-700 leading-relaxed select-text">
-                        {{ $blog->content }}
+                        {!! $blog->content !!}
                     </p>
 
                     {{-- FLASH MESSAGE --}}

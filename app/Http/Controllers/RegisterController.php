@@ -32,4 +32,3 @@ class RegisterController extends Controller
         return redirect()->route('otp.verification')->with('success', 'Silakan verifikasi nomor handphone Anda.');
     }
 }
- 
