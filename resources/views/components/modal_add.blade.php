@@ -185,6 +185,15 @@
                                         @endforeach
                                     @endif
                                 @break
+
+                                @case('keypoints')
+                                    @for ($i = 0; $i < ($field['count'] ?? 3); $i++)
+                                        <input type="text" name="keypoints[{{ $i }}]" id="keypoints_{{ $i }}"
+                                            placeholder="Keypoint #{{ $i + 1 }}"
+                                            value="{{ old('keypoints.' . $i) }}"
+                                            class="bg-[#F5F5F5] border border-gray-300 text-black placeholder-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mb-2 @error('keypoints.' . $i) border-red-500 @enderror">
+                                    @endfor
+                                @break
                             @endswitch
 
                             @error($field['name'])

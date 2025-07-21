@@ -186,6 +186,18 @@
                                         @endforeach
                                     @endif
                                 @break
+
+                                @case('keypoints')
+                                    @php
+                                        $existingKeypoints = isset($row->keypoints) ? $row->keypoints->pluck('keypoint')->toArray() : [];
+                                    @endphp
+                                    @for ($i = 0; $i < ($field['count'] ?? 3); $i++)
+                                        <input type="text" name="keypoints[{{ $i }}]" id="keypoints_{{ $i }}"
+                                            placeholder="Keypoint #{{ $i + 1 }}"
+                                            value="{{ old('keypoints.' . $i, $existingKeypoints[$i] ?? '') }}"
+                                            class="block w-full rounded-lg border border-neutral-200 bg-neutral-50 focus:bg-white shadow-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200 text-sm text-neutral-900 placeholder-neutral-400 @error('keypoints.' . $i) border-red-400 @enderror mb-2">
+                                    @endfor
+                                @break
                             @endswitch
                             @error($field['name'])
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

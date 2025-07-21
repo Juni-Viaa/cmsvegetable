@@ -46,7 +46,7 @@
       </div>
       <div class="flex flex-col gap-[30px] py-[50px] h-fit max-w-[500px]">
         <p class="badge w-fit bg-cp-pale-blue text-cp-light-blue p-[8px_16px] rounded-full uppercase font-bold text-sm">OUR {{$about->type}}</p>
-        <div class="flex flex-col gap-[10px]">
+        <div class="flex flex-col gap-5">
           <h2 class="font-bold text-4xl leading-[45px]">{{$about->name}}</h2>
           <div class="flex flex-col gap-5">
             <div class="flex items-center gap-[10px]">
@@ -55,7 +55,7 @@
               <div class="w-6 h-6 flex shrink-0">
                 <img src="assets/icons/tick-circle.svg" alt="icon">
               </div>
-              <p class="leading-[26px] font-semibold">{{$keypoint->keypoint}}</p>
+              <p class="leading-[26px] font-semibold max-w-sm break-words">{{$keypoint->keypoint}}</p>
             </div>
             @empty
             <p class="text-cp-light-grey">No key points available.</p>

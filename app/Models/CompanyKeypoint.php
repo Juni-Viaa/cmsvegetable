@@ -13,5 +13,6 @@ class CompanyKeypoint extends Model
     protected $fillable = [
         'company_about_id',
         'keypoint',
+        'created_by', // <--- this must be present
     ];
 }

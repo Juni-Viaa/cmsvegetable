@@ -59,6 +59,13 @@
                                 <h3 class="text-indigo-950 text-xl font-bold break-words">{{ $row->name }}</h3>
                             </div>
                         </div>
+
+                        <!-- Kolom: Type -->
+                        <div  class="hidden md:flex flex-col">
+                            <p class="text-slate-500 text-sm">Type</p>
+                            <h3 class="text-indigo-950 text-xl font-bold">{{$row->type}}</h3>
+                        </div>
+
                         <!-- Kolom: Tanggal -->
                         <div class="hidden md:flex flex-col justify-center items-center text-center w-4/12 border-gray-300">
                             <p class="text-slate-500 text-sm">Date</p>
