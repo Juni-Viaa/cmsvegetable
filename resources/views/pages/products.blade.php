@@ -1,4 +1,4 @@
-@extends('layouts.products')
+@extends('layouts.content')
 
 @section('title', 'Products')
 
@@ -174,7 +174,7 @@
                      class="w-20 h-20 object-cover rounded-md border border-white/30 transform transition duration-300 group-hover:scale-105" />
                 <div>
                     <h3 class="font-bold text-sm text-gray-900 group-hover:text-green-700">{{ $item->product_name }}</h3>
-                    <p class="text-xs text-gray-700 mt-1">{{ \Str::limit(strip_tags($item->description), 50) }}</p>
+                    <p class="text-xs text-gray-700 mt-1">{!! \Str::limit(strip_tags($item->description), 50) !!}</p>
                 </div>
             </div>
         </a>

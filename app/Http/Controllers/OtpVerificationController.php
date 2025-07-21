@@ -29,7 +29,7 @@ class OtpVerificationController extends Controller
      */
     public function show()
     {
-        return view('otp-verification');
+        return view('pages.otp-verification');
     }
 
     /**

@@ -57,10 +57,16 @@ Route::middleware([
     \Illuminate\Auth\Middleware\Authenticate::class,
     \App\Http\Middleware\AdminMiddleware::class,
 ])->prefix('admin')->name('admin.')->group(function () {
+
     //Landing Page
     Route::resource('hero_sections', HeroSectionController::class);
     Route::resource('principles', OurPrincipleController::class);
     Route::resource('statistics', CompanyStatisticController::class);
+    Route::resource('abouts', CompanyAboutController::class);
+    Route::resource('showcases', ShowcaseController::class);
+    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('clients', ProjectClientController::class);
+    Route::resource('teams', OurTeamController::class);
 
     //Content
     Route::resource('categories', AdminCategoryController::class);
@@ -69,12 +75,7 @@ Route::middleware([
     Route::resource('galleries', AdminGalleryController::class);
     Route::resource('accounts', AdminAccountController::class);
     
-    //
-    Route::resource('abouts', CompanyAboutController::class);
-    Route::resource('showcases', ShowcaseController::class);
-    Route::resource('testimonials', TestimonialController::class);
-    Route::resource('clients', ProjectClientController::class);
-    Route::resource('teams', OurTeamController::class);
+    //Others
     Route::resource('appointments', AppointmentController::class);
 });
 
@@ -143,26 +144,18 @@ Route::get('/blogs', [ListBlogController::class, 'index'])->name('list_blog');
 Route::get('/blogs/{id}', [BlogController::class, 'blog']);
 Route::post('/blogs/{id}/comment', [BlogController::class, 'comments'])->middleware('auth');
 Route::post('/blogs/{id}/replies', [BlogController::class, 'replies'])->middleware('auth');
-// Route::get('/list_blog', [ListBlogController::class, 'index'])->name('list_blog');
+Route::get('/list_blog', [ListBlogController::class, 'index'])->name('list_blog');
 
 Route::get('/products', [ListProductController::class, 'index'])->name('list_product');
 Route::get('/products/{id}', [ProductController::class, 'product']);
 Route::post('/products/{id}/comment', [ProductController::class, 'comments'])->middleware('auth');
 Route::post('/products/{id}/replies', [ProductController::class, 'replies'])->middleware('auth');
-// Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
+Route::get('/list_product', [ListProductController::class, 'index'])->name('list_product');
 
 Route::get('/settings', [AccountSettingsController::class, 'index'])->name('settings.index');
 Route::get('/settings/password', [AccountSettingsController::class, 'password'])->name('settings.password');
 Route::put('/settings/profile', [AccountSettingsController::class, 'updateProfile'])->name('settings.profile.update');
 Route::put('/settings/password', [AccountSettingsController::class, 'updatePassword'])->name('settings.password.update');
-
-
-//Auth
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
