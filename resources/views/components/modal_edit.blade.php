@@ -2,7 +2,7 @@
 <button data-modal-target="{{ $modal_id }}-{{ $row->{$id_field} }}"
     data-modal-toggle="{{ $modal_id }}-{{ $row->{$id_field} }}" data-id="{{ $row->{$id_field} }}"
     data-name="{{ $row->name ?? 'Item' }}"
-    class="font-bold py-1 px-2 bg-indigo-700 text-white rounded-full hover:bg-indigo-800 transition">
+    class="font-bold py-3 px-5 bg-indigo-700 text-white rounded-full hover:bg-indigo-800 transition">
     Edit
 </button>
 

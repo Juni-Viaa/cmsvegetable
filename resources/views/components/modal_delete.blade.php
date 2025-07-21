@@ -3,7 +3,7 @@
     @csrf
     @method('DELETE')
     <button type="button"
-        class="btn-delete font-bold py-1 px-2 text-white bg-red-600 rounded-full"
+        class="btn-delete font-bold py-3 px-5 text-white bg-red-600 rounded-full"
         data-id="{{ $row->{$id_field} }}"
         data-name="{{ $row->name ?? 'Item' }}">
         Delete

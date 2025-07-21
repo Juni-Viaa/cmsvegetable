@@ -34,18 +34,18 @@
 
                         <!-- Kolom: Preview Gambar -->
                         {{-- This image is shown as the "Preview Gambar" (Banner Image) column for each hero section row --}}
-                        <div class="flex flex-row items-center gap-x-3">
+                        <div class="flex flex-row items-center w-0 min-w-[400px] gap-x-3">
                             <img src="{{ Storage::url($row->image_path) }}" alt="Banner Image"
-                                class="rounded-2xl object-cover w-[100px] h-[100px]">
+                                class="flex-none rounded-2xl object-cover w-[100px] h-[100px]">
                             <!-- Kolom: Nama Hero Section -->
                             <div class="flex flex-col">
-                                <h3 class="text-indigo-950 text-xl font-bold break-words">{{ $row->heading }}</h3>
+                                <h3 class="text-indigo-950 text-xl font-bold break-words line-clamp-2">{{ $row->heading }}</h3>
                                 {{-- <h3 class="text-indigo-950 text-sm font-bold break-words">{{ $row->subheading }}</h3> --}}
                             </div>
                         </div>
             
                         <!-- Kolom: Tanggal -->
-                        <div class="hidden md:flex flex-col text-center w-4/12 border-gray-300">
+                        <div class="hidden md:flex flex-col justify-center items-center text-center w-4/12 border-gray-300">
                             <p class="text-slate-500 text-sm">Date</p>
                             <h3 class="text-indigo-950 text-xl font-bold">
                                 {{ $row->created_at ? $row->created_at->format('d M Y') : '-' }}</h3>

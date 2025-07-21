@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col">
                 <!-- Header Kolom -->
-                <div
+                {{-- <div
                     class="flex flex-row items-center justify-between border-b shadow-sm sm:rounded-lg border-gray-400 px-2 py-3 bg-gray-100 font-semibold text-sm uppercase">
                     <div class="w-1/12 text-center border-r border-gray-300">
                         No
@@ -28,29 +28,33 @@
                     <div class="w-2/12 pl-1 text-center hidden md:block">
                         Actions
                     </div>
-                </div>
+                </div> --}}
                 @forelse($data as $index => $row)
                     <!-- Baris Data -->
                     <div
-                        class="item-card flex flex-row items-center justify-between border-b border-gray-300 py-2 px-2">
+                        class="item-card flex flex-row items-center justify-between border-gray-300 py-2 px-2">
 
                         <!-- Kolom: Nomor Urut -->
-                        <div class="w-1/12 text-center font-medium text-slate-700 border-r border-gray-300">
+                        {{-- <div class="w-1/12 text-center font-medium text-slate-700 border-r border-gray-300">
                             {{ $index + 1 }}
-                        </div>
+                        </div> --}}
+
                         <!-- Kolom: Nama Produk -->
-                        <div class="flex flex-col w-5/12 pl-4 border-r border-gray-300">
+                        <div class="flex flex-col pr-4 border-gray-300">
+                            <p class="text-slate-500 text-sm">Username</p>
                             <h3 class="text-indigo-950 text-xl font-bold break-words">{{ $row->username }}</h3>
                         </div>
 
+
                         <!-- Kolom: Tanggal -->
-                        <div class="hidden md:flex flex-col text-center w-4/12 border-r border-gray-300">
+                        <div class="hidden md:flex flex-col justify-center items-center text-center  w-4/12 border-gray-300">
+                            <p class="text-slate-500 text-sm">Date</p>
                             <h3 class="text-indigo-950 text-xl font-bold">
                                 {{ $row->created_at ? $row->created_at->format('d M Y') : '-' }}</h3>
                         </div>
 
                         <!-- Kolom: Tombol Aksi -->
-                        <div class="hidden md:flex flex-col items-center justify-center w-2/12 gap-y-2">
+                        <div class="hidden md:flex flex-row items-center gap-x-3">
                             @include('components.modal_edit', [
                                 'modal' => 'Edit',
                                 'modal_name' => 'Edit Account',
