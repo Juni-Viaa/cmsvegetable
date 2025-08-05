@@ -21,7 +21,7 @@
 
 <p align="center">
   <a href="https://youtu.be/UO63PTp0t-c"><strong>🚀 Project Demo</strong></a> •
-  <a href=""><strong>📁 Project Assets</strong></a> •
+  <a href="https://drive.google.com/drive/folders/13LkGFJMwCiyfPhRtmk4VvyYOnub3id44?usp=sharing"><strong>📁 Project Assets</strong></a> •
   <a href="#-features-that-make-a-difference"><strong>✨ Features</strong></a> •
   <a href="#-installation-guide"><strong>📦 Installation</strong></a> •
   <a href="#-meet-our-amazing-team"><strong>👥 Team</strong></a>
